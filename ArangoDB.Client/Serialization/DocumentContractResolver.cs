@@ -38,6 +38,9 @@ namespace ArangoDB.Client.Serialization
 
                 p.PropertyName = db.Settings.Collection.ResolvePropertyName(type, p.UnderlyingName);
 
+                if (p.PropertyName == "_key" || p.PropertyName == "_id" || p.PropertyName == "_rev")
+                    p.NullValueHandling = NullValueHandling.Ignore;
+
                 convertedProperties.Add(p);
             }
 
