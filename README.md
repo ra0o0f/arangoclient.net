@@ -106,3 +106,20 @@ while(await enumerator.MoveNextAsync())
     Console.WriteLine(enumerator.Current.Name);
 }
 ```
+
+<hr/>
+
+### Database Settings
+
+client behavior could be change by 'db.Settings' property, like:
+
+```c#
+// will set waitForSync to true anywhere its used 
+database.Settings.WaitForSync = true;
+
+// waitForSync is true
+database.Update<Person>("41234512",new {Name:"hojat"});
+
+// waitForSync will be overridden to false
+database.Update<Person>("41234512",new {Name:"hojat"}, waitForSync: false);
+```
