@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client", "ArangoDB.Client\ArangoDB.Client.csproj", "{BF30BB46-FFCA-4725-AF2F-806326770244}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Common", "ArangoDB.Client.Common\ArangoDB.Client.Common.csproj", "{041982ED-AA4E-4212-A9DC-822D6DFF5414}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Test", "ArangoDB.Client.Test\ArangoDB.Client.Test.csproj", "{BBD66B39-78B8-477E-8ABC-C73CC3C17106}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.TestConsole", "..\..\arango-console\ArangoDB.TestConsole\ArangoDB.TestConsole\ArangoDB.TestConsole.csproj", "{C5029FC6-AF30-495D-A21B-74679A7B32F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF30BB46-FFCA-4725-AF2F-806326770244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF30BB46-FFCA-4725-AF2F-806326770244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF30BB46-FFCA-4725-AF2F-806326770244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF30BB46-FFCA-4725-AF2F-806326770244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5029FC6-AF30-495D-A21B-74679A7B32F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5029FC6-AF30-495D-A21B-74679A7B32F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5029FC6-AF30-495D-A21B-74679A7B32F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5029FC6-AF30-495D-A21B-74679A7B32F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
