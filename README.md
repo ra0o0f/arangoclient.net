@@ -131,8 +131,8 @@ for ease of changing client behavior, ArangoDatabase could be create with follow
 var setting = ArangoDatabase.FindSetting();
 setting.WaitForSync = true;
 
-// use it whenever you create ArangoDatabase instance
-using(ArangoDatabase db =ArangoDatabase.WithSettingSetting())
+// will create ArangoDatabase with setting defined above
+using(ArangoDatabase db = ArangoDatabase.WithSetting())
 {
 }
 
