@@ -100,10 +100,12 @@ foreach(var p in cursor.AsEnumerable())
 var list = awiat cursor.ToListAsync();
 
 // stream cursor results async
-var enumerator = cursor.GetAsyncEnumerator();
-while(await enumerator.MoveNextAsync())
+using(enumerator = cursor.GetAsyncEnumerator())
 {
-    Console.WriteLine(enumerator.Current.Name);
+    while(await enumerator.MoveNextAsync())
+    {
+        Console.WriteLine(enumerator.Current.Name);
+    }
 }
 ```
 
