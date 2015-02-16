@@ -114,7 +114,7 @@ while(await enumerator.MoveNextAsync())
 client behavior could be change by 'db.Settings' property, like:
 
 ```c#
-// will set waitForSync to true anywhere its used 
+// will set default value for waitForSync to true anywhere it is used 
 database.Settings.WaitForSync = true;
 
 // waitForSync is true
@@ -122,4 +122,26 @@ database.Update<Person>("41234512",new {Name:"hojat"});
 
 // waitForSync will be overridden to false
 database.Update<Person>("41234512",new {Name:"hojat"}, waitForSync: false);
+```
+
+for ease of changing client behavior, ArangoDatabase could be create with following static methods
+
+```c#
+// set setting once
+var setting = ArangoDatabase.FindSetting();
+setting.WaitForSync = true;
+
+// use it whenever you create ArangoDatabase instance
+using(ArangoDatabase db =ArangoDatabase.WithSettingSetting())
+{
+}
+
+// you can define multiple settings by passing an identifier to "FindSetting"
+var setting = ArangoDatabase.FindSetting("SampleDbSetting");
+setting.WaitForSync = true;
+
+// and use it like this
+using(ArangoDatabase db =ArangoDatabase.WithSetting("SampleDbSetting"))
+{
+}
 ```
