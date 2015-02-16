@@ -115,13 +115,13 @@ client behavior could be change by 'db.Settings' property, like:
 
 ```c#
 // will set default value for waitForSync to true anywhere it is used 
-database.Settings.WaitForSync = true;
+db.Settings.WaitForSync = true;
 
 // waitForSync is true
-database.Update<Person>("41234512",new {Name:"hojat"});
+db.Update<Person>("41234512",new {Name:"hojat"});
 
 // waitForSync will be overridden to false
-database.Update<Person>("41234512",new {Name:"hojat"}, waitForSync: false);
+db.Update<Person>("41234512",new {Name:"hojat"}, waitForSync: false);
 ```
 
 for ease of changing client behavior, ArangoDatabase could be create with following static methods
