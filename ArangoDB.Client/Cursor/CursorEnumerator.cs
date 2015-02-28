@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArangoDB.Client.Utility;
 
 namespace ArangoDB.Client.Cursor
 {
@@ -17,7 +18,7 @@ namespace ArangoDB.Client.Cursor
 
         public bool MoveNext()
         {
-            return asyncEnumerator.MoveNextAsync().Result;
+            return asyncEnumerator.MoveNextAsync().ResultSynchronizer();
         }
 
         T IEnumerator<T>.Current
