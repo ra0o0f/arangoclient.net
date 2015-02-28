@@ -94,43 +94,6 @@ namespace ArangoDB.Client
 
         private static ConcurrentDictionary<string, MethodInfo> _cachedMethodInfos = new ConcurrentDictionary<string, MethodInfo>();
 
-        //
-        // Summary:
-        //     Projects each element of a sequence to an System.Collections.Generic.IEnumerable<T>
-        //     and invokes a result selector function on each element therein. The resulting
-        //     values from each intermediate sequence are combined into a single, one-dimensional
-        //     sequence and returned.
-        //
-        // Parameters:
-        //   source:
-        //     A sequence of values to project.
-        //
-        //   collectionSelector:
-        //     A projection function to apply to each element of the input sequence.
-        //
-        //   resultSelector:
-        //     A projection function to apply to each element of each intermediate sequence.
-        //
-        // Type parameters:
-        //   TSource:
-        //     The type of the elements of source.
-        //
-        //   TCollection:
-        //     The type of the intermediate elements collected by the function represented
-        //     by collectionSelector.
-        //
-        //   TResult:
-        //     The type of the elements of the resulting sequence.
-        //
-        // Returns:
-        //     An System.Linq.IQueryable<T> whose elements are the result of invoking the
-        //     one-to-many projection function collectionSelector on each element of source
-        //     and then mapping each of those sequence elements and their corresponding
-        //     source element to a result element.
-        //
-        // Exceptions:
-        //   System.ArgumentNullException:
-        //     source or collectionSelector or resultSelector is null.
         public static IQueryable<TResult> For<TSource, TCollection, TResult>(this IQueryable<TSource> source, 
             Expression<Func<TSource, IEnumerable<TCollection>>> collectionSelector, Expression<Func<TSource, TCollection, TResult>> resultSelector)
         {

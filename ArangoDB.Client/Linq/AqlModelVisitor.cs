@@ -15,10 +15,12 @@ namespace ArangoDB.Client.Linq
 {
     public class AqlModelVisitor : QueryModelVisitorBase
     {
+        static Dictionary<Type, string> aggregateResultOperatorFunctions;
+
         public ArangoDatabase Db;
 
         public StringBuilder QueryText { get; set; }
-
+        
         public QueryData QueryData { get; set; }
 
         public QueryModel QueryModel { get; set; }
@@ -37,13 +39,37 @@ namespace ArangoDB.Client.Linq
             this.Db = db;
         }
 
+        static AqlModelVisitor()
+        {
+            aggregateResultOperatorFunctions = new Dictionary<Type, string>
+            {
+                {typeof(CountResultOperator),"length"},
+                {typeof(SumResultOperator),"sum"},
+                {typeof(MinResultOperator),"min"},
+                {typeof(MaxResultOperator),"max"},
+                {typeof(AverageResultOperator),"average"}
+            };
+        }
+
         public override void VisitQueryModel(QueryModel queryModel)
         {
             this.QueryModel = queryModel;
+            var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
+            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType()) 
+                ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
+            
+            if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
+                queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
+
+            if (aggregateFunction != null)
+                QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
             queryModel.MainFromClause.Accept(this, queryModel);
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
             queryModel.SelectClause.Accept(this, queryModel);
+
+            if (aggregateFunction != null)
+                QueryText.Append(" )) ");
         }
 
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
