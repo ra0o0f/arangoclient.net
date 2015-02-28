@@ -100,9 +100,50 @@ foreach(var p in cursor.AsEnumerable())
 var list = awiat cursor.ToListAsync();
 
 // stream cursor results async
-var enumerator = cursor.GetAsyncEnumerator();
-while(await enumerator.MoveNextAsync())
+using(enumerator = cursor.GetAsyncEnumerator())
 {
-    Console.WriteLine(enumerator.Current.Name);
+    while(await enumerator.MoveNextAsync())
+    {
+        Console.WriteLine(enumerator.Current.Name);
+    }
+}
+```
+
+<hr/>
+
+### Database Settings
+
+client behavior could be change by 'db.Settings' property, like:
+
+```c#
+// will set default value for waitForSync to true anywhere it is used 
+db.Settings.WaitForSync = true;
+
+// waitForSync is true
+db.Update<Person>("41234512",new {Name:"hojat"});
+
+// waitForSync will be overridden to false
+db.Update<Person>("41234512",new {Name:"hojat"}, waitForSync: false);
+```
+
+for ease of changing client behavior, ArangoDatabase could be create with following static methods
+
+```c#
+// set setting once
+var setting = ArangoDatabase.FindSetting();
+setting.WaitForSync = true;
+
+// will create ArangoDatabase with setting defined above
+using(ArangoDatabase db = ArangoDatabase.WithSetting())
+{
+}
+
+// you can define multiple settings by passing an identifier to "FindSetting"
+var setting = ArangoDatabase.FindSetting("SampleDbSetting");
+setting.WaitForSync = true;
+
+// and use it like this
+using(ArangoDatabase db =ArangoDatabase.WithSetting("SampleDbSetting"))
+{
 }
 ```

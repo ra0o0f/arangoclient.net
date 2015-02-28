@@ -28,15 +28,18 @@ namespace ArangoDB.Client.Linq
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
+            return GetCursor<T>(queryModel).AsEnumerable();
+        }
+
+        ICursor<T> GetCursor<T>(QueryModel queryModel)
+        {
             var visitor = new AqlModelVisitor(db);
             visitor.VisitQueryModel(queryModel);
 
             visitor.QueryData.Query = visitor.QueryText.ToString();
 
             return db.CreateStatement<T>(visitor.QueryData.Query,
-                bindVars: visitor.QueryData.BindVars)
-                .AsEnumerable();
+                bindVars: visitor.QueryData.BindVars);
         }
-
     }
 }
