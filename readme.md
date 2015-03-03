@@ -1,5 +1,8 @@
 ### .Net client driver for http://www.arangodb.net
-##### written in c# portable class library[.net 4.5, winphone 8.1] <h8><sub>xarmin ios and android apps are probably supported but not tested</sub></h8>
+##### written in c# portable class library[.net 4.5, winphone 8.1]
+
+nuget package https://www.nuget.org/packages/ArangoDB.Client
+
 <hr/>
 
 ### Main features

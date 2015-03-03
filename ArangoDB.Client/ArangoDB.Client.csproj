@@ -47,6 +47,8 @@
     <Compile Include="ArangoDocumentCommands.cs" />
     <Compile Include="ArangoServerException.cs" />
     <Compile Include="BaseResultAnalyzer.cs" />
+    <Compile Include="ChangeTracking\DocumentContainer.cs" />
+    <Compile Include="ChangeTracking\DocumentTracker.cs" />
     <Compile Include="ClientSetting.cs" />
     <Compile Include="Cursor\CursorAsyncEnumerator.cs" />
     <Compile Include="Cursor\CursorEnumerable.cs" />
@@ -56,7 +58,7 @@
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />
-    <Compile Include="Data\CreateDocumentResult.cs" />
+    <Compile Include="Data\DocumentIdentifierResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
     <Compile Include="Data\DatabaseInformationResult.cs" />
