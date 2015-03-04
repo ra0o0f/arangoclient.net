@@ -1,4 +1,5 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Serialization;
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,22 @@ namespace ArangoDB.Client.Http
 
         protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
-            var docSerializer = new DocumentSerializer(db);
-            var streamWriter = new StreamWriter(stream);
-            var jsonWriter = new JsonTextWriter(streamWriter);
-            var serializer = docSerializer.CreateJsonSerializer();
-            serializer.Serialize(jsonWriter, data);
-            await streamWriter.FlushAsync();
+            var jObject = data as JObject;
+            if (jObject != null)
+            {
+                var streamWriter = new StreamWriter(stream);
+                await streamWriter.WriteAsync(jObject.ToString(Formatting.None));
+                await streamWriter.FlushAsync();
+            }
+            else
+            {
+                var docSerializer = new DocumentSerializer(db);
+                var streamWriter = new StreamWriter(stream);
+                var jsonWriter = new JsonTextWriter(streamWriter);
+                var serializer = docSerializer.CreateJsonSerializer();
+                serializer.Serialize(jsonWriter, data);
+                await streamWriter.FlushAsync();
+            }
         }
 
         protected override bool TryComputeLength(out long length)

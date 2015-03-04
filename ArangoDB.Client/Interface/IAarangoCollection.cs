@@ -81,6 +81,29 @@ namespace ArangoDB.Client
         ///<returns>Document identifiers</returns>
         Task<DocumentIdentifierResult> UpdateAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
 
+        ///<summary>
+        ///Partially updates the document
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+
+        ///<summary>
+        ///Partially updates the document
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
         /// <summary>
         /// Deletes the document
         /// </summary>

@@ -32,9 +32,25 @@ namespace ArangoDB.Client.ChangeTracking
             }
         }
 
+        public DocumentContainer FindDocumentInfo(string id)
+        {
+            return containerById[id];
+        }
+
+        public DocumentContainer FindDocumentInfo(object document)
+        {
+            return containerByInstance[document];
+        }
+
         public JObject GetChanges(object document)
         {
-            var container = containerByInstance[document];
+            DocumentContainer container = null;
+            return GetChanges(document, out container);
+        }
+
+        public JObject GetChanges(object document,out DocumentContainer container)
+        {
+            container = containerByInstance[document];
 
             var jObject = JObject.FromObject(document,new DocumentSerializer(db).CreateJsonSerializer());
 
@@ -53,11 +69,11 @@ namespace ArangoDB.Client.ChangeTracking
                 return null;
 
             container.Key = jObject.Value<string>("_key");
-            if (container.Id == null)
+            if (container.Key == null)
                 return null;
 
             container.Rev = jObject.Value<string>("_rev");
-            if (container.Id == null)
+            if (container.Rev == null)
                 return null;
 
             container.From = jObject.Value<string>("_from");

@@ -25,22 +25,12 @@ namespace ArangoDB.Client.Data
             this.Extra = new CursorExtraResult();
         }
 
-        internal void SetFromJsonTextReader(string name, JsonToken token, object value)
+        internal override void SetFromJsonTextReader(string name, JsonToken token, object value)
         {
+            base.SetFromJsonTextReader(name, token, value);
+
             if (name == "extra")
                 this.Extra = (value as JObject).ToObject<CursorExtraResult>();
-
-            if (name == "code" && token == JsonToken.Integer)
-                this.Code = Convert.ToInt32(value);
-
-            if (name == "error" && token == JsonToken.Boolean)
-                this.Error = Convert.ToBoolean(value);
-
-            if (name == "errorMessage" && token == JsonToken.String)
-                this.ErrorMessage = value.ToString();
-
-            if (name == "errorNum" && token == JsonToken.Integer)
-                this.ErrorNum = Convert.ToInt32(value);
 
             if (name == "hasMore" && token == JsonToken.Boolean)
                 this.HasMore = Convert.ToBoolean(value);

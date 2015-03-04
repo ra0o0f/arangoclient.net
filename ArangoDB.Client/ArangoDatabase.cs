@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure;
+﻿using ArangoDB.Client.ChangeTracking;
+using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
@@ -18,6 +19,8 @@ namespace ArangoDB.Client
     {
         private static ConcurrentDictionary<string, DatabaseSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSetting>();
 
+        internal DocumentTracker ChangeTracker;
+
         internal HttpConnection Connection { get; set; }
 
         public DatabaseSetting Settings { get; set; }
@@ -35,6 +38,7 @@ namespace ArangoDB.Client
         {
             Settings = new DatabaseSetting();
             Connection = new HttpConnection(this);
+            ChangeTracker = new DocumentTracker(this);
         }
 
         public ArangoDatabase(string url, string database)
@@ -77,6 +81,26 @@ namespace ArangoDB.Client
         public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)
         {
             throw new NotImplementedException("ConnectionStringSetting");
+        }
+
+        /// <summary>
+        /// Get Document JsonObject and Identifiers
+        /// </summary>
+        /// <param name="id">id of document</param>
+        /// <returns>A DocumentContainer</returns>
+        public DocumentContainer FindDocumentInfo(string id)
+        {
+            return ChangeTracker.FindDocumentInfo(id);
+        }
+
+        /// <summary>
+        /// Get Document JsonObject and Identifiers
+        /// </summary>
+        /// <param name="id">document object</param>
+        /// <returns>A DocumentContainer</returns>
+        public DocumentContainer FindDocumentInfo(object document)
+        {
+            return ChangeTracker.FindDocumentInfo(document);
         }
 
         public void Dispose()

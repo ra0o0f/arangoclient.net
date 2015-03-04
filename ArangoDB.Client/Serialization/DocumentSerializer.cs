@@ -1,4 +1,5 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,17 @@ namespace ArangoDB.Client.Serialization
                 var serializer = CreateJsonSerializer();
 
                 return serializer.Deserialize<T>(jsonReader);
+            }
+        }
+
+        public T DeserializeSingleResult<T>(Stream stream,out JObject jObject)
+        {
+            using (var streamReader = new StreamReader(stream))
+            using (var jsonReader = new JsonTextReader(streamReader))
+            {
+                var serializer = CreateJsonSerializer();
+
+                return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject);
             }
         }
 

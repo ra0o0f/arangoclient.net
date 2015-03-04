@@ -60,6 +60,8 @@ namespace ArangoDB.Client
 
         public bool ClusterMode { get; set; }
 
+        public bool DisableChangeTracking { get; set; }
+
         public DatabaseCursorSetting Cursor;
 
         public DatabaseLinqSetting Linq;

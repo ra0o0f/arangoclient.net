@@ -15,6 +15,21 @@ namespace ArangoDB.Client.Data
 
         public string ErrorMessage { get; set; }
 
-        public int ErrorNum { get; set; }        
+        public int ErrorNum { get; set; }   
+     
+        internal virtual void SetFromJsonTextReader(string name, JsonToken token, object value)
+        {
+            if (name == "code" && token == JsonToken.Integer)
+                this.Code = Convert.ToInt32(value);
+
+            if (name == "error" && token == JsonToken.Boolean)
+                this.Error = Convert.ToBoolean(value);
+
+            if (name == "errorMessage" && token == JsonToken.String)
+                this.ErrorMessage = value.ToString();
+
+            if (name == "errorNum" && token == JsonToken.Integer)
+                this.ErrorNum = Convert.ToInt32(value);
+        }
     }
 }

@@ -34,7 +34,9 @@ namespace ArangoDB.Client
                 Command = "current"
             };
 
-            var result = await command.ExecuteCommandAsync<DatabaseInformation>().ConfigureAwait(false);
+            //var result = await command.ExecuteCommandAsync<DatabaseInformation>().ConfigureAwait(false);
+
+            var result = await command.RequestGenericResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -61,7 +63,7 @@ namespace ArangoDB.Client
                 Command = "user"
             };
 
-            var result = await command.ExecuteCommandAsync<List<string>>().ConfigureAwait(false);
+            var result = await command.RequestGenericResult<List<string>,InheritedCommandResult<List<string>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -89,7 +91,7 @@ namespace ArangoDB.Client
                 IsSystemCommand = true
             };
 
-            var result = await command.ExecuteCommandAsync<List<string>>().ConfigureAwait(false);
+            var result = await command.RequestGenericResult<List<string>, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -126,7 +128,7 @@ namespace ArangoDB.Client
                 Users = users
             };
 
-            var result = await command.ExecuteCommandAsync<bool>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -167,8 +169,7 @@ namespace ArangoDB.Client
             var command = new HttpCommand(this)
             {
                 Api = CommandApi.Collection,
-                Method = HttpMethod.Post,
-                ResultPartition= CommandResultPartition.MergedResult
+                Method = HttpMethod.Post
             };
 
             var data = new CreateCollectionData
@@ -185,7 +186,7 @@ namespace ArangoDB.Client
             if (type.HasValue)
                 data.Type = (int)type.Value;
 
-            var result = await command.ExecuteCommandAsync<CreateCollectionResult>(data).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<CreateCollectionResult>(data).ConfigureAwait(false);
 
             return result.Result;
         }

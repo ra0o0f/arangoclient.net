@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.Data;
+﻿using ArangoDB.Client.ChangeTracking;
+using ArangoDB.Client.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,20 @@ namespace ArangoDB.Client
 {
     public interface IArangoDatabase
     {
+        /// <summary>
+        /// Get Document JsonObject and Identifiers
+        /// </summary>
+        /// <param name="id">id of document</param>
+        /// <returns>A DocumentContainer</returns>
+        DocumentContainer FindDocumentInfo(string id);
+
+        /// <summary>
+        /// Get Document JsonObject and Identifiers
+        /// </summary>
+        /// <param name="id">document object</param>
+        /// <returns>A DocumentContainer</returns>
+        DocumentContainer FindDocumentInfo(object document);
+
         /// <summary>
         /// Creates a new document in the collection for specific type
         /// </summary>
@@ -97,7 +112,29 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<DocumentIdentifierResult> UpdateAsync<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
-    
+
+        ///<summary>
+        ///Partially updates the document
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        DocumentIdentifierResult Update<T>(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+        ///<summary>
+        ///Partially updates the document
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        Task<DocumentIdentifierResult> UpdateAsync<T>(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
         /// <summary>
         /// Deletes the document
         /// </summary>

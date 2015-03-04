@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.Cursor;
+﻿using ArangoDB.Client.ChangeTracking;
+using ArangoDB.Client.Cursor;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Utility;
@@ -96,15 +97,14 @@ namespace ArangoDB.Client
             {
                 Api = CommandApi.Document,
                 Method = HttpMethod.Post,
-                Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult
+                Query = new Dictionary<string, string>()
             };
 
             command.Query.Add("collection", collectionName);
             command.Query.Add("createCollection", createCollection.ToString());
             command.Query.Add("waitForSync", waitForSync.ToString());
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>(document).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
             return result.Result;
         }
@@ -141,8 +141,7 @@ namespace ArangoDB.Client
             {
                 Api = CommandApi.Edge,
                 Method = HttpMethod.Post,
-                Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult
+                Query = new Dictionary<string, string>()
             };
 
             command.Query.Add("collection", collectionName);
@@ -151,7 +150,7 @@ namespace ArangoDB.Client
             command.Query.Add("from", from);
             command.Query.Add("to", to);
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
 
             return result.Result;
         }
@@ -191,7 +190,6 @@ namespace ArangoDB.Client
                 Api = CommandApi.Document,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult,
                 Command = apiCommand
             };
 
@@ -201,7 +199,7 @@ namespace ArangoDB.Client
             if (policy.HasValue)
                 command.Query.Add("policy", policy.Value == ReplacePolicy.Last ? "last" : "error");
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>(document).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
             return result.Result;
         }
@@ -237,8 +235,8 @@ namespace ArangoDB.Client
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
-            keepNull = Utils.ChangeIfNotSpecified<bool>(keepNull, db.Settings.Document.MergeObjectsOnUpdate);
-            mergeObjects = Utils.ChangeIfNotSpecified<bool>(mergeObjects, db.Settings.Document.KeepNullAttributesOnUpdate);
+            keepNull = Utils.ChangeIfNotSpecified<bool>(keepNull, db.Settings.Document.KeepNullAttributesOnUpdate);
+            mergeObjects = Utils.ChangeIfNotSpecified<bool>(mergeObjects, db.Settings.Document.MergeObjectsOnUpdate);
             policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Settings.Document.ReplacePolicy);
             waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Settings.WaitForSync);
 
@@ -247,7 +245,6 @@ namespace ArangoDB.Client
                 Api = CommandApi.Document,
                 Method = new HttpMethod("PATCH"),
                 Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult,
                 Command = apiCommand
             };
 
@@ -259,9 +256,54 @@ namespace ArangoDB.Client
             if (policy.HasValue)
                 command.Query.Add("policy", policy.Value == ReplacePolicy.Last ? "last" : "error");
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>(document).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
             return result.Result;
+        }
+
+        ///<summary>
+        ///Partially updates the document 
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync).ResultSynchronizer();
+        }
+
+        ///<summary>
+        ///Partially updates the document 
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public async Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            DocumentContainer container = null;
+            var changed = db.ChangeTracker.GetChanges(document,out container);
+
+            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Settings.Document.ReplacePolicy);
+            string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
+
+            if (changed.Count != 0)
+            {
+                var result = await UpdateAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync);
+
+                if (!string.IsNullOrEmpty(result.Rev))
+                    container.Rev = result.Rev;
+
+                return result;
+            }
+            else
+                return new DocumentIdentifierResult() { Id = container.Id, Key = container.Key, Rev = container.Rev };
+            
         }
 
         private async Task<DocumentIdentifierResult> DocumentHeaderAsync(string id, string rev = null)
@@ -273,14 +315,13 @@ namespace ArangoDB.Client
                 Api = CommandApi.Document,
                 Method = HttpMethod.Head,
                 Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult,
                 Command = apiCommand
             };
 
             if (rev != null)
                 command.Query.Add("rev", rev);
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>().ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -318,7 +359,6 @@ namespace ArangoDB.Client
                 Api = CommandApi.Document,
                 Method = HttpMethod.Delete,
                 Query = new Dictionary<string, string>(),
-                ResultPartition = CommandResultPartition.MergedResult,
                 Command = apiCommand
             };
 
@@ -328,7 +368,7 @@ namespace ArangoDB.Client
             if (policy.HasValue)
                 command.Query.Add("policy", policy.Value == ReplacePolicy.Last ? "last" : "error");
 
-            var result = await command.ExecuteCommandAsync<DocumentIdentifierResult>().ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DocumentIdentifierResult>().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -354,11 +394,11 @@ namespace ArangoDB.Client
             {
                 Api = collectionType == CollectionType.Document ? CommandApi.Document : CommandApi.Edge,
                 Method = HttpMethod.Get,
-                ResultPartition = CommandResultPartition.DistinctResult,
-                Command = apiCommand
+                Command = apiCommand,
+                EnableChangeTracking = !db.Settings.DisableChangeTracking
             };
 
-            var result = await command.ExecuteCommandAsync<T>().ConfigureAwait(false);
+            var result = await command.RequestDistinctResult<T>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -395,7 +435,7 @@ namespace ArangoDB.Client
             if (direction.HasValue)
                 command.Query.Add("direction", direction.Value == EdgeDirection.In ? "in" : "out");
 
-            var result = await command.ExecuteCommandAsync<List<T>, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericResult<List<T>, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -526,7 +566,7 @@ namespace ArangoDB.Client
                 Method = HttpMethod.Put,
             };
 
-            var result = await command.ExecuteCommandAsync<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
             return result.Result;
         }
@@ -558,7 +598,7 @@ namespace ArangoDB.Client
                 Method = HttpMethod.Put,
             };
 
-            var result = await command.ExecuteCommandAsync<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
             return result.Result;
         }

@@ -162,6 +162,34 @@ namespace ArangoDB.Client
             return await Collection<T>().UpdateAsync(id, document,keepNull,mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
         }
 
+        ///<summary>
+        ///Partially updates the document 
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public DocumentIdentifierResult Update<T>(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return Collection<T>().Update(document, keepNull, mergeObjects, policy, waitForSync);
+        }
+
+        ///<summary>
+        ///Partially updates the document 
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="mergeObjects">Controls whether objects (not arrays) will be merged if present in both the existing and the patch document</param>
+        ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public async Task<DocumentIdentifierResult> UpdateAsync<T>(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return await Collection<T>().UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Deletes the document
         /// </summary>
