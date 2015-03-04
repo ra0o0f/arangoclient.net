@@ -82,7 +82,7 @@ namespace ArangoDB.Client
 
         public static async Task ForEachAsync<T>(this IQueryable<T> source, Action<T> action)
         {
-            await source.AsAqlQueryable<T>().ForEachAsync(x => action(x));
+            await source.AsAqlQueryable<T>().ForEachAsync(x => action(x)).ConfigureAwait(false);
         }
 
         public static ICursor<T> AsCursor<T>(this IQueryable<T> source)

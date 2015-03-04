@@ -99,7 +99,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a list of edges starting or ending in the vertex identified by vertex document handle</returns>
         public async Task<List<T>> EdgesAsync<T>(string vertexId, EdgeDirection? direction = null)
         {
-            return await EdgeCollection<T>().EdgesAsync(vertexId, direction);
+            return await EdgeCollection<T>().EdgesAsync(vertexId, direction).ConfigureAwait(false);
         }
 
         /// <summary>

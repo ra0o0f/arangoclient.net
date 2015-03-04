@@ -294,7 +294,7 @@ namespace ArangoDB.Client
 
             if (changed.Count != 0)
             {
-                var result = await UpdateAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync);
+                var result = await UpdateAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
 
                 if (!string.IsNullOrEmpty(result.Rev))
                     container.Rev = result.Rev;

@@ -32,8 +32,8 @@ namespace ArangoDB.Client.Http
             if (jObject != null)
             {
                 var streamWriter = new StreamWriter(stream);
-                await streamWriter.WriteAsync(jObject.ToString(Formatting.None));
-                await streamWriter.FlushAsync();
+                await streamWriter.WriteAsync(jObject.ToString(Formatting.None)).ConfigureAwait(false);
+                await streamWriter.FlushAsync().ConfigureAwait(false);
             }
             else
             {
@@ -42,7 +42,7 @@ namespace ArangoDB.Client.Http
                 var jsonWriter = new JsonTextWriter(streamWriter);
                 var serializer = docSerializer.CreateJsonSerializer();
                 serializer.Serialize(jsonWriter, data);
-                await streamWriter.FlushAsync();
+                await streamWriter.FlushAsync().ConfigureAwait(false);
             }
         }
 

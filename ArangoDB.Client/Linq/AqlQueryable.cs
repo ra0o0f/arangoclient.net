@@ -41,9 +41,9 @@ namespace ArangoDB.Client.Linq
             return AsCursor().ToList();
         }
 
-        public Task<List<T>> ToListAsync()
+        public async Task<List<T>> ToListAsync()
         {
-            return AsCursor().ToListAsync();
+            return await AsCursor().ToListAsync().ConfigureAwait(false);
         }
 
         public void ForEach(Action<T> action)
@@ -53,7 +53,7 @@ namespace ArangoDB.Client.Linq
 
         public async Task ForEachAsync(Action<T> action)
         {
-            await AsCursor().ForEachAsync(x => action(x));
+            await AsCursor().ForEachAsync(x => action(x)).ConfigureAwait(false);
         }
 
         public CursorResult Statistics

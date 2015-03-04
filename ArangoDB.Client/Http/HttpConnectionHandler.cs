@@ -28,7 +28,7 @@ namespace ArangoDB.Client.Http
         {
             //beforeRequest(request);
 
-            var responseMessage = await base.SendAsync(request,cancellationToken);
+            var responseMessage = await base.SendAsync(request,cancellationToken).ConfigureAwait(false);
 
             //afterRespone(responseMessage);
 

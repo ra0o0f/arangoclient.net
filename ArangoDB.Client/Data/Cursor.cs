@@ -42,7 +42,7 @@ namespace ArangoDB.Client.Data
             List<T> list = new List<T>();
             using(asyncEnumerator)
             {
-                while (await asyncEnumerator.MoveNextAsync())
+                while (await asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
                 {
                     list.Add(asyncEnumerator.Current);
                 }
@@ -54,7 +54,7 @@ namespace ArangoDB.Client.Data
         {
             using (asyncEnumerator)
             {
-                while (await asyncEnumerator.MoveNextAsync())
+                while (await asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
                 {
                     action(asyncEnumerator.Current);
                 }

@@ -92,7 +92,7 @@ namespace ArangoDB.Client.Http
 
         public async Task<ICommandResult<TResult>> RequestGenericResult<TResult, TDeserialize>(object data = null)
         {
-            var response = await SendCommandAsync(data);
+            var response = await SendCommandAsync(data).ConfigureAwait(false);
 
             ICommandResult<TResult> result = null;
 
@@ -122,7 +122,7 @@ namespace ArangoDB.Client.Http
         public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
-            var response = await SendCommandAsync(data);
+            var response = await SendCommandAsync(data).ConfigureAwait(false);
 
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
@@ -140,7 +140,7 @@ namespace ArangoDB.Client.Http
         public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
-            var response = await SendCommandAsync(data);
+            var response = await SendCommandAsync(data).ConfigureAwait(false);
 
             var serializer = new DocumentSerializer(db);
 
