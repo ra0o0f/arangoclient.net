@@ -106,6 +106,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
+            db.ChangeTracker.TrackChanges(document, result.Result);
+            db.Settings.IdentifierModifier.Modify(document, result.Result);
+
             return result.Result;
         }
 
@@ -151,6 +154,14 @@ namespace ArangoDB.Client
             command.Query.Add("to", to);
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
+
+            var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
+            if (container != null)
+            {
+                container.From = from;
+                container.To = to;
+            }
+            db.Settings.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
 
             return result.Result;
         }

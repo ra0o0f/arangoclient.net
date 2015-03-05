@@ -14,17 +14,28 @@ namespace ArangoDB.Client.Property
         ConcurrentDictionary<Type, CollectionPropertySetting> collectionProperties = new ConcurrentDictionary<Type, CollectionPropertySetting>();
         ConcurrentDictionary<IdentifierType, string> defaultIdentifierNames = new ConcurrentDictionary<IdentifierType, string>();
 
+        DatabaseSetting setting;
+
+        public DatabaseCollectionSetting(DatabaseSetting setting)
+        {
+            this.setting = setting;
+        }
+
         public void ChangeIdentifierDefaultName(IdentifierType identifier, string defaultName)
         {
             if (IdentifierType.None == identifier)
                 throw new InvalidOperationException("Can not set default name for [IdentifierType.None]");
 
             defaultIdentifierNames.AddOrUpdate(identifier, defaultName, (oldIdentifier, oldName) => defaultName);
+
+            setting.IdentifierModifier.ClearMethodCache();
         }
 
         internal void ChangeCollectionPropertyForType(Type type,Action<ICollectionPropertySetting> action)
         {
             action(collectionProperties.GetOrAdd(type, new CollectionPropertySetting()));
+
+            setting.IdentifierModifier.ClearMethodCache(type);
         }
 
         public void ChangeCollectionPropertyForType<T>(Action<ICollectionPropertySetting> action)
@@ -39,6 +50,8 @@ namespace ArangoDB.Client.Property
                 var collectionSetting = collection as CollectionPropertySetting;
                 action(collectionSetting.FindDocumentPropertyForType(memberName));
             });
+
+            setting.IdentifierModifier.ClearMethodCache(type);
         }
 
         public void ChangeDocumentPropertyForType<T>(Expression<Func<T, object>> attribute, Action<IDocumentPropertySetting> action)

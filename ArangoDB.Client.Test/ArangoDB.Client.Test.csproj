@@ -54,6 +54,7 @@
     <Compile Include="ChangeTracking\SimpleChange.cs" />
     <Compile Include="Database\DatabaseGenerator.cs" />
     <Compile Include="Linq\SimpleQuery.cs" />
+    <Compile Include="Model\Friend.cs" />
     <Compile Include="Model\Person.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

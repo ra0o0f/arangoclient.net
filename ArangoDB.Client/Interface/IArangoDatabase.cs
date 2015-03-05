@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
-    public interface IArangoDatabase
+    public interface IArangoDatabase : IDisposable
     {
         /// <summary>
         /// Get Document JsonObject and Identifiers

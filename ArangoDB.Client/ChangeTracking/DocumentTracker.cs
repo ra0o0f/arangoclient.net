@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Common.Utility;
+using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace ArangoDB.Client.ChangeTracking
             this.db = db;
         }
 
-        public void TrackChanges(object document,JObject jObject)
+        public DocumentContainer TrackChanges(object document,JObject jObject)
         {
             var container = CreateContainer(jObject);
 
@@ -30,6 +31,23 @@ namespace ArangoDB.Client.ChangeTracking
                 containerById[container.Id] = container;
                 containerByInstance[document] = container;
             }
+
+            return container;
+        }
+
+        public DocumentContainer TrackChanges(object document, DocumentIdentifierResult identifiers)
+        {
+            var jObject = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
+
+            var container = CreateContainer(jObject, identifiers);
+
+            if (container != null)
+            {
+                containerById[container.Id] = container;
+                containerByInstance[document] = container;
+            }
+
+            return container;
         }
 
         public DocumentContainer FindDocumentInfo(string id)
@@ -78,6 +96,22 @@ namespace ArangoDB.Client.ChangeTracking
 
             container.From = jObject.Value<string>("_from");
             container.To = jObject.Value<string>("_to");
+
+            container.Document = jObject;
+
+            return container;
+        }
+
+        DocumentContainer CreateContainer(JObject jObject, DocumentIdentifierResult identifiers)
+        {
+            DocumentContainer container = new DocumentContainer();
+
+            if (identifiers.Id == null || identifiers.Key == null || identifiers.Rev == null)
+                return null;
+
+            container.Id = identifiers.Id;
+            container.Key = identifiers.Key;
+            container.Rev = identifiers.Rev;
 
             container.Document = jObject;
 

@@ -15,6 +15,16 @@ namespace ArangoDB.Client.Common.Utility
             return ReflectionUtils.GetAttribute<T>(attributeProvider, inherit);
         }
 
+        public static PropertyInfo GetProperty(Type type, string name)
+        {
+            return TypeExtensions.GetProperty(type, name);
+        }
+
+        public static MethodInfo GetSetMethod(PropertyInfo propertyInfo)
+        {
+            return TypeExtensions.GetSetMethod(propertyInfo);
+        }
+
         public static List<MemberInfo> GetFieldsAndProperties_PublicInstance(Type type)
         {
             return ReflectionUtils.GetFieldsAndProperties(type, BindingFlags.Public | BindingFlags.Instance);

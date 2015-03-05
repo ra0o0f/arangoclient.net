@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
-    public partial class ArangoDatabase : IArangoDatabase, IDisposable
+    public partial class ArangoDatabase : IArangoDatabase
     {
         private static ConcurrentDictionary<string, DatabaseSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSetting>();
 
@@ -48,17 +48,31 @@ namespace ArangoDB.Client
             Settings.Url = url;
         }
 
-        public static ArangoDatabase WithSetting(string identifier)
+        public ArangoDatabase(DatabaseSetting setting)
         {
-            return new ArangoDatabase { Settings = FindSetting(identifier) };
+            Settings = setting;
+            Connection = new HttpConnection(this);
+            ChangeTracker = new DocumentTracker(this);
         }
 
-        public static ArangoDatabase WithSetting()
+        /// <summary>
+        /// Change setting for a specific identifier
+        /// </summary>
+        /// <param name="identifier">name of setting</param>
+        public static void ChangeSetting(string identifier, Action<DatabaseSetting> action)
         {
-            return new ArangoDatabase { Settings = FindSetting() };
+            action(FindSetting(identifier));
         }
 
-        public static DatabaseSetting FindSetting(string identifier)
+        /// <summary>
+        /// Change Default Setting
+        /// </summary>
+        public static void ChangeSetting(Action<DatabaseSetting> action)
+        {
+            action(FindSetting("default"));
+        }
+
+        static DatabaseSetting FindSetting(string identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
                 throw new ArgumentNullException("Setting identifier");
@@ -73,9 +87,9 @@ namespace ArangoDB.Client
             return setting;
         }
 
-        public static DatabaseSetting FindSetting()
+        public static ArangoDatabase CreateWithSetting()
         {
-            return FindSetting("default");
+            return new ArangoDatabase();
         }
 
         public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)

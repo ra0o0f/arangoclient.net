@@ -20,7 +20,8 @@ namespace ArangoDB.Client
             Cursor = new DatabaseCursorSetting();
             Linq = new DatabaseLinqSetting();
             Document = new DatabaseDocumentSetting();
-            Collection = new DatabaseCollectionSetting();
+            Collection = new DatabaseCollectionSetting(this);
+            IdentifierModifier = new DocumentIdentifierModifier(this);
             CreateCollectionOnTheFly = true;
             Url = "http://localhost:8529";
             Credentials = new NetworkCredential("root", "");
@@ -69,6 +70,8 @@ namespace ArangoDB.Client
         public DatabaseDocumentSetting Document;
 
         public DatabaseCollectionSetting Collection;
+
+        internal DocumentIdentifierModifier IdentifierModifier;
     }
 
     public class DatabaseLinqSetting
