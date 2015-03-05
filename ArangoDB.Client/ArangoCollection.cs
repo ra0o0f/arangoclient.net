@@ -1,7 +1,9 @@
 ﻿using ArangoDB.Client.ChangeTracking;
+using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Cursor;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
+using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
@@ -106,7 +108,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
-            db.ChangeTracker.TrackChanges(document, result.Result);
+            if (!db.Settings.DisableChangeTracking)
+                db.ChangeTracker.TrackChanges(document, result.Result);
+
             db.Settings.IdentifierModifier.Modify(document, result.Result);
 
             return result.Result;
@@ -155,19 +159,23 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
 
-            var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
-            if (container != null)
+            if (!db.Settings.DisableChangeTracking)
             {
-                container.From = from;
-                container.To = to;
+                var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
+                if (container != null)
+                {
+                    container.From = from;
+                    container.To = to;
+                }
             }
+
             db.Settings.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
 
             return result.Result;
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the document with no change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the new document</param>
@@ -175,13 +183,13 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Replace(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return ReplaceAsync(id, document, rev, policy, waitForSync).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, rev, policy, waitForSync).ResultSynchronizer();
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the document with no change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the new document</param>
@@ -189,7 +197,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -212,11 +220,56 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
+            db.Settings.IdentifierModifier.Modify(document, result.Result);
+
             return result.Result;
         }
 
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return ReplaceAsync(document, policy, waitForSync).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            if (db.Settings.DisableChangeTracking)
+                throw new InvalidOperationException("Change tracking is disabled, use ReplaceById() instead");
+
+            var container = db.ChangeTracker.FindDocumentInfo(document);
+            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Settings.Document.ReplacePolicy);
+            string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
+
+            var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync).ConfigureAwait(false);
+            
+            if (!result.Error)
+            {
+                container.Rev = result.Rev;
+                container.Document = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
+                db.Settings.IdentifierModifier.FindIdentifierMethodFor(document.GetType()).SetRevision(document, result.Rev);
+            }
+
+            return result;
+        }
+
         ///<summary>
-        ///Partially updates the document 
+        ///Partially updates the document with no change tracking
         ///</summary>
         ///<param name="id">The document handle or key of document</param>
         ///<param name="document">Representation of the patch document</param>
@@ -226,13 +279,13 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult Update(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return UpdateAsync(id, document, keepNull, mergeObjects, rev, policy, waitForSync).ResultSynchronizer();
+            return UpdateByIdAsync(id, document, keepNull, mergeObjects, rev, policy, waitForSync).ResultSynchronizer();
         }
 
         /// <summary>
-        /// Partially updates the document 
+        /// Partially updates the document with no change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the patch document</param>
@@ -242,7 +295,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -297,18 +350,27 @@ namespace ArangoDB.Client
         ///<returns>Document identifiers</returns>
         public async Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
+            if (db.Settings.DisableChangeTracking)
+                throw new InvalidOperationException("Change tracking is disabled, use UpdateById() instead");
+
+
             DocumentContainer container = null;
-            var changed = db.ChangeTracker.GetChanges(document,out container);
+            JObject jObject = null;
+            var changed = db.ChangeTracker.GetChanges(document,out container, out jObject);
 
             policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Settings.Document.ReplacePolicy);
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             if (changed.Count != 0)
             {
-                var result = await UpdateAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
+                var result = await UpdateByIdAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
 
-                if (!string.IsNullOrEmpty(result.Rev))
+                if (!result.Error)
+                {
                     container.Rev = result.Rev;
+                    container.Document = jObject;
+                    db.Settings.IdentifierModifier.FindIdentifierMethodFor(document.GetType()).SetRevision(document, result.Rev);
+                }
 
                 return result;
             }
@@ -338,27 +400,27 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Deletes the document
+        /// Deletes the document without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public void Remove(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            RemoveAsync(id, rev, policy, waitForSync).WaitSynchronizer();
+            return RemoveByIdAsync(id, rev, policy, waitForSync).ResultSynchronizer();
         }
 
         /// <summary>
-        /// Deletes the document
+        /// Deletes the document without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task RemoveAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -380,6 +442,44 @@ namespace ArangoDB.Client
                 command.Query.Add("policy", policy.Value == ReplacePolicy.Last ? "last" : "error");
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>().ConfigureAwait(false);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Deletes the document
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return RemoveAsync(document, policy, waitForSync).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the document
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            if (db.Settings.DisableChangeTracking)
+                throw new InvalidOperationException("Change tracking is disabled, use RemoveById() instead");
+
+            var container = db.ChangeTracker.FindDocumentInfo(document);
+            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Settings.Document.ReplacePolicy);
+            string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
+
+            var result = await RemoveByIdAsync(container.Id, rev, policy, waitForSync).ConfigureAwait(false);
+
+            if (!result.Error)
+                db.ChangeTracker.StopTrackChanges(document);
+
+            return result;
         }
 
         /// <summary>

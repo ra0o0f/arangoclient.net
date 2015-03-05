@@ -22,6 +22,13 @@ namespace ArangoDB.Client.ChangeTracking
             this.db = db;
         }
 
+        public void StopTrackChanges(object document)
+        {
+            var container = FindDocumentInfo(document);
+            containerByInstance.Remove(document);
+            containerById.Remove(container.Id);
+        }
+
         public DocumentContainer TrackChanges(object document,JObject jObject)
         {
             var container = CreateContainer(jObject);
@@ -63,14 +70,15 @@ namespace ArangoDB.Client.ChangeTracking
         public JObject GetChanges(object document)
         {
             DocumentContainer container = null;
-            return GetChanges(document, out container);
+            JObject jObject = null;
+            return GetChanges(document, out container, out jObject);
         }
 
-        public JObject GetChanges(object document,out DocumentContainer container)
+        public JObject GetChanges(object document,out DocumentContainer container,out JObject jObject)
         {
             container = containerByInstance[document];
 
-            var jObject = JObject.FromObject(document,new DocumentSerializer(db).CreateJsonSerializer());
+            jObject = JObject.FromObject(document,new DocumentSerializer(db).CreateJsonSerializer());
 
             JObject changedObject = new JObject();
             CreateChangedDocument(container.Document, jObject, ref changedObject);
@@ -106,7 +114,7 @@ namespace ArangoDB.Client.ChangeTracking
         {
             DocumentContainer container = new DocumentContainer();
 
-            if (identifiers.Id == null || identifiers.Key == null || identifiers.Rev == null)
+            if (identifiers.Error)
                 return null;
 
             container.Id = identifiers.Id;

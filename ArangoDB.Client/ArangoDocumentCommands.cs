@@ -105,15 +105,14 @@ namespace ArangoDB.Client
         /// <summary>
         /// Completely updates the document
         /// </summary>
-        /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the new document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Replace<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Replace<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return Collection<T>().Replace(id, document, rev, policy, waitForSync);
+            return Collection<T>().Replace(document, policy, waitForSync);
         }
 
         /// <summary>
@@ -125,13 +124,41 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceAsync<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> ReplaceAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return await Collection<T>().ReplaceAsync(id, document, rev, policy, waitForSync).ConfigureAwait(false);
+            return await Collection<T>().ReplaceAsync(document, policy, waitForSync).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Completely updates the document with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public DocumentIdentifierResult ReplaceById<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return Collection<T>().ReplaceById(id, document, rev, policy, waitForSync);
+        }
+
+        /// <summary>
+        /// Completely updates the document with no change tacking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<DocumentIdentifierResult> ReplaceByIdAsync<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return await Collection<T>().ReplaceByIdAsync(id, document, rev, policy, waitForSync).ConfigureAwait(false);
         }
 
         ///<summary>
-        ///Partially updates the document 
+        ///Partially updates the document without change tracking
         ///</summary>
         ///<param name="id">The document handle or key of document</param>
         ///<param name="document">Representation of the patch document</param>
@@ -141,13 +168,13 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult Update<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult UpdateById<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return Collection<T>().Update(id, document, keepNull, mergeObjects, rev, policy, waitForSync);
+            return Collection<T>().UpdateById(id, document, keepNull, mergeObjects, rev, policy, waitForSync);
         }
 
         ///<summary>
-        ///Partially updates the document 
+        ///Partially updates the document without change tracking
         ///</summary>
         ///<param name="id">The document handle or key of document</param>
         ///<param name="document">Representation of the patch document</param>
@@ -157,9 +184,9 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateAsync<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> UpdateByIdAsync<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            return await Collection<T>().UpdateAsync(id, document,keepNull,mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
+            return await Collection<T>().UpdateByIdAsync(id, document,keepNull,mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -193,27 +220,51 @@ namespace ArangoDB.Client
         /// <summary>
         /// Deletes the document
         /// </summary>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="document">document reference</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public void Remove<T>(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Remove<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            Collection<T>().Remove(id, rev, policy, waitForSync);
+            return Collection<T>().Remove(document, policy, waitForSync);
         }
 
         /// <summary>
         /// Deletes the document
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<DocumentIdentifierResult> RemoveAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return await Collection<T>().RemoveAsync(document, policy, waitForSync).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the document without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task RemoveAsync<T>(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult RemoveById<T>(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
         {
-            await Collection<T>().RemoveAsync(id, rev, policy, waitForSync).ConfigureAwait(false);
+            return Collection<T>().RemoveById(id, rev, policy, waitForSync);
+        }
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<DocumentIdentifierResult> RemoveByIdAsync<T>(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        {
+            return await Collection<T>().RemoveByIdAsync(id, rev, policy, waitForSync).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -150,7 +150,8 @@ namespace ArangoDB.Client.Http
                 {
                     JObject jObject = null;
                     result.Result = response.IsSuccessStatusCode ? serializer.DeserializeSingleResult<T>(stream, out jObject) : default(T);
-                    db.ChangeTracker.TrackChanges(result.Result, jObject);
+                    if (response.IsSuccessStatusCode)
+                        db.ChangeTracker.TrackChanges(result.Result, jObject);
                 }
                 else
                 {

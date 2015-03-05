@@ -36,13 +36,12 @@ namespace ArangoDB.Client
         /// <summary>
         /// Completely updates the document
         /// </summary>
-        /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the new document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        DocumentIdentifierResult Replace(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         /// <summary>
         /// Completely updates the document
@@ -53,10 +52,32 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> ReplaceAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+        /// <summary>
+        /// Completely updates the document with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+        /// <summary>
+        /// Completely updates the document with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         ///<summary>
-        ///Partially updates the document 
+        ///Partially updates the document without change tracking
         ///</summary>
         ///<param name="id">The document handle or key of document</param>
         ///<param name="document">Representation of the patch document</param>
@@ -66,10 +87,10 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        DocumentIdentifierResult Update(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         ///<summary>
-        ///Partially updates the document 
+        ///Partially updates the document without change tracking
         ///</summary>
         ///<param name="id">The document handle or key of document</param>
         ///<param name="document">Representation of the patch document</param>
@@ -79,7 +100,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> UpdateAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         ///<summary>
         ///Partially updates the document
@@ -105,24 +126,42 @@ namespace ArangoDB.Client
         Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         /// <summary>
-        /// Deletes the document
+        /// Deletes the document without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        void Remove(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         /// <summary>
         /// Deletes the document
         /// </summary>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="document">document reference</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        Task RemoveAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
 
         /// <summary>
         /// Finds all documents matching a given example

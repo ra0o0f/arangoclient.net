@@ -9,16 +9,16 @@ namespace ArangoDB.Client.ChangeTracking
 {
     public class DocumentContainer
     {
-        public string Id { get; set; }
+        public string Id { get; internal set; }
 
-        public string Rev { get; set; }
+        public string Rev { get; internal set; }
 
-        public string Key { get; set; }
+        public string Key { get; internal set; }
 
-        public string From { get; set; }
+        public string From { get; internal set; }
 
-        public string To { get; set; }
+        public string To { get; internal set; }
 
-        public JObject Document { get; set; }
+        public JObject Document { get; internal set; }
     }
 }
