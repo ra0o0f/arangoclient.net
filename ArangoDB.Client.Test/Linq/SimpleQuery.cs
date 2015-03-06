@@ -170,13 +170,13 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
         {
             var db = DatabaseGenerator.Get();
 
-            db.Settings.Linq.TranslateGroupByIntoName = identifier => identifier;
+            db.Setting.Linq.TranslateGroupByIntoName = identifier => identifier;
 
             var query = db.Query<Person>().GroupBy(x => x.Age).Select(byAge => byAge.Key);
 
             Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `Age` = `x`.`Age` into `byAge` return `Age`");
 
-            db.Settings.Linq.TranslateGroupByIntoName = null;
+            db.Setting.Linq.TranslateGroupByIntoName = null;
         }
 
         [Fact]
@@ -184,13 +184,13 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
         {
             var db = DatabaseGenerator.Get();
 
-            db.Settings.Linq.TranslateGroupByIntoName = identifier => identifier;
+            db.Setting.Linq.TranslateGroupByIntoName = identifier => identifier;
 
             var query = db.Query<Person>().GroupBy(x => new { x.Age }).Select(byAge => byAge.Key);
 
             Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `Age` = `x`.`Age` into `byAge` return { `Age` : `Age` }");
 
-            db.Settings.Linq.TranslateGroupByIntoName = null;
+            db.Setting.Linq.TranslateGroupByIntoName = null;
         }
 
         [Fact]
@@ -198,13 +198,13 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
         {
             var db = DatabaseGenerator.Get();
 
-            db.Settings.Linq.TranslateGroupByIntoName = identifier => identifier;
+            db.Setting.Linq.TranslateGroupByIntoName = identifier => identifier;
 
             var query = db.Query<Person>().GroupBy(x => new { x.Age, x.Fullname }).Select(byAge => byAge.Key);
 
             Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `Age` = `x`.`Age` , `Fullname` = `x`.`Fullname` into `byAge` return { `Age` : `Age` , `Fullname` : `Fullname` }");
 
-            db.Settings.Linq.TranslateGroupByIntoName = null;
+            db.Setting.Linq.TranslateGroupByIntoName = null;
         }
 
         [Fact]
@@ -225,7 +225,7 @@ return ( for `x` in `C1` return `x`.`p`.`Fullname` )".RemoveSpaces());
         {
             var db = DatabaseGenerator.Get();
 
-            db.Settings.Linq.TranslateGroupByIntoName = identifier => identifier;
+            db.Setting.Linq.TranslateGroupByIntoName = identifier => identifier;
 
             var query = from p in db.Query<Person>()
                         group p by p.Age into byAge
@@ -242,7 +242,7 @@ return ( for `x` in `C1` return `x`.`p`.`Fullname` )".RemoveSpaces());
             Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), @"for `p` in `Person` collect `Age` = `p`.`Age` into `byAge` 
 return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Height` into `byAgebyHeight` return ( for `x` in `byAgebyHeight` return `x`.`b`.`p`.`Fullname` ) ) }".RemoveSpaces());
 
-            db.Settings.Linq.TranslateGroupByIntoName = null;
+            db.Setting.Linq.TranslateGroupByIntoName = null;
         }
 
 

@@ -64,9 +64,9 @@ namespace ArangoDB.Client.Http
 
         Uri BuildUrl()
         {
-            string databaseName = IsSystemCommand ? "_system" : db.Settings.Database;
+            string databaseName = IsSystemCommand ? "_system" : db.SharedSetting.Database;
 
-            UriBuilder builder = new UriBuilder(db.Settings.Url);
+            UriBuilder builder = new UriBuilder(db.SharedSetting.Url);
             builder.Path = string.Format("/_db/{0}/_api/{1}", databaseName, ApiValues[Api]);
 
             if (!string.IsNullOrEmpty(Command))
@@ -91,7 +91,7 @@ namespace ArangoDB.Client.Http
             {
                 var serializer = new DocumentSerializer(db);
 
-                if (db.Settings.DisableChangeTracking)
+                if (db.Setting.DisableChangeTracking == true)
                 {
                     result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<List<TResult>>;
                 }
@@ -119,7 +119,7 @@ namespace ArangoDB.Client.Http
             {
                 var serializer = new DocumentSerializer(db);
 
-                if (db.Settings.DisableChangeTracking)
+                if (db.Setting.DisableChangeTracking == true)
                 {
                     result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<TResult>;
                 }

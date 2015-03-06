@@ -1,13 +1,6 @@
-﻿using ArangoDB.Client.Http;
-using ArangoDB.Client.Property;
-using ArangoDB.Client.Utility;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,104 +8,222 @@ namespace ArangoDB.Client
 {
     public class DatabaseSetting
     {
-        public DatabaseSetting()
+        private bool? _createCollectionOnTheFly;
+
+        private bool? _waitForSync;
+
+        private bool? _disableChangeTracking;
+
+        SharedDatabaseSetting sharedSetting;
+
+        public DatabaseSetting(SharedDatabaseSetting sharedSetting)
         {
-            Cursor = new DatabaseCursorSetting();
-            Linq = new DatabaseLinqSetting();
-            Document = new DatabaseDocumentSetting();
-            Collection = new DatabaseCollectionSetting(this);
-            IdentifierModifier = new DocumentIdentifierModifier(this);
-            CreateCollectionOnTheFly = true;
-            Url = "http://localhost:8529";
-            Credentials = new NetworkCredential("root", "");
-            SystemDatabaseCredentials = new NetworkCredential("root", "");
+            this.sharedSetting = sharedSetting;
+            this.Cursor = new DatabaseCursorSetting(sharedSetting);
+            this.Document = new DatabaseDocumentSetting(sharedSetting);
+            this.Linq = new DatabaseLinqSetting(sharedSetting);
         }
 
-        private string _url;
-
-        public string Url
-        { 
-            get { return _url; } 
-            set 
-            {
-                _url = new UriBuilder(value).Uri.ToString();
-            }
-        }
-
-        public string Database { get; set; }
-
-        public ICredentials Credentials { get; set; }
-
-        public string SettingIdentifier { get; internal set; }
-
-        public bool WaitForSync { get; set; }
-
-        private bool _createCollectionOnTheFly;
-        public bool CreateCollectionOnTheFly
-        { 
+        public bool? CreateCollectionOnTheFly
+        {
             get
             {
-                return _createCollectionOnTheFly && !ClusterMode;
+                if (sharedSetting.ClusterMode == true)
+                    return false;
+
+                if (_createCollectionOnTheFly.HasValue)
+                    return _createCollectionOnTheFly.Value;
+
+                return sharedSetting.CreateCollectionOnTheFly;
             }
             set { _createCollectionOnTheFly = value; }
         }
 
-        public ICredentials SystemDatabaseCredentials { get; set; }
+        public bool? WaitForSync 
+        {
+            get
+            {
+                if (_waitForSync.HasValue)
+                    return _waitForSync.Value;
 
-        public bool ClusterMode { get; set; }
+                return sharedSetting.WaitForSync;
+            }
+            set { _waitForSync = value; }
+        }
 
-        public bool DisableChangeTracking { get; set; }
+        public bool? DisableChangeTracking
+        {
+            get
+            {
+                if (_disableChangeTracking.HasValue)
+                    return _disableChangeTracking.Value;
+
+                return sharedSetting.DisableChangeTracking;
+            }
+            set { _disableChangeTracking = value; }
+        }
 
         public DatabaseCursorSetting Cursor;
 
-        public DatabaseLinqSetting Linq;
-
         public DatabaseDocumentSetting Document;
 
-        public DatabaseCollectionSetting Collection;
-
-        internal DocumentIdentifierModifier IdentifierModifier;
+        public DatabaseLinqSetting Linq;
     }
 
     public class DatabaseLinqSetting
     {
-        public Func<string,string> TranslateGroupByIntoName { get; set; }
+        SharedDatabaseSetting sharedSetting;
 
-        public DatabaseLinqSetting()
+        private Func<string, string> _translateGroupByIntoName;
+
+        public DatabaseLinqSetting(SharedDatabaseSetting sharedSetting)
         {
+            this.sharedSetting = sharedSetting;
         }
-    }
 
-    public class DatabaseDocumentSetting
-    {
-        public ReplacePolicy? ReplacePolicy { get; set; }
-
-        public bool MergeObjectsOnUpdate { get; set; }
-
-        public bool KeepNullAttributesOnUpdate { get; set; }
-
-        public DatabaseDocumentSetting()
+        public Func<string, string> TranslateGroupByIntoName
         {
-            MergeObjectsOnUpdate = true;
-            KeepNullAttributesOnUpdate = true;
+            get
+            {
+                if (_translateGroupByIntoName != null)
+                    return _translateGroupByIntoName;
+
+                return sharedSetting.Linq.TranslateGroupByIntoName;
+            }
+            set { _translateGroupByIntoName = value; }
         }
     }
 
     public class DatabaseCursorSetting
     {
-        public int? BatchSize { get; set; }
+        SharedDatabaseSetting sharedSetting;
 
-        public bool? Count { get; set; }
+        private int? _batchSize;
 
-        public TimeSpan? Ttl { get; set; }
+        private bool? _count;
 
-        public int? MaxPlans { get; set; }
+        private TimeSpan? _ttl;
 
-        public readonly List<string> Rules;
+        private int? _maxPlans;
 
-        public DatabaseCursorSetting()
+        private List<string> _rules;
+
+        public DatabaseCursorSetting(SharedDatabaseSetting sharedSetting)
         {
-            Rules = new List<string>();
+            this.sharedSetting = sharedSetting;
+            this.Rules = new List<string>();
+        }
+
+        public int? BatchSize
+        {
+            get
+            {
+                if (_batchSize.HasValue)
+                    return _batchSize.Value;
+
+                return sharedSetting.Cursor.BatchSize;
+            }
+            set { _batchSize = value; }
+        }
+
+        public bool? Count
+        {
+            get
+            {
+                if (_count.HasValue)
+                    return _count.Value;
+
+                return sharedSetting.Cursor.Count;
+            }
+            set { _count = value; }
+        }
+
+        public TimeSpan? Ttl
+        {
+            get
+            {
+                if (_ttl.HasValue)
+                    return _ttl.Value;
+
+                return sharedSetting.Cursor.Ttl;
+            }
+            set { _ttl = value; }
+        }
+
+        public int? MaxPlans
+        {
+            get
+            {
+                if (_maxPlans.HasValue)
+                    return _maxPlans.Value;
+
+                return sharedSetting.Cursor.MaxPlans;
+            }
+            set { _maxPlans = value; }
+        }
+
+        public List<string> Rules
+        {
+            get
+            {
+                if (_rules != null && _rules.Count != 0)
+                    return _rules;
+
+                return sharedSetting.Cursor.Rules;
+            }
+            set { _rules = value; }
+        }
+    }
+
+    public class DatabaseDocumentSetting
+    {
+        SharedDatabaseSetting sharedSetting;
+
+        private ReplacePolicy? _replacePolicy;
+
+        private bool? _mergeObjectsOnUpdate;
+
+        private bool? _keepNullAttributesOnUpdate;
+
+        public DatabaseDocumentSetting(SharedDatabaseSetting sharedSetting)
+        {
+            this.sharedSetting = sharedSetting;
+        }
+
+        public ReplacePolicy? ReplacePolicy
+        {
+            get
+            {
+                if (_replacePolicy.HasValue)
+                    return _replacePolicy.Value;
+
+                return sharedSetting.Document.ReplacePolicy;
+            }
+            set { _replacePolicy = value; }
+        }
+
+        public bool? MergeObjectsOnUpdate
+        {
+            get
+            {
+                if (_mergeObjectsOnUpdate.HasValue)
+                    return _mergeObjectsOnUpdate.Value;
+
+                return sharedSetting.Document.MergeObjectsOnUpdate;
+            }
+            set { _mergeObjectsOnUpdate = value; }
+        }
+
+        public bool? KeepNullAttributesOnUpdate
+        {
+            get
+            {
+                if (_keepNullAttributesOnUpdate.HasValue)
+                    return _keepNullAttributesOnUpdate.Value;
+
+                return sharedSetting.Document.KeepNullAttributesOnUpdate;
+            }
+            set { _keepNullAttributesOnUpdate = value; }
         }
     }
 }

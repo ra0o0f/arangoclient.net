@@ -29,14 +29,14 @@ namespace ArangoDB.Client.Serialization
             foreach (var p in properties)
             {
                 IDocumentPropertySetting documentProperty = null;
-                db.Settings.Collection.ChangeDocumentPropertyForType(type, p.UnderlyingName, x => documentProperty = x);
+                db.SharedSetting.Collection.ChangeDocumentPropertyForType(type, p.UnderlyingName, x => documentProperty = x);
                 if (documentProperty != null)
                 {
                     if (documentProperty.IgnoreProperty)
                         continue;
                 }
 
-                p.PropertyName = db.Settings.Collection.ResolvePropertyName(type, p.UnderlyingName);
+                p.PropertyName = db.SharedSetting.Collection.ResolvePropertyName(type, p.UnderlyingName);
 
                 if (p.PropertyName == "_key" || p.PropertyName == "_id" || p.PropertyName == "_rev")
                     p.NullValueHandling = NullValueHandling.Ignore;

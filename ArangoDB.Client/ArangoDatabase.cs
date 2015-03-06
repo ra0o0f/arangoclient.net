@@ -4,6 +4,7 @@ using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
 using ArangoDB.Client.Serialization;
+using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,13 +18,15 @@ namespace ArangoDB.Client
 {
     public partial class ArangoDatabase : IArangoDatabase
     {
-        private static ConcurrentDictionary<string, DatabaseSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSetting>();
+        private static ConcurrentDictionary<string, SharedDatabaseSetting> cachedSettings = new ConcurrentDictionary<string, SharedDatabaseSetting>();
 
         internal DocumentTracker ChangeTracker;
 
         internal HttpConnection Connection { get; set; }
 
-        public DatabaseSetting Settings { get; set; }
+        internal SharedDatabaseSetting SharedSetting { get; set; }
+
+        public DatabaseSetting Setting { get; set; }
 
         public static ClientSetting ClientSetting { get; private set; }
 
@@ -36,7 +39,8 @@ namespace ArangoDB.Client
 
         public ArangoDatabase()
         {
-            Settings = new DatabaseSetting();
+            SharedSetting = new SharedDatabaseSetting();
+            Setting = new DatabaseSetting(SharedSetting);
             Connection = new HttpConnection(this);
             ChangeTracker = new DocumentTracker(this);
         }
@@ -44,22 +48,22 @@ namespace ArangoDB.Client
         public ArangoDatabase(string url, string database)
             : this()
         {
-            Settings.Database = database;
-            Settings.Url = url;
+            SharedSetting.Database = database;
+            SharedSetting.Url = url;
         }
 
-        public ArangoDatabase(DatabaseSetting setting)
+        public ArangoDatabase(SharedDatabaseSetting sharedSetting)
+            : this()
         {
-            Settings = setting;
-            Connection = new HttpConnection(this);
-            ChangeTracker = new DocumentTracker(this);
+            SharedSetting = sharedSetting;
+            Setting = new DatabaseSetting(SharedSetting);
         }
 
         /// <summary>
         /// Change setting for a specific identifier
         /// </summary>
         /// <param name="identifier">name of setting</param>
-        public static void ChangeSetting(string identifier, Action<DatabaseSetting> action)
+        public static void ChangeSetting(string identifier, Action<SharedDatabaseSetting> action)
         {
             action(FindSetting(identifier));
         }
@@ -67,20 +71,20 @@ namespace ArangoDB.Client
         /// <summary>
         /// Change Default Setting
         /// </summary>
-        public static void ChangeSetting(Action<DatabaseSetting> action)
+        public static void ChangeSetting(Action<SharedDatabaseSetting> action)
         {
             action(FindSetting("default"));
         }
 
-        static DatabaseSetting FindSetting(string identifier)
+        static SharedDatabaseSetting FindSetting(string identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
                 throw new ArgumentNullException("Setting identifier");
 
-            DatabaseSetting setting = null;
+            SharedDatabaseSetting setting = null;
             if (cachedSettings.TryGetValue(identifier, out setting))
             {
-                setting = new DatabaseSetting();
+                setting = new SharedDatabaseSetting();
                 setting.SettingIdentifier = identifier;
 
             }
@@ -89,13 +93,18 @@ namespace ArangoDB.Client
 
         public static ArangoDatabase CreateWithSetting()
         {
-            return new ArangoDatabase();
+            return CreateWithSetting("default");
         }
 
-        public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)
+        public static ArangoDatabase CreateWithSetting(string identifier)
         {
-            throw new NotImplementedException("ConnectionStringSetting");
+            return new ArangoDatabase(FindSetting(identifier));
         }
+
+        //public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)
+        //{
+        //    throw new NotImplementedException("ConnectionStringSetting");
+        //}
 
         /// <summary>
         /// Get Document JsonObject and Identifiers
@@ -137,13 +146,13 @@ namespace ArangoDB.Client
 
             data.Query = query;
 
-            data.BatchSize = batchSize.HasValue ? batchSize.Value : Settings.Cursor.BatchSize;
-            data.Count = count.HasValue ? count.Value : Settings.Cursor.Count;
+            data.BatchSize = Utils.ChangeIfNotSpecified<int>(batchSize, Setting.Cursor.BatchSize);
+            data.Count = Utils.ChangeIfNotSpecified<bool>(count, Setting.Cursor.Count);
 
             if (ttl.HasValue)
                 data.Ttl = ttl.Value.TotalSeconds;
-            else if (Settings.Cursor.Ttl.HasValue)
-                data.Ttl = Settings.Cursor.Ttl.Value.TotalSeconds;
+            else if (Setting.Cursor.Ttl.HasValue)
+                data.Ttl = Setting.Cursor.Ttl.Value.TotalSeconds;
 
             if (bindVars != null)
                 data.BindVars = bindVars;
@@ -152,8 +161,8 @@ namespace ArangoDB.Client
                 data.Options = options;
             else
             {
-                data.Options.MaxPlans = Settings.Cursor.MaxPlans;
-                foreach (var r in Settings.Cursor.Rules)
+                data.Options.MaxPlans = Setting.Cursor.MaxPlans;
+                foreach (var r in Setting.Cursor.Rules)
                     options.Optimizer.Rules.Add(r);
             }
 

@@ -53,7 +53,7 @@
     <Compile Include="Cursor\CursorAsyncEnumerator.cs" />
     <Compile Include="Cursor\CursorEnumerable.cs" />
     <Compile Include="Cursor\CursorEnumerator.cs" />
-    <Compile Include="DatabaseSetting.cs" />
+    <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\BaseResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
@@ -117,6 +117,7 @@
     <Compile Include="Serialization\DocumentParser.cs" />
     <Compile Include="Serialization\DocumentSerializer.cs" />
     <Compile Include="Property\CollectionPropertySetting.cs" />
+    <Compile Include="DatabaseSetting.cs" />
     <Compile Include="Utility\StringUtils.cs" />
     <Compile Include="Utility\SynchronizionUtils.cs" />
     <Compile Include="Utility\Utils.cs" />

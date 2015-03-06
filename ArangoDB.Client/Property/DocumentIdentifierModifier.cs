@@ -13,7 +13,12 @@ namespace ArangoDB.Client.Property
 {
     public class DocumentIdentifierModifier
     {
-        DatabaseSetting setting;
+        SharedDatabaseSetting setting;
+
+        public DocumentIdentifierModifier(SharedDatabaseSetting setting)
+        {
+            this.setting = setting;
+        }
 
         ConcurrentDictionary<Type, IdentifierMethod> methods = new ConcurrentDictionary<Type, IdentifierMethod>();
 
@@ -40,11 +45,6 @@ namespace ArangoDB.Client.Property
         {
             IdentifierMethod identifierMethod = null;
             methods.TryRemove(type, out identifierMethod);
-        }
-
-        public DocumentIdentifierModifier(DatabaseSetting setting)
-        {
-            this.setting = setting;
         }
 
         public void Modify(object document,DocumentIdentifierResult identifiers)

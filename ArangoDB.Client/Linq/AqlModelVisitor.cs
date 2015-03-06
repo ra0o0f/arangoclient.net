@@ -167,7 +167,7 @@ namespace ArangoDB.Client.Linq
             var parentMVisitor = LinqUtility.FindParentModelVisitor(this);
             parentMVisitor.GroupByNameCounter++;
             groupByClause.IntoName = "C" + parentMVisitor.GroupByNameCounter;
-            groupByClause.funcIntoName = Db.Settings.Linq.TranslateGroupByIntoName;
+            groupByClause.funcIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
 
             QueryText.Append(" collect ");
 
