@@ -538,7 +538,8 @@ namespace ArangoDB.Client
                 Api = CommandApi.AllEdges,
                 Method = HttpMethod.Get,
                 Query = new Dictionary<string, string>(),
-                Command = collectionName
+                Command = collectionName,
+                EnableChangeTracking = !db.Settings.DisableChangeTracking
             };
 
             command.Query.Add("vertex", vertexId);
@@ -546,7 +547,7 @@ namespace ArangoDB.Client
             if (direction.HasValue)
                 command.Query.Add("direction", direction.Value == EdgeDirection.In ? "in" : "out");
 
-            var result = await command.RequestGenericResult<List<T>, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<T, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -675,9 +676,10 @@ namespace ArangoDB.Client
                 Api = CommandApi.Simple,
                 Command = "first-example",
                 Method = HttpMethod.Put,
+                EnableChangeTracking = !db.Settings.DisableChangeTracking
             };
 
-            var result = await command.RequestGenericResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
             return result.Result;
         }
@@ -707,17 +709,12 @@ namespace ArangoDB.Client
                 Api = CommandApi.Simple,
                 Command = "any",
                 Method = HttpMethod.Put,
+                EnableChangeTracking = !db.Settings.DisableChangeTracking
             };
 
-            var result = await command.RequestGenericResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
             return result.Result;
         }
     }
-
-    //public class CollectionProperty
-    //{
-    //    public Type Type { get; set; }
-    //    public string Name { get; set; }
-    //}
 }

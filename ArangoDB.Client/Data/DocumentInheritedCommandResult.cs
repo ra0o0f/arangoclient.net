@@ -12,7 +12,7 @@ namespace ArangoDB.Client.Data
         public BaseResult BaseResult
         {
             get { return this as BaseResult; }
-            set { }
+            set { base.SetProperties(value); }
         }
 
         [DocumentProperty(PropertyName = "document")]

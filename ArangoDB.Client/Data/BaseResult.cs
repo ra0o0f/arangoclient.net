@@ -15,7 +15,15 @@ namespace ArangoDB.Client.Data
 
         public string ErrorMessage { get; set; }
 
-        public int ErrorNum { get; set; }   
+        public int ErrorNum { get; set; } 
+
+        protected void SetProperties(BaseResult baseResult)
+        {
+            this.Code = baseResult.Code;
+            this.Error = baseResult.Error;
+            this.ErrorMessage = baseResult.ErrorMessage;
+            this.ErrorNum = baseResult.ErrorNum;
+        }
      
         internal virtual void SetFromJsonTextReader(string name, JsonToken token, object value)
         {

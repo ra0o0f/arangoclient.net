@@ -29,7 +29,7 @@ namespace ArangoDB.Client.Cursor
 
         ReaderState readerState;
 
-        public CursorAsyncEnumerator(ArangoDatabase db, HttpCommand command,object data=null)
+        public CursorAsyncEnumerator(ArangoDatabase db, HttpCommand command, object data=null)
         {
             this.db = db;
             this.initiateCommand = command;
@@ -83,7 +83,17 @@ namespace ArangoDB.Client.Cursor
 
             if (readerState.ReadNextArrayValue(jsonTextReader))
             {
-                Current = new DocumentSerializer(db).DeserializeFromJsonTextReader<T>(jsonTextReader);
+                var documentSerializer =new DocumentSerializer(db);
+                if (db.Settings.DisableChangeTracking)
+                {
+                    Current = documentSerializer.DeserializeFromJsonTextReader<T>(jsonTextReader);
+                }
+                else
+                {
+                    JObject jObject = null;
+                    Current = documentSerializer.DeserializeSingleResult<T>(jsonTextReader, out jObject);
+                    db.ChangeTracker.TrackChanges(Current, jObject);
+                }
                 return true;
             }
             else

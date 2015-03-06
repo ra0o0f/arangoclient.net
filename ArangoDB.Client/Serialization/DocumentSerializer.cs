@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json;
 using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using ArangoDB.Client.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,15 +29,43 @@ namespace ArangoDB.Client.Serialization
             }
         }
 
+        public List<T> DeserializeBatchResult<T>(Stream stream, out BaseResult baseResult)
+        {
+            using (var streamReader = new StreamReader(stream))
+            using (var jsonReader = new JsonTextReader(streamReader))
+            {
+                var serializer = CreateJsonSerializer();
+                jsonReader.Read();
+                return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult);
+            }
+        }
+
+        public T DeserializeSingleResult<T>(Stream stream, out BaseResult baseResult)
+        {
+            using (var streamReader = new StreamReader(stream))
+            using (var jsonReader = new JsonTextReader(streamReader))
+            {
+                var serializer = CreateJsonSerializer();
+                jsonReader.Read();
+                return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult).FirstOrDefault();
+            }
+        }
+
         public T DeserializeSingleResult<T>(Stream stream,out JObject jObject)
         {
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-
+                jsonReader.Read();
                 return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject);
             }
+        }
+
+        public T DeserializeSingleResult<T>(JsonTextReader reader, out JObject jObject)
+        {
+            var serializer = CreateJsonSerializer();
+            return new DocumentParser(db).ParseSingleResult<T>(reader, out jObject);
         }
 
         public Stream Serialize(object value,Stream stream)

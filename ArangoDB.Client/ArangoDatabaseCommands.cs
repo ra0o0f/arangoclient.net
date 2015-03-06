@@ -36,7 +36,7 @@ namespace ArangoDB.Client
 
             //var result = await command.ExecuteCommandAsync<DatabaseInformation>().ConfigureAwait(false);
 
-            var result = await command.RequestGenericResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>().ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -63,7 +63,7 @@ namespace ArangoDB.Client
                 Command = "user"
             };
 
-            var result = await command.RequestGenericResult<List<string>,InheritedCommandResult<List<string>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<string,InheritedCommandResult<List<string>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -91,7 +91,7 @@ namespace ArangoDB.Client
                 IsSystemCommand = true
             };
 
-            var result = await command.RequestGenericResult<List<string>, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
 
             return result.Result;
         }
@@ -128,7 +128,7 @@ namespace ArangoDB.Client
                 Users = users
             };
 
-            var result = await command.RequestGenericResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
         }
 
         /// <summary>

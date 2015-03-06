@@ -25,13 +25,6 @@ namespace ArangoDB.Client.Http
         Collection=6
     }
 
-    //public enum CommandResultPartition
-    //{
-    //    InheritedResult = 0,
-    //    DistinctResult = 1,
-    //    MergedResult = 2
-    //}
-
     public class HttpCommand
     {
         ArangoDatabase db;
@@ -56,8 +49,6 @@ namespace ArangoDB.Client.Http
         {
             this.db = db;
         }
-
-        //public CommandResultPartition ResultPartition { get; set; }
 
         public HttpMethod Method { get; set; }
 
@@ -90,7 +81,35 @@ namespace ArangoDB.Client.Http
             return builder.Uri;
         }
 
-        public async Task<ICommandResult<TResult>> RequestGenericResult<TResult, TDeserialize>(object data = null)
+        public async Task<ICommandResult<List<TResult>>> RequestGenericListResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
+        {
+            var response = await SendCommandAsync(data).ConfigureAwait(false);
+
+            ICommandResult<List<TResult>> result = null;
+
+            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                var serializer = new DocumentSerializer(db);
+
+                if (db.Settings.DisableChangeTracking)
+                {
+                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<List<TResult>>;
+                }
+                else
+                {
+                    result = new TDeserialize() as ICommandResult<List<TResult>>;
+                    BaseResult baseResult = null;
+                    result.Result = serializer.DeserializeBatchResult<TResult>(stream, out baseResult);
+                    result.BaseResult = baseResult;
+                }
+            }
+
+            new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
+
+            return result;
+        }
+
+        public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
 
@@ -100,21 +119,20 @@ namespace ArangoDB.Client.Http
             {
                 var serializer = new DocumentSerializer(db);
 
-                result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<TResult>;
+                if (db.Settings.DisableChangeTracking)
+                {
+                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<TResult>;
+                }
+                else
+                {
+                    result = new TDeserialize() as ICommandResult<TResult>;
+                    BaseResult baseResult = null;
+                    result.Result = serializer.DeserializeSingleResult<TResult>(stream, out baseResult);
+                    result.BaseResult = baseResult;
+                }
             }
 
             new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
-
-            return result;
-        }
-
-        ICommandResult<T> CreateInheritedResult<T>(Stream stream)
-        {
-            var serializer = new DocumentSerializer(db);
-
-            InheritedCommandResult<T> result = new InheritedCommandResult<T>();
-
-            result = serializer.Deserialize<InheritedCommandResult<T>>(stream);
 
             return result;
         }
@@ -170,45 +188,6 @@ namespace ArangoDB.Client.Http
         {
             return await db.Connection.SendCommandAsync(Method, BuildUrl(), data).ConfigureAwait(false);
         }
-
-        //public async Task<ICommandResult<T>> ExecuteCommandAsync<T>(object data = null)
-        //{
-        //    var response = await SendCommandAsync(data);
-
-        //    ICommandResult<T> result = null;
-
-        //    using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-        //    {
-        //        if (ResultPartition == CommandResultPartition.InheritedResult)
-        //            result = CreateInheritedResult<T>(stream);
-
-        //        if (ResultPartition == CommandResultPartition.DistinctResult)
-        //            result = CreateDistinctResult<T>(response, stream);
-
-        //        if (ResultPartition == CommandResultPartition.MergedResult)
-        //            result = CreateMergedResult<T>(stream);
-        //    }
-
-        //    new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
-
-        //    return result;
-        //}
-
-        //public async Task<ICommandResult<TResult>> ExecuteCommandAsync<TResult, TDeserialize>(object data = null)
-        //{
-        //    var response = await SendCommandAsync(data);
-
-        //    ICommandResult<TResult> result = null;
-
-        //    using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-        //    {
-        //        result = CreateGenericResult<TResult, TDeserialize>(stream);
-        //    }
-
-        //    new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
-
-        //    return result;
-        //}
 
         public ICursor<T> CreateCursor<T>(object data=null)
         {
