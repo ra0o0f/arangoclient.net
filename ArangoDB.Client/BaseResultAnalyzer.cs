@@ -18,7 +18,7 @@ namespace ArangoDB.Client
 
         public void ThrowIfNeeded(BaseResult baseResult)
         {
-            if(baseResult.Error)
+            if (baseResult.Error && db.Setting.ThrowForServerErrors == true)
             {
                 throw new ArangoServerException(baseResult);
             }

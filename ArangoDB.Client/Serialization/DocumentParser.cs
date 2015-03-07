@@ -22,10 +22,13 @@ namespace ArangoDB.Client.Serialization
         /// Parse Merge and Distinct Results
         /// </summary>
         /// <returns></returns>
-        public T ParseSingleResult<T>(JsonTextReader reader,out JObject jObject)
+        public T ParseSingleResult<T>(JsonTextReader reader,out JObject jObject,bool readForObjectStart=false)
         {
+            if (readForObjectStart == true)
+                reader.Read();
+
             if (reader.TokenType != JsonToken.StartObject)
-                throw new InvalidOperationException("Expecting an object in parsing");
+                throw new InvalidOperationException("Expecting JsonToken.StartObject");
 
             jObject = JObject.Load(reader);
 
@@ -38,6 +41,8 @@ namespace ArangoDB.Client.Serialization
             var readerState = new ReaderState();
             baseResult = new BaseResult();
             List<T> result = new List<T>();
+
+            jsonTextReader.Read();
 
             while (readerState.ReadNextProperty(jsonTextReader))
             {
@@ -93,7 +98,7 @@ namespace ArangoDB.Client.Serialization
                 reader.Read();
 
                 // reach end of object
-                if (reader.TokenType == JsonToken.EndObject)
+                if (reader.TokenType == JsonToken.EndObject || reader.TokenType == JsonToken.None)
                     return false;
 
                 if (reader.TokenType != JsonToken.PropertyName)

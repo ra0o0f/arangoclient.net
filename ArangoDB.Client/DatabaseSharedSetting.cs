@@ -26,6 +26,7 @@ namespace ArangoDB.Client
             Url = "http://localhost:8529";
             Credentials = new NetworkCredential("root", "");
             SystemDatabaseCredentials = new NetworkCredential("root", "");
+            ThrowForServerErrors = true;
         }
 
         private bool _createCollectionOnTheFly;
@@ -48,6 +49,8 @@ namespace ArangoDB.Client
         public string SettingIdentifier { get; internal set; }
 
         public bool WaitForSync { get; set; }
+
+        public bool ThrowForServerErrors { get; set; }
 
         public bool CreateCollectionOnTheFly
         { 

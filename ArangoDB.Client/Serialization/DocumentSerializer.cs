@@ -35,7 +35,6 @@ namespace ArangoDB.Client.Serialization
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-                jsonReader.Read();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult);
             }
         }
@@ -46,7 +45,6 @@ namespace ArangoDB.Client.Serialization
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-                jsonReader.Read();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult).FirstOrDefault();
             }
         }
@@ -57,8 +55,7 @@ namespace ArangoDB.Client.Serialization
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-                jsonReader.Read();
-                return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject);
+                return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject,true);
             }
         }
 

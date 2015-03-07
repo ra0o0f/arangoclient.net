@@ -12,6 +12,8 @@ namespace ArangoDB.Client
 
         private bool? _waitForSync;
 
+        private bool? _throwForServerErrors;
+
         private bool? _disableChangeTracking;
 
         SharedDatabaseSetting sharedSetting;
@@ -49,6 +51,18 @@ namespace ArangoDB.Client
                 return sharedSetting.WaitForSync;
             }
             set { _waitForSync = value; }
+        }
+
+        public bool? ThrowForServerErrors
+        {
+            get
+            {
+                if (_throwForServerErrors.HasValue)
+                    return _throwForServerErrors.Value;
+
+                return sharedSetting.ThrowForServerErrors;
+            }
+            set { _throwForServerErrors = value; }
         }
 
         public bool? DisableChangeTracking
