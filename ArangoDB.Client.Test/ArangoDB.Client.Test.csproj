@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeTracking\SimpleChange.cs" />
+    <Compile Include="Command\SimpleHttpCommand.cs" />
     <Compile Include="Database\DatabaseGenerator.cs" />
     <Compile Include="Linq\SimpleQuery.cs" />
     <Compile Include="Model\Friend.cs" />

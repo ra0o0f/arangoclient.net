@@ -9,9 +9,9 @@ namespace ArangoDB.Client.Linq
 {
     public class AqlQueryExecuter : IQueryExecutor
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
-        public AqlQueryExecuter(ArangoDatabase db)
+        public AqlQueryExecuter(IArangoDatabase db)
         {
             this.db = db;
         }

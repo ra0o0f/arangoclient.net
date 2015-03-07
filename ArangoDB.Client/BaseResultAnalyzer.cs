@@ -9,9 +9,9 @@ namespace ArangoDB.Client
 {
     public class BaseResultAnalyzer
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
-        public BaseResultAnalyzer(ArangoDatabase db)
+        public BaseResultAnalyzer(IArangoDatabase db)
         {
             this.db = db;
         }

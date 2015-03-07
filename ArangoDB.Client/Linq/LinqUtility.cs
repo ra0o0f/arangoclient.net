@@ -14,13 +14,13 @@ namespace ArangoDB.Client.Linq
 {
     public class LinqUtility
     {
-        public static string ResolveCollectionName(ArangoDatabase db,Type itemType)
+        public static string ResolveCollectionName(IArangoDatabase db,Type itemType)
         {
             string collectionName = db.SharedSetting.Collection.ResolveCollectionName(itemType);
             return AddBacktickToName(collectionName);
         }
 
-        public static string ResolveMemberName(ArangoDatabase db,MemberInfo memberInfo)
+        public static string ResolveMemberName(IArangoDatabase db,MemberInfo memberInfo)
         {
             return ResolvePropertyName(db.SharedSetting.Collection.ResolvePropertyName(memberInfo.DeclaringType, memberInfo.Name));
         }

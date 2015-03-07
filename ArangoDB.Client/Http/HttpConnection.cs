@@ -12,7 +12,7 @@ namespace ArangoDB.Client.Http
 {
     public class HttpConnection
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
         private static Lazy<HttpClient> httpClientLazily = new Lazy<HttpClient>(() => {
             connectionHandler = new HttpConnectionHandler();
@@ -41,28 +41,13 @@ namespace ArangoDB.Client.Http
             get { return connectionHandler.InnerHandler as HttpClientHandler; }
         }
 
-        public HttpConnection(ArangoDatabase db)
+        public HttpConnection(IArangoDatabase db)
         {
             this.db = db;
         }
 
         public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data)
         {
-            if(!db.HttpInitialized)
-            {
-#if !PORTABLE
-                Uri baseUri = new Uri(db.Settings.Url);
-                var servicePoint = ArangoDatabase.ClientSetting.Proxy != null ? ServicePointManager.FindServicePoint(baseUri
-                    , ArangoDatabase.ClientSetting.Proxy)
-                : ServicePointManager.FindServicePoint(baseUri);
-                servicePoint.UseNagleAlgorithm = false;
-                servicePoint.Expect100Continue = false;
-                servicePoint.ConnectionLimit = 256;
-#endif
-
-                db.HttpInitialized = true;
-            }
-
             var requestMessage = new HttpRequestMessage(method,uri);
 
             if(data!=null)

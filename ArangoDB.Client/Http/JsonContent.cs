@@ -16,10 +16,10 @@ namespace ArangoDB.Client.Http
     // from http://stackoverflow.com/questions/25335897/using-json-net-to-serialize-object-into-httpclients-response-stream
     public class JsonContent : HttpContent
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
         object data { get; set; }
-        public JsonContent(ArangoDatabase db,object data)
+        public JsonContent(IArangoDatabase db,object data)
         {
             this.db = db;
             this.data = data;

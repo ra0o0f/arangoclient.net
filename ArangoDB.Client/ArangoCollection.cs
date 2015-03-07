@@ -40,7 +40,7 @@ namespace ArangoDB.Client
     {
         string collectionName;
 
-        ArangoDatabase db;
+        IArangoDatabase db;
 
         CollectionType collectionType { get; set; }
 
@@ -48,7 +48,7 @@ namespace ArangoDB.Client
         /// Gets the document collection for a specific type
         /// </summary>
         /// <returns></returns>
-        public ArangoCollection(ArangoDatabase db)
+        public ArangoCollection(IArangoDatabase db)
             : this(db, CollectionType.Document)
         {
 
@@ -58,7 +58,7 @@ namespace ArangoDB.Client
         /// Gets the collection by its type
         /// </summary>
         /// <returns></returns>
-        public ArangoCollection(ArangoDatabase db, CollectionType type)
+        public ArangoCollection(IArangoDatabase db, CollectionType type)
         {
             this.db = db;
             collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();

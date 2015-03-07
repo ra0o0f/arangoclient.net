@@ -10,7 +10,7 @@ namespace ArangoDB.Client.Test.Utility
 {
     public class ObjectUtility
     {
-        public static JObject CreateJObject(object document,ArangoDatabase db)
+        public static JObject CreateJObject(object document,IArangoDatabase db)
         {
             return JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
         }

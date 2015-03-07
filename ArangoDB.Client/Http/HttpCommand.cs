@@ -27,7 +27,7 @@ namespace ArangoDB.Client.Http
 
     public class HttpCommand
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
         static Dictionary<CommandApi, string> ApiValues;
 
@@ -45,7 +45,7 @@ namespace ArangoDB.Client.Http
             };
         }
 
-        public HttpCommand(ArangoDatabase db)
+        public HttpCommand(IArangoDatabase db)
         {
             this.db = db;
         }

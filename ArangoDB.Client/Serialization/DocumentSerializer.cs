@@ -12,8 +12,8 @@ namespace ArangoDB.Client.Serialization
 {
     public class DocumentSerializer
     {
-        ArangoDatabase db;
-        public DocumentSerializer(ArangoDatabase db)
+        IArangoDatabase db;
+        public DocumentSerializer(IArangoDatabase db)
         {
             this.db = db;
         }

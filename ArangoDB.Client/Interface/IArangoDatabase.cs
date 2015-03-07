@@ -1,5 +1,7 @@
 ﻿using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
+using ArangoDB.Client.Http;
+using ArangoDB.Client.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,19 @@ namespace ArangoDB.Client
 {
     public interface IArangoDatabase : IDisposable
     {
+        HttpConnection Connection { get; set; }
+
+        DocumentTracker ChangeTracker { get; set; }
+
+        SharedDatabaseSetting SharedSetting { get; set; }
+
+        DatabaseSetting Setting { get; set; }
+
+        ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,
+            int? batchSize = 0, TimeSpan? ttl = null, QueryOption options = null);
+
+        AqlQueryable<T> Query<T>();
+
         /// <summary>
         /// Get Document JsonObject and Identifiers
         /// </summary>

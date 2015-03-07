@@ -14,8 +14,8 @@ namespace ArangoDB.Client.Serialization
 {
     public class DocumentContractResolver : DefaultContractResolver
     {
-        ArangoDatabase db;
-        public DocumentContractResolver(ArangoDatabase db) 
+        IArangoDatabase db;
+        public DocumentContractResolver(IArangoDatabase db) 
             : base(true) 
         {
             this.db = db;

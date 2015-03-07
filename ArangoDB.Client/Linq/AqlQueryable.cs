@@ -12,15 +12,15 @@ namespace ArangoDB.Client.Linq
 {
     public class AqlQueryable<T> : QueryableBase<T>, ICursor<T>
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
-        public AqlQueryable(IQueryParser queryParser, IQueryExecutor executor,ArangoDatabase db)
+        public AqlQueryable(IQueryParser queryParser, IQueryExecutor executor,IArangoDatabase db)
             : base(new AqlQueryProvider(typeof(AqlQueryable<>), queryParser, executor,db))
         {
             this.db = db;
         }
 
-        public AqlQueryable(IQueryProvider provider, Expression expression, ArangoDatabase db)
+        public AqlQueryable(IQueryProvider provider, Expression expression, IArangoDatabase db)
             : base(provider, expression)
         {
             this.db = db;

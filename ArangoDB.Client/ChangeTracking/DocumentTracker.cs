@@ -15,9 +15,9 @@ namespace ArangoDB.Client.ChangeTracking
         private readonly Dictionary<object, DocumentContainer> containerByInstance = new Dictionary<object, DocumentContainer>();
         private readonly Dictionary<string, DocumentContainer> containerById = new Dictionary<string, DocumentContainer>();
 
-        ArangoDatabase db;
+        IArangoDatabase db;
 
-        public DocumentTracker(ArangoDatabase db)
+        public DocumentTracker(IArangoDatabase db)
         {
             this.db = db;
         }

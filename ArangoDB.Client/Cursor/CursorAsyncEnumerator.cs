@@ -17,7 +17,7 @@ namespace ArangoDB.Client.Cursor
     {
         bool initialized;
 
-        ArangoDatabase db;
+        IArangoDatabase db;
         HttpCommand initiateCommand;
         object data;
 
@@ -29,7 +29,7 @@ namespace ArangoDB.Client.Cursor
 
         ReaderState readerState;
 
-        public CursorAsyncEnumerator(ArangoDatabase db, HttpCommand command, object data=null)
+        public CursorAsyncEnumerator(IArangoDatabase db, HttpCommand command, object data=null)
         {
             this.db = db;
             this.initiateCommand = command;

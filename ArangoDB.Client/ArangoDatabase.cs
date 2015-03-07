@@ -20,11 +20,11 @@ namespace ArangoDB.Client
     {
         private static ConcurrentDictionary<string, SharedDatabaseSetting> cachedSettings = new ConcurrentDictionary<string, SharedDatabaseSetting>();
 
-        internal DocumentTracker ChangeTracker;
+        public DocumentTracker ChangeTracker { get; set; }
 
-        internal HttpConnection Connection { get; set; }
+        public HttpConnection Connection { get; set; }
 
-        internal SharedDatabaseSetting SharedSetting { get; set; }
+        public SharedDatabaseSetting SharedSetting { get; set; }
 
         public DatabaseSetting Setting { get; set; }
 
@@ -91,12 +91,12 @@ namespace ArangoDB.Client
             return setting;
         }
 
-        public static ArangoDatabase CreateWithSetting()
+        public static IArangoDatabase CreateWithSetting()
         {
             return CreateWithSetting("default");
         }
 
-        public static ArangoDatabase CreateWithSetting(string identifier)
+        public static IArangoDatabase CreateWithSetting(string identifier)
         {
             return new ArangoDatabase(FindSetting(identifier));
         }

@@ -31,7 +31,7 @@ namespace ArangoDB.Client.Linq
 {
     public sealed class AqlQueryProvider : QueryProviderBase
     {
-        ArangoDatabase db;
+        IArangoDatabase db;
 
         private readonly Type _queryableType;
 
@@ -72,7 +72,7 @@ namespace ArangoDB.Client.Linq
         /// <param name="queryParser">The <see cref="IQueryParser"/> used to parse queries. Specify an instance of 
         ///   <see cref="Parsing.Structure.QueryParser"/> for default behavior. See also <see cref="QueryParser.CreateDefault"/>.</param>
         /// <param name="executor">The <see cref="IQueryExecutor"/> used to execute queries against a specific query backend.</param>
-        public AqlQueryProvider(Type queryableType, IQueryParser queryParser, IQueryExecutor executor,ArangoDatabase db)
+        public AqlQueryProvider(Type queryableType, IQueryParser queryParser, IQueryExecutor executor,IArangoDatabase db)
             : base(CheckNotNull("queryParser", queryParser), CheckNotNull("executor", executor))
         {
             CheckNotNull("queryableType", queryableType);

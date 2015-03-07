@@ -17,7 +17,7 @@ namespace ArangoDB.Client.Linq
     {
         static Dictionary<Type, string> aggregateResultOperatorFunctions;
 
-        public ArangoDatabase Db;
+        public IArangoDatabase Db;
 
         public StringBuilder QueryText { get; set; }
         
@@ -31,7 +31,7 @@ namespace ArangoDB.Client.Linq
 
         internal int GroupByNameCounter { get; set; }
 
-        public AqlModelVisitor(ArangoDatabase db)
+        public AqlModelVisitor(IArangoDatabase db)
         {
             QueryText = new StringBuilder();
             QueryData = new QueryData();
