@@ -86,7 +86,7 @@ namespace ArangoDB.Client.Cursor
                 var documentSerializer =new DocumentSerializer(db);
                 if (db.Setting.DisableChangeTracking==true)
                 {
-                    Current = documentSerializer.DeserializeFromJsonTextReader<T>(jsonTextReader);
+                    Current = documentSerializer.Deserialize<T>(jsonTextReader);
                 }
                 else
                 {

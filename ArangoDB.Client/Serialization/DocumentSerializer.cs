@@ -29,6 +29,13 @@ namespace ArangoDB.Client.Serialization
             }
         }
 
+        public T Deserialize<T>(JsonTextReader reader)
+        {
+            var serializer = CreateJsonSerializer();
+
+            return serializer.Deserialize<T>(reader);
+        }
+
         public List<T> DeserializeBatchResult<T>(Stream stream, out BaseResult baseResult)
         {
             using (var streamReader = new StreamReader(stream))
@@ -63,33 +70,6 @@ namespace ArangoDB.Client.Serialization
         {
             var serializer = CreateJsonSerializer();
             return new DocumentParser(db).ParseSingleResult<T>(reader, out jObject);
-        }
-
-        public Stream Serialize(object value,Stream stream)
-        {
-            using (var streamWriter = new StreamWriter(stream))
-            using (var jsonWriter = new JsonTextWriter(streamWriter))
-            {
-                var serializer = CreateJsonSerializer();
-
-                serializer.Serialize(jsonWriter, value);
-            }
-
-            return stream;
-        }
-
-        public T DeserializeFromJsonTextReader<T>(JsonTextReader reader)
-        {
-            var serializer = CreateJsonSerializer();
-
-            return serializer.Deserialize<T>(reader);
-        }
-
-        public void SerializeFromJsonWriter(JsonWriter writer,object value)
-        {
-            var serializer = CreateJsonSerializer();
-
-            serializer.Serialize(writer, value);
         }
 
         public JsonSerializer CreateJsonSerializer()
