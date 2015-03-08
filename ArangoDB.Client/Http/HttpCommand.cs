@@ -81,6 +81,8 @@ namespace ArangoDB.Client.Http
             return builder.Uri;
         }
 
+
+        // TDeserialize can be : EdgesInheritedCommandResult<List<TResult>>, InheritedCommandResult<List<TResult>>
         public async Task<ICommandResult<List<TResult>>> RequestGenericListResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
@@ -91,16 +93,18 @@ namespace ArangoDB.Client.Http
             {
                 var serializer = new DocumentSerializer(db);
 
-                if (db.Setting.DisableChangeTracking == true)
-                {
-                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<List<TResult>>;
-                }
-                else
+                if (EnableChangeTracking)
                 {
                     result = new TDeserialize() as ICommandResult<List<TResult>>;
                     BaseResult baseResult = null;
                     result.Result = serializer.DeserializeBatchResult<TResult>(stream, out baseResult);
                     result.BaseResult = baseResult;
+                }
+                else
+                {
+                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<List<TResult>>;
+                    if (!response.IsSuccessStatusCode)
+                        result.Result = new List<TResult>();
                 }
             }
 
@@ -109,6 +113,7 @@ namespace ArangoDB.Client.Http
             return result;
         }
 
+        // TDeserialize can be : InheritedCommandResult<TResult>, DocumentInheritedCommandResult<TResult>
         public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
@@ -119,16 +124,16 @@ namespace ArangoDB.Client.Http
             {
                 var serializer = new DocumentSerializer(db);
 
-                if (db.Setting.DisableChangeTracking == true)
-                {
-                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<TResult>;
-                }
-                else
+                if (EnableChangeTracking)
                 {
                     result = new TDeserialize() as ICommandResult<TResult>;
                     BaseResult baseResult = null;
                     result.Result = serializer.DeserializeSingleResult<TResult>(stream, out baseResult);
                     result.BaseResult = baseResult;
+                }
+                else
+                {
+                    result = serializer.Deserialize<TDeserialize>(stream) as ICommandResult<TResult>;
                 }
             }
 
@@ -137,6 +142,7 @@ namespace ArangoDB.Client.Http
             return result;
         }
 
+        // T can be any type that derived from BaseResult
         public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
@@ -148,6 +154,9 @@ namespace ArangoDB.Client.Http
 
                 result.Result = serializer.Deserialize<T>(stream);
                 result.BaseResult = result.Result as BaseResult;
+
+                if (!response.IsSuccessStatusCode)
+                    result.Result = default(T);
             }
 
             new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
@@ -155,6 +164,7 @@ namespace ArangoDB.Client.Http
             return result;
         }
 
+        // T can be any type
         public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
@@ -176,7 +186,7 @@ namespace ArangoDB.Client.Http
                     result.Result = response.IsSuccessStatusCode ? serializer.Deserialize<T>(stream) : default(T);
                 }
 
-                result.BaseResult = !response.IsSuccessStatusCode ? serializer.Deserialize<BaseResult>(stream) : new BaseResult();
+                result.BaseResult = !response.IsSuccessStatusCode ? serializer.Deserialize<BaseResult>(stream) : new BaseResult { Code = (int)response.StatusCode };
             }
 
             new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);

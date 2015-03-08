@@ -13,7 +13,7 @@ namespace ArangoDB.Client
 {
     public interface IArangoDatabase : IDisposable
     {
-        HttpConnection Connection { get; set; }
+        IHttpConnection Connection { get; set; }
 
         DocumentTracker ChangeTracker { get; set; }
 

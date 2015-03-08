@@ -27,78 +27,12 @@ namespace ArangoDB.Client.Test.Serialization
             return new JsonTextReader(streamReader);
         }
 
-        string SingleResultJson
-        {
-            get
-            {
-                return @"
-{
-'error':false,
-'code':200,
-'Fullname':'raoof hojat',
-'Age':27,
-'Height':172
-}
-"; ;
-            }
-        }
-
-        string BatchDocumentJson
-        {
-            get
-            {
-                return @"
-{
-'error':false,
-'code':200,
-'document':
-{
-'Fullname':'raoof hojat',
-'Age':27,
-'Height':172
-}
-}
-"; ;
-            }
-        }
-
-        string ErrorJson
-        {
-            get
-            {
-                return @"
-{
-'error' : true, 
-'errorMessage' : 'error message', 
-'code' : 404, 
-'errorNum' : 1202 
-}";
-            }
-        }
-
-        string BatchListJson
-        {
-            get
-            {
-                return @"
-{
-'error':false,
-'code':200,
-'document':
-[{
-'Fullname':'raoof hojat',
-'Age':27,
-'Height':172
-}]
-}
-"; ;
-            }
-        }
+        
 
         [Fact]
         public void ParseSingle()
         {
-            using(var reader = GenerateReader(SingleResultJson))
+            using(var reader = GenerateReader(JsonSample.SingleResult))
             {
                 var documentParser = new DocumentParser(new ArangoDatabase());
                 JObject jObject=null;
@@ -108,27 +42,43 @@ namespace ArangoDB.Client.Test.Serialization
                 Assert.Equal(person.Fullname, "raoof hojat");
                 Assert.Equal(person.Height, 172);
 
-                Assert.True(JObject.DeepEquals(jObject, JObject.Parse(SingleResultJson)));
+                Assert.True(JObject.DeepEquals(jObject, JObject.Parse(JsonSample.SingleResult)));
             }
         }
 
         [Fact]
         public void ParseBatchList()
         {
-            using (var reader = GenerateReader(BatchListJson))
+            using (var reader = GenerateReader(JsonSample.ListResult))
             {
-                var documentParser = new DocumentParser(new ArangoDatabase());
+                var db = new ArangoDatabase();
+
+                var documentParser = new DocumentParser(db);
 
                 BaseResult baseResult = null;
                 var personList = documentParser.ParseBatchResult<Person>(reader, out baseResult);
 
-                Assert.Equal(personList.Count, 1);
+                Assert.Equal(personList.Count, 2);
 
-                var person = personList[0];
+                Assert.Equal(personList[0].Age, 27);
+                Assert.Equal(personList[0].Fullname, "raoof hojat");
+                Assert.Equal(personList[0].Height, 172);
 
-                Assert.Equal(person.Age, 27);
-                Assert.Equal(person.Fullname, "raoof hojat");
-                Assert.Equal(person.Height, 172);
+                Assert.Equal(personList[1].Age, 7);
+                Assert.Equal(personList[1].Fullname, "hojat raoof");
+                Assert.Equal(personList[1].Height, 721);
+
+                var info1 = db.FindDocumentInfo(personList[0]);
+                Assert.NotNull(info1.Document);
+                Assert.Equal(info1.Id, "Person/KEY1");
+                Assert.Equal(info1.Key, "KEY1");
+                Assert.Equal(info1.Rev, "REV1");
+
+                var info2 = db.FindDocumentInfo(personList[1]);
+                Assert.NotNull(info2.Document);
+                Assert.Equal(info2.Id, "Person/KEY2");
+                Assert.Equal(info2.Key, "KEY2");
+                Assert.Equal(info2.Rev, "REV2");
 
                 Assert.Equal(baseResult.Code, 200);
                 Assert.Equal(baseResult.Error, false);
@@ -138,7 +88,7 @@ namespace ArangoDB.Client.Test.Serialization
         [Fact]
         public void ParseBatchDocument()
         {
-            using (var reader = GenerateReader(BatchDocumentJson))
+            using (var reader = GenerateReader(JsonSample.NestedSingleResult))
             {
                 var documentParser = new DocumentParser(new ArangoDatabase());
 
@@ -161,7 +111,7 @@ namespace ArangoDB.Client.Test.Serialization
         [Fact]
         public void ParseBatchErrorDocument()
         {
-            using (var reader = GenerateReader(ErrorJson))
+            using (var reader = GenerateReader(JsonSample.Error))
             {
                 var documentParser = new DocumentParser(new ArangoDatabase());
 
@@ -173,7 +123,7 @@ namespace ArangoDB.Client.Test.Serialization
         [Fact]
         public void ParseBatchErrorDocumentWithNotThrowing()
         {
-            using (var reader = GenerateReader(ErrorJson))
+            using (var reader = GenerateReader(JsonSample.Error))
             {
                 var db = new ArangoDatabase();
                 db.Setting.ThrowForServerErrors = false;
@@ -185,8 +135,8 @@ namespace ArangoDB.Client.Test.Serialization
                 Assert.Equal(list.Count, 0);
 
                 Assert.Equal(baseResult.Error, true);
-                Assert.Equal(baseResult.Code, 404);
-                Assert.Equal(baseResult.ErrorMessage, "error message");
+                Assert.Equal(baseResult.Code, 400);
+                Assert.Equal(baseResult.ErrorMessage, "ERROR");
                 Assert.Equal(baseResult.ErrorNum, 1202);
             }
         }
@@ -194,7 +144,7 @@ namespace ArangoDB.Client.Test.Serialization
         [Fact]
         public void ParseSingleError()
         {
-            using (var reader = GenerateReader(ErrorJson))
+            using (var reader = GenerateReader(JsonSample.Error))
             {
                 var documentParser = new DocumentParser(new ArangoDatabase());
                 JObject jObject = null;

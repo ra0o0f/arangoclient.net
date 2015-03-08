@@ -59,12 +59,26 @@ namespace ArangoDB.Client.ChangeTracking
 
         public DocumentContainer FindDocumentInfo(string id)
         {
-            return containerById[id];
+            try
+            {
+                return containerById[id];
+            }
+            catch (KeyNotFoundException e)
+            {
+                throw new Exception(string.Format("No tracked document found for {0}, change tracking maybe disabled", id), e);
+            }
         }
 
         public DocumentContainer FindDocumentInfo(object document)
         {
-            return containerByInstance[document];
+            try
+            {
+                return containerByInstance[document];
+            }
+            catch(KeyNotFoundException e)
+            {
+                throw new Exception("No tracked document found, change tracking maybe disabled", e);
+            }
         }
 
         public JObject GetChanges(object document)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Http
 {
-    public class HttpConnection
+    public class HttpConnection : IHttpConnection
     {
         IArangoDatabase db;
 
@@ -46,7 +46,7 @@ namespace ArangoDB.Client.Http
             this.db = db;
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data)
+        public async Task<HttpResponseMessage>  SendCommandAsync(HttpMethod method,Uri uri,object data)
         {
             var requestMessage = new HttpRequestMessage(method,uri);
 

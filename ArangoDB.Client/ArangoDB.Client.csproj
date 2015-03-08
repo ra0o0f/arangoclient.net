@@ -74,6 +74,7 @@
     <Compile Include="Http\HttpConnection.cs" />
     <Compile Include="Http\HttpConnectionHandler.cs" />
     <Compile Include="Http\HttpConnectionOption.cs" />
+    <Compile Include="Http\IHttpConnection.cs" />
     <Compile Include="Http\JsonContent.cs" />
     <Compile Include="Interface\IAarangoCollection.cs" />
     <Compile Include="Interface\IArangoDatabase.cs" />

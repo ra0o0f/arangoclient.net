@@ -79,6 +79,9 @@ namespace ArangoDB.Client.Cursor
             if (jsonTextReader.TokenType== JsonToken.EndObject)
             {
                 new BaseResultAnalyzer(db).ThrowIfNeeded(CursorResult);
+
+                if (db.Setting.ThrowForServerErrors == false)
+                    return false;
             }
 
             if (readerState.ReadNextArrayValue(jsonTextReader))

@@ -22,7 +22,7 @@ namespace ArangoDB.Client
 
         public DocumentTracker ChangeTracker { get; set; }
 
-        public HttpConnection Connection { get; set; }
+        public IHttpConnection Connection { get; set; }
 
         public SharedDatabaseSetting SharedSetting { get; set; }
 
