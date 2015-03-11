@@ -16,9 +16,9 @@ namespace ArangoDB.Client
 
         private bool? _disableChangeTracking;
 
-        SharedDatabaseSetting sharedSetting;
+        DatabaseSharedSetting sharedSetting;
 
-        public DatabaseSetting(SharedDatabaseSetting sharedSetting)
+        public DatabaseSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
             this.Cursor = new DatabaseCursorSetting(sharedSetting);
@@ -86,11 +86,11 @@ namespace ArangoDB.Client
 
     public class DatabaseLinqSetting
     {
-        SharedDatabaseSetting sharedSetting;
+        DatabaseSharedSetting sharedSetting;
 
         private Func<string, string> _translateGroupByIntoName;
 
-        public DatabaseLinqSetting(SharedDatabaseSetting sharedSetting)
+        public DatabaseLinqSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
         }
@@ -110,7 +110,7 @@ namespace ArangoDB.Client
 
     public class DatabaseCursorSetting
     {
-        SharedDatabaseSetting sharedSetting;
+        DatabaseSharedSetting sharedSetting;
 
         private int? _batchSize;
 
@@ -122,7 +122,7 @@ namespace ArangoDB.Client
 
         private List<string> _rules;
 
-        public DatabaseCursorSetting(SharedDatabaseSetting sharedSetting)
+        public DatabaseCursorSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
             this.Rules = new List<string>();
@@ -191,7 +191,7 @@ namespace ArangoDB.Client
 
     public class DatabaseDocumentSetting
     {
-        SharedDatabaseSetting sharedSetting;
+        DatabaseSharedSetting sharedSetting;
 
         private ReplacePolicy? _replacePolicy;
 
@@ -199,7 +199,7 @@ namespace ArangoDB.Client
 
         private bool? _keepNullAttributesOnUpdate;
 
-        public DatabaseDocumentSetting(SharedDatabaseSetting sharedSetting)
+        public DatabaseDocumentSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
         }

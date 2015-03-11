@@ -13,9 +13,9 @@ namespace ArangoDB.Client.Property
 {
     public class DocumentIdentifierModifier
     {
-        SharedDatabaseSetting setting;
+        DatabaseSharedSetting setting;
 
-        public DocumentIdentifierModifier(SharedDatabaseSetting setting)
+        public DocumentIdentifierModifier(DatabaseSharedSetting setting)
         {
             this.setting = setting;
         }
@@ -109,11 +109,21 @@ namespace ArangoDB.Client.Property
         Action<object, object> BuildSetAccessor(Type type, string memberName)
         {
             var propertyInfo = CommonUtility.GetProperty(type, memberName);
-            var setMethod = CommonUtility.GetSetMethod(propertyInfo);
-
-            if (setMethod != null)
+            if (propertyInfo != null)
             {
-                return BuildAccessor(setMethod);
+                var setMethod = CommonUtility.GetSetMethod(propertyInfo);
+
+                if (setMethod != null)
+                {
+                    return BuildAccessor(setMethod);
+                }
+            }
+
+            var memberInfo = CommonUtility.GetField(type, memberName);
+            if(memberInfo!=null)
+            {
+                var fieldInfo = memberInfo as FieldInfo;
+                return (x, y) => { fieldInfo.SetValue(x, y); };
             }
 
             return (x, y) => { };

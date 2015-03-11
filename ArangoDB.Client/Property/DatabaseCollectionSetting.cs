@@ -14,9 +14,9 @@ namespace ArangoDB.Client.Property
         ConcurrentDictionary<Type, CollectionPropertySetting> collectionProperties = new ConcurrentDictionary<Type, CollectionPropertySetting>();
         ConcurrentDictionary<IdentifierType, string> defaultIdentifierNames = new ConcurrentDictionary<IdentifierType, string>();
 
-        SharedDatabaseSetting setting;
+        DatabaseSharedSetting setting;
 
-        public DatabaseCollectionSetting(SharedDatabaseSetting setting)
+        public DatabaseCollectionSetting(DatabaseSharedSetting setting)
         {
             this.setting = setting;
         }

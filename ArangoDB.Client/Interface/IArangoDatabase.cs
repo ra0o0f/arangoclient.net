@@ -17,7 +17,7 @@ namespace ArangoDB.Client
 
         DocumentTracker ChangeTracker { get; set; }
 
-        SharedDatabaseSetting SharedSetting { get; set; }
+        DatabaseSharedSetting SharedSetting { get; set; }
 
         DatabaseSetting Setting { get; set; }
 

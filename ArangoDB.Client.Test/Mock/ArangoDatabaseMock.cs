@@ -37,7 +37,7 @@ namespace ArangoDB.Client.Test.Mock
 
         public ArangoDatabaseMock WithDefaultSetting()
         {
-            mockDB.Setup(x => x.SharedSetting).Returns(new SharedDatabaseSetting());
+            mockDB.Setup(x => x.SharedSetting).Returns(new DatabaseSharedSetting());
             mockDB.Setup(x => x.Setting).Returns(new DatabaseSetting(Db.SharedSetting));
 
             return this;

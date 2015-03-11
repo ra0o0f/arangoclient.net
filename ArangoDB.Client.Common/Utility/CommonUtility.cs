@@ -20,6 +20,11 @@ namespace ArangoDB.Client.Common.Utility
             return TypeExtensions.GetProperty(type, name);
         }
 
+        public static MemberInfo GetField(Type type,string name)
+        {
+            return TypeExtensions.GetField(type, name);
+        }
+
         public static MethodInfo GetSetMethod(PropertyInfo propertyInfo)
         {
             return TypeExtensions.GetSetMethod(propertyInfo);

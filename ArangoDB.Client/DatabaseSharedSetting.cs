@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
-    public class SharedDatabaseSetting
+    public class DatabaseSharedSetting
     {
-        public SharedDatabaseSetting()
+        public DatabaseSharedSetting()
         {
             Cursor = new DatabaseCursorSharedSetting();
             Linq = new DatabaseLinqSharedSetting();

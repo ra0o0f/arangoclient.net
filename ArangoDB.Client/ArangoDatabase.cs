@@ -18,13 +18,13 @@ namespace ArangoDB.Client
 {
     public partial class ArangoDatabase : IArangoDatabase
     {
-        private static ConcurrentDictionary<string, SharedDatabaseSetting> cachedSettings = new ConcurrentDictionary<string, SharedDatabaseSetting>();
+        private static ConcurrentDictionary<string, DatabaseSharedSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSharedSetting>();
 
         public DocumentTracker ChangeTracker { get; set; }
 
         public IHttpConnection Connection { get; set; }
 
-        public SharedDatabaseSetting SharedSetting { get; set; }
+        public DatabaseSharedSetting SharedSetting { get; set; }
 
         public DatabaseSetting Setting { get; set; }
 
@@ -39,7 +39,7 @@ namespace ArangoDB.Client
 
         public ArangoDatabase()
         {
-            SharedSetting = new SharedDatabaseSetting();
+            SharedSetting = new DatabaseSharedSetting();
             Setting = new DatabaseSetting(SharedSetting);
             Connection = new HttpConnection(this);
             ChangeTracker = new DocumentTracker(this);
@@ -52,7 +52,7 @@ namespace ArangoDB.Client
             SharedSetting.Url = url;
         }
 
-        public ArangoDatabase(SharedDatabaseSetting sharedSetting)
+        public ArangoDatabase(DatabaseSharedSetting sharedSetting)
             : this()
         {
             SharedSetting = sharedSetting;
@@ -63,7 +63,7 @@ namespace ArangoDB.Client
         /// Change setting for a specific identifier
         /// </summary>
         /// <param name="identifier">name of setting</param>
-        public static void ChangeSetting(string identifier, Action<SharedDatabaseSetting> action)
+        public static void ChangeSetting(string identifier, Action<DatabaseSharedSetting> action)
         {
             action(FindSetting(identifier));
         }
@@ -71,20 +71,20 @@ namespace ArangoDB.Client
         /// <summary>
         /// Change Default Setting
         /// </summary>
-        public static void ChangeSetting(Action<SharedDatabaseSetting> action)
+        public static void ChangeSetting(Action<DatabaseSharedSetting> action)
         {
             action(FindSetting("default"));
         }
 
-        static SharedDatabaseSetting FindSetting(string identifier)
+        static DatabaseSharedSetting FindSetting(string identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
                 throw new ArgumentNullException("Setting identifier");
 
-            SharedDatabaseSetting setting = null;
+            DatabaseSharedSetting setting = null;
             if (cachedSettings.TryGetValue(identifier, out setting))
             {
-                setting = new SharedDatabaseSetting();
+                setting = new DatabaseSharedSetting();
                 setting.SettingIdentifier = identifier;
 
             }
