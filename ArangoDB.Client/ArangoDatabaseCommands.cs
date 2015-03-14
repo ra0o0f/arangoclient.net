@@ -128,7 +128,7 @@ namespace ArangoDB.Client
                 Users = users
             };
 
-            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>(data).ConfigureAwait(false);
         }
 
         /// <summary>
