@@ -190,5 +190,35 @@ namespace ArangoDB.Client
 
             return result.Result;
         }
+
+        /// <summary>
+        /// Deletes a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <returns></returns>
+        public void DeleteDatabase(string name)
+        {
+            DeleteDatabaseAsync(name).WaitSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <param name="users">list of database user</param>
+        /// <returns></returns>
+        public async Task DeleteDatabaseAsync(string name)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Database,
+                Method = HttpMethod.Delete,
+                IsSystemCommand = true
+            };
+
+            command.Command = name;
+
+            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
+        }
     }
 }
