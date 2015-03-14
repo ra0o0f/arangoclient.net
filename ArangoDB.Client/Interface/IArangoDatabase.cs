@@ -381,6 +381,21 @@ namespace ArangoDB.Client
         /// <returns>CreateCollectionResult</returns>
         Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null, bool? doCompact = null, decimal? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null, string shardKeys = null);
+
+        /// <summary>
+        /// Deletes a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <returns></returns>
+        void DeleteDatabase(string name);
+
+        /// <summary>
+        /// Creates a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <param name="users">list of database user</param>
+        /// <returns></returns>
+        Task DeleteDatabaseAsync(string name);
         
     }
 }
