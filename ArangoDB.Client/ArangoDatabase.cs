@@ -28,7 +28,7 @@ namespace ArangoDB.Client
 
         public DatabaseSetting Setting { get; set; }
 
-        public static ClientSetting ClientSetting { get; private set; }
+        public static ClientSetting ClientSetting { get; set; }
 
         internal bool HttpInitialized { get; set; }
 

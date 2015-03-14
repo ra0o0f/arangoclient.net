@@ -9,6 +9,7 @@
 # Build results
 
 [Dd]ebug/
+[Pp]ackages/
 [Rr]elease/
 x64/
 build/
