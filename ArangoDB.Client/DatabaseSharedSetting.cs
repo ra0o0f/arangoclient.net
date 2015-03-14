@@ -78,6 +78,16 @@ namespace ArangoDB.Client
         internal DocumentIdentifierModifier IdentifierModifier;
     }
 
+    public class DatabaseSerializationSetting
+    {
+        public DatabaseSerializationSetting()
+        {
+            IgnoreOffsetForLocalDateTime = true;
+        }
+
+        public bool IgnoreOffsetForLocalDateTime { get; set; }
+    }
+
     public class DatabaseLinqSharedSetting
     {
         public Func<string,string> TranslateGroupByIntoName { get; set; }

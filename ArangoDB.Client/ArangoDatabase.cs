@@ -76,17 +76,20 @@ namespace ArangoDB.Client
             action(FindSetting("default"));
         }
 
-        static DatabaseSharedSetting FindSetting(string identifier)
+        static DatabaseSharedSetting FindSetting(string identifier,bool? throwIfNotFound=false)
         {
             if (string.IsNullOrWhiteSpace(identifier))
                 throw new ArgumentNullException("Setting identifier");
 
             DatabaseSharedSetting setting = null;
-            if (cachedSettings.TryGetValue(identifier, out setting))
+            if (!cachedSettings.TryGetValue(identifier, out setting))
             {
+                if (throwIfNotFound == true)
+                    throw new InvalidOperationException(string.Format("can not find identifier '{0}'",identifier));
+
                 setting = new DatabaseSharedSetting();
                 setting.SettingIdentifier = identifier;
-
+                cachedSettings.TryAdd(identifier, setting);
             }
             return setting;
         }
@@ -98,7 +101,7 @@ namespace ArangoDB.Client
 
         public static IArangoDatabase CreateWithSetting(string identifier)
         {
-            return new ArangoDatabase(FindSetting(identifier));
+            return new ArangoDatabase(FindSetting(identifier,true));
         }
 
         //public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)

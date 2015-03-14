@@ -113,6 +113,7 @@
     <Compile Include="Property\DocumentIdentifierModifier.cs" />
     <Compile Include="Property\DocumentPropertySetting.cs" />
     <Compile Include="Property\DocumentPropertyAttribute.cs" />
+    <Compile Include="Serialization\Converters\DateTimeConverter.cs" />
     <Compile Include="Serialization\Converters\QueryParameterConverter.cs" />
     <Compile Include="Serialization\DocumentContractResolver.cs" />
     <Compile Include="Serialization\DocumentParser.cs" />
