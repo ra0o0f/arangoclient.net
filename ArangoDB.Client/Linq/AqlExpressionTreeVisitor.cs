@@ -186,6 +186,10 @@ namespace ArangoDB.Client.Linq
                     return Expression.Not(operand);
                 }
             }
+            if(expression.NodeType == ExpressionType.Convert)
+            {
+                return VisitExpression(expression.Operand);
+            }
 
             return base.VisitUnaryExpression(expression);
         }
@@ -362,12 +366,6 @@ namespace ArangoDB.Client.Linq
             throw new NotSupportedException(string.Format("Constant value of type {0} cant be translate to aql", type.ToString()));
         }
 
-        //void VisitConstantGenericList<T>(T t,List<T> value)
-        //{
-        //    foreach (var v in value)
-        //        VisitConstantValue(v, t);
-        //}
-
         protected override Expression VisitMemberInitExpression(MemberInitExpression node)
         {
             //NewExpression n = this.VisitNew(node.NewExpression);
@@ -377,17 +375,28 @@ namespace ArangoDB.Client.Linq
             if (!TreatNewWithoutBracket)
                 ModelVisitor.QueryText.Append(" { ");
 
-            IEnumerable<MemberBinding> bindings = this.VisitMemberBindingList(node.Bindings);
+            //IEnumerable<MemberBinding> bindings = this.VisitMemberBindingList(node.Bindings);
+
+            int bindingIndex = -1;
+            foreach (var b in node.Bindings)
+            {
+                bindingIndex++;
+
+                VisitMemberBinding(b);
+
+                if(bindingIndex!=node.Bindings.Count-1)
+                    ModelVisitor.QueryText.Append(" , ");
+            }
 
             if (!TreatNewWithoutBracket)
                 ModelVisitor.QueryText.Append(" } ");
 
-            if (n != node.NewExpression || bindings != node.Bindings)
-            {
-                var e = Expression.MemberInit(n, bindings);
+            //if (n != node.NewExpression || bindings != node.Bindings)
+            //{
+            //    var e = Expression.MemberInit(n, bindings);
 
-                return e;
-            }
+            //    return e;
+            //}
 
             return node;
         }

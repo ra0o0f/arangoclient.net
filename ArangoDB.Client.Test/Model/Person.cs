@@ -14,6 +14,13 @@ namespace ArangoDB.Client.Test.Model
         public int Age { get; set; }
 
         public int Height { get; set; }
+
+        public Outfit Outfit { get; set; }
+    }
+
+    public class Outfit
+    {
+        public string Color { get; set; }
     }
 
     // for merged result test that cant be tracked by client

@@ -103,6 +103,8 @@
     <Compile Include="Linq\Clause\SkipTakeClause.cs" />
     <Compile Include="Linq\Clause\LimitExpressionNode.cs" />
     <Compile Include="Linq\Clause\TakeExpressionNode.cs" />
+    <Compile Include="Linq\Clause\UpdateAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\UpdateAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Grouping.cs" />
     <Compile Include="Linq\GroupQuerySource.cs" />
     <Compile Include="Linq\LinqUtility.cs" />

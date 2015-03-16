@@ -14,11 +14,25 @@ namespace ArangoDB.Client.Property
         ConcurrentDictionary<Type, CollectionPropertySetting> collectionProperties = new ConcurrentDictionary<Type, CollectionPropertySetting>();
         ConcurrentDictionary<IdentifierType, string> defaultIdentifierNames = new ConcurrentDictionary<IdentifierType, string>();
 
+        ConcurrentDictionary<Type,Dictionary<IdentifierType,Func<Type,string>>> defaultIdentifierNamesResolver = new ConcurrentDictionary<Type,Dictionary<IdentifierType,Func<Type,string>>>();
+
         DatabaseSharedSetting setting;
 
         public DatabaseCollectionSetting(DatabaseSharedSetting setting)
         {
             this.setting = setting;
+        }
+
+        public void ChangeIdentifierDefaultName(IdentifierType identifier, Func<Type,string> func)
+        {
+            if (IdentifierType.None == identifier)
+                throw new InvalidOperationException("Can not set default name for [IdentifierType.None]");
+
+            Dictionary<IdentifierType, Func<Type, string>> funcs = null;
+            //if(defaultIdentifierNamesResolver.TryGetValue())
+            //{
+            //    func.
+            //}
         }
 
         public void ChangeIdentifierDefaultName(IdentifierType identifier, string defaultName)
@@ -172,6 +186,8 @@ namespace ArangoDB.Client.Property
                 if(collectionAttribute.Naming== NamingConvention.ToCamelCase)
                     return StringUtils.ToCamelCase(memberName);
             }
+
+            /*************   default identifer setting for type   **************/
 
             /*************   default identifer setting   **************/
 

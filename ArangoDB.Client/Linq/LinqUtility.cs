@@ -47,6 +47,7 @@ namespace ArangoDB.Client.Linq
             customNodeTypeRegistry.Register(SkipExpressionNode.SupportedMethods, typeof(SkipExpressionNode));
             customNodeTypeRegistry.Register(GroupByExpressionNode.GroupBySupportedMethods, typeof(GroupByExpressionNode));
             customNodeTypeRegistry.Register(LimitExpressionNode.SupportedMethods, typeof(LimitExpressionNode));
+            customNodeTypeRegistry.Register(UpdateAndReturnExpressionNode.SupportedMethods, typeof(UpdateAndReturnExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderBySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderByDescendingSupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByDescendingExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.SelectManySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.SelectManyExpressionNode));
@@ -66,6 +67,7 @@ namespace ArangoDB.Client.Linq
 
             return queryParser;
         }
+        
 
         public static AqlModelVisitor FindParentModelVisitor(AqlModelVisitor modelVisitor)
         {

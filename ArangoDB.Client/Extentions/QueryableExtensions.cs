@@ -94,16 +94,28 @@ namespace ArangoDB.Client
 
         private static ConcurrentDictionary<string, MethodInfo> _cachedMethodInfos = new ConcurrentDictionary<string, MethodInfo>();
 
+        private static MethodInfo FindCachedMethod(string name,params Type[] arguments)
+        {
+            string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
+            return _cachedMethodInfos.GetOrAdd(key,
+                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
+                .Where(x => x.Name == name).First().MakeGenericMethod(arguments));
+        }
+
+        private static MethodInfo FindCachedMethod(string name, int argCount,int genericCount, params Type[] arguments)
+        {
+            string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
+            return _cachedMethodInfos.GetOrAdd(key,
+                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
+                .Where(x => x.Name == name && x.GetParameters().Count() == argCount && x.GetGenericArguments().Count()==genericCount).First().MakeGenericMethod(arguments));
+        }
+
         public static IQueryable<TResult> For<TSource, TCollection, TResult>(this IQueryable<TSource> source, 
             Expression<Func<TSource, IEnumerable<TCollection>>> collectionSelector, Expression<Func<TSource, TCollection, TResult>> resultSelector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("For",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "For").First().MakeGenericMethod(typeof(TSource), typeof(TCollection),typeof(TResult)));
-
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("For",typeof(TSource), typeof(TCollection),typeof(TResult)),
                     source.Expression,
                     Expression.Quote(collectionSelector),
                     Expression.Quote(resultSelector)));
@@ -111,26 +123,19 @@ namespace ArangoDB.Client
 
         public static IQueryable<IGrouping<TKey, TSource>> Collect<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Collect",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Collect").First().MakeGenericMethod(typeof(TSource), typeof(TKey)));
-
             return source.Provider.CreateQuery<IGrouping<TKey, TSource>>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Collect", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
 
         public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source,int offset, int count)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Limit",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Limit" && x.GetParameters().Count() == 3).First().MakeGenericMethod(typeof(TSource)));
-
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    methodInfo,
+                    // 3 parameter for providing 0 for offset
+                    FindCachedMethod("Limit", 3,0, typeof(TSource)),
                     source.Expression,
                     Expression.Constant(count),
                     Expression.Constant(offset)));
@@ -138,80 +143,91 @@ namespace ArangoDB.Client
 
         public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source, int count)
         {
-            // 3 parameter for providing 0 for offset
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Limit",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Limit" && x.GetParameters().Count()==3).First().MakeGenericMethod(typeof(TSource)));
+            return Limit<TSource>(source, 0, count);
+        }
 
-            return source.Provider.CreateQuery<TSource>(
+        public static IQueryable<TSource> Update<TSource>(this IQueryable<TSource> source,
+            Expression<Func<TSource, object>> withSelector, Expression<Func<TSource, object>> keySelector=null, bool? returnNewResult = null)
+        { return Update<TSource, TSource>(source, withSelector, keySelector, returnNewResult); }
+
+        public static IQueryable<TModified> Update<TSource, TModified>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector,
+            Expression<Func<TSource, object>> keySelector = null, bool? returnNewResult = null)
+        {
+            bool _returnModifiedResult = returnNewResult.HasValue;
+            bool _returnNewResult = returnNewResult.HasValue ? returnNewResult.Value : true;
+            Type type = typeof(TModified);
+            return Update<TSource, TModified>(source, withSelector, keySelector, _returnModifiedResult, _returnNewResult, typeof(TModified));
+        }
+
+        internal static IQueryable<TModified> Update<TSource, TModified>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector,
+             Expression<Func<TSource, object>> keySelector, bool returnModifiedResult, bool returnNewResult, Type type)
+        {
+            if (withSelector.Body.NodeType != ExpressionType.MemberInit &&
+                withSelector.Body.NodeType != ExpressionType.New)
+                throw new InvalidOperationException(@"IQueryable.Update() 'withSelector' argument should be initialize within the function:
+ for example use a defined type
+ db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
+ or an anonymous type
+ db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
+");
+
+
+            if (keySelector == null)
+                keySelector = x => null;
+
+            return source.Provider.CreateQuery<TModified>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Update", 6, 2, typeof(TSource), typeof(TModified)),
                     source.Expression,
-                    Expression.Constant(count),
-                    Expression.Constant(0)));
+                    Expression.Quote(withSelector),
+                    Expression.Quote(keySelector),
+                    Expression.Constant(returnModifiedResult),
+                    Expression.Constant(returnNewResult),
+                    Expression.Constant(type)
+                    ));
         }
 
         public static IQueryable<TResult> Return<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Return",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Return").First().MakeGenericMethod(typeof(TSource), typeof(TResult)));
-
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Return", typeof(TSource), typeof(TResult)),
                     source.Expression,
                     Expression.Quote(selector)));
         }
 
         public static IOrderedQueryable<TSource> Sort<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Sort",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Sort").First().MakeGenericMethod(typeof(TSource), typeof(TKey)));
-
             return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Sort", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
 
         public static IOrderedQueryable<TSource> SortDescending<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("SortDescending",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "SortDescending").First().MakeGenericMethod(typeof(TSource), typeof(TKey)));
-
             return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("SortDescending", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
 
         public static IQueryable<TResult> Let<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Let",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Let").First().MakeGenericMethod(typeof(TSource), typeof(TResult)));
-
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Let", typeof(TSource), typeof(TResult)),
                     source.Expression,
                     Expression.Quote(selector)));
         }
 
         public static IQueryable<TSource> Filter<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
-            MethodInfo methodInfo = _cachedMethodInfos.GetOrAdd("Filter",
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == "Filter").First().MakeGenericMethod(typeof(TSource)));
-            
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    methodInfo,
+                    FindCachedMethod("Filter", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(predicate)));
         }

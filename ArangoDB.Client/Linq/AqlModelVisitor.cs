@@ -20,7 +20,7 @@ namespace ArangoDB.Client.Linq
         public IArangoDatabase Db;
 
         public StringBuilder QueryText { get; set; }
-        
+
         public QueryData QueryData { get; set; }
 
         public QueryModel QueryModel { get; set; }
@@ -30,6 +30,12 @@ namespace ArangoDB.Client.Linq
         internal int ParameterNameCounter { get; set; }
 
         internal int GroupByNameCounter { get; set; }
+
+        public bool HaveCrudReturn { get; set; }
+
+        public bool HaveCrudModifiedReturn { get; set; }
+
+        public string CrudReturnType { get; set; }
 
         public AqlModelVisitor(IArangoDatabase db)
         {
@@ -55,9 +61,9 @@ namespace ArangoDB.Client.Linq
         {
             this.QueryModel = queryModel;
             var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
-            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType()) 
+            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
                 ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
-            
+
             if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
                 queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
 
@@ -66,7 +72,14 @@ namespace ArangoDB.Client.Linq
 
             queryModel.MainFromClause.Accept(this, queryModel);
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
-            queryModel.SelectClause.Accept(this, queryModel);
+
+            if (HaveCrudReturn)
+            {
+                if (HaveCrudModifiedReturn)
+                    QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudReturnType);
+            }
+            else
+                queryModel.SelectClause.Accept(this, queryModel);
 
             if (aggregateFunction != null)
                 QueryText.Append(" )) ");
@@ -115,7 +128,7 @@ namespace ArangoDB.Client.Linq
 
         public void VisitLetClause(LetClause letClause, QueryModel queryModel, Type lhsType)
         {
-            QueryText.AppendFormat(" let `{0}` = ", letClause.ItemName);
+            QueryText.AppendFormat(" let {0} = ", LinqUtility.ResolvePropertyName(letClause.ItemName));
             GetAqlExpression(letClause.LetExpression, queryModel);
         }
 
@@ -123,6 +136,31 @@ namespace ArangoDB.Client.Linq
         {
             QueryText.Append(" return ");
             GetAqlExpression(selectClause.Selector, queryModel);
+        }
+
+        public void VisitUpdateAndReturnClause(UpdateAndReturnClause updateAndReturnClause, QueryModel queryModel)
+        {
+            if (updateAndReturnClause.KeySelector != null)
+            {
+                QueryText.Append(" update ");
+
+                GetAqlExpression(updateAndReturnClause.KeySelector, queryModel);
+
+                QueryText.AppendFormat(" with ", LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
+            }
+            else
+            {
+                QueryText.AppendFormat(" update {0} with ", LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
+            }
+
+            GetAqlExpression(updateAndReturnClause.WithSelector, queryModel);
+
+            QueryText.AppendFormat(" in {0} ", LinqUtility.ResolveCollectionName(Db, (Type)(updateAndReturnClause.InCollection as ConstantExpression).Value));
+
+            HaveCrudReturn = true;
+            HaveCrudModifiedReturn = (bool)(updateAndReturnClause.ReturnModifiedResult as ConstantExpression).Value;
+            bool newResult = (bool)(updateAndReturnClause.ReturnNewResult as ConstantExpression).Value;
+            CrudReturnType = newResult ? "new" : "old";
         }
 
         public void VisitFilterClause(FilterClause filterClause, QueryModel queryModel, int index)
@@ -133,27 +171,16 @@ namespace ArangoDB.Client.Linq
 
         public void VisitSkipTakeClause(SkipTakeClause skipTakeClause, QueryModel queryModel, int index)
         {
-            if(skipTakeClause.TakeCount==null)
+            if (skipTakeClause.TakeCount == null)
                 throw new InvalidOperationException("in limit[skip & take functions] count[take function] should be specified");
 
             QueryText.AppendFormat("  limit ");
-            if (skipTakeClause != null && skipTakeClause.SkipCount!=null)
+            if (skipTakeClause != null && skipTakeClause.SkipCount != null)
             {
                 GetAqlExpression(skipTakeClause.SkipCount, queryModel);
                 QueryText.AppendFormat("  , ");
             }
             GetAqlExpression(skipTakeClause.TakeCount, queryModel);
-
-            //int? skipCount = skipTakeClause.GetConstantSkipCount();
-            //int? takeCount = skipTakeClause.GetConstantTakeCount();
-
-            //if (!takeCount.HasValue)
-            //    throw new InvalidOperationException("Skip() should be used with Take() in query");
-
-            //if (skipCount.HasValue)
-            //    QueryText.AppendFormat("  limit {0},{1} ", skipCount.Value, takeCount.Value);
-            //else
-            //    QueryText.AppendFormat("  limit {0} ", takeCount.Value);
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
