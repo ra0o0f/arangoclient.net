@@ -16,7 +16,8 @@ namespace ArangoDB.Client.Linq.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                               GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false,false,null)),
+                                                               GetSupportedMethod(() => QueryableExtensions.Update<object>(null,o=>null,o=>null))
+                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false,false,null)),
                                                                //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false,false)),
                                                                //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false)),
                                                                //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null)),
@@ -31,7 +32,7 @@ namespace ArangoDB.Client.Linq.Clause
         private readonly ResolvedExpressionCache<Expression> _cachedKeySelector;
 
         public UpdateAndReturnExpressionNode(MethodCallExpressionParseInfo parseInfo, LambdaExpression withSelector
-            , LambdaExpression keySelector, Expression returnModifiedResult, Expression returnNewResult, Expression inCollection)
+            , LambdaExpression keySelector)
             : base(parseInfo)
         {
             Utils.CheckNotNull("withSelector", withSelector);
@@ -48,10 +49,6 @@ namespace ArangoDB.Client.Linq.Clause
                 KeySelector = keySelector;
                 _cachedKeySelector = new ResolvedExpressionCache<Expression>(this);
             }
-
-            ReturnNewResult = returnNewResult;
-            ReturnModifiedResult = returnModifiedResult;
-            InCollection = inCollection;
         }
 
         public LambdaExpression WithSelector { get; private set; }
@@ -83,15 +80,12 @@ namespace ArangoDB.Client.Linq.Clause
         {
             Utils.CheckNotNull("queryModel", queryModel);
 
-            queryModel.BodyClauses.Add(new UpdateAndReturnClause(GetResolvedPredicate(clauseGenerationContext), WithSelector.Parameters[0].Name,
-                 KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null
-                 ,ReturnModifiedResult, ReturnNewResult,InCollection));
+            queryModel.BodyClauses.Add(new UpdateAndReturnClause(GetResolvedPredicate(clauseGenerationContext),
+                queryModel.MainFromClause.ItemName,
+                WithSelector.Parameters[0].Type,
+                KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null));
             
-
             return queryModel;
         }
     }
-
-
-
 }

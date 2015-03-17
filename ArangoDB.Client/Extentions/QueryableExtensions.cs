@@ -90,6 +90,22 @@ namespace ArangoDB.Client
             return source.AsAqlQueryable<T>().AsCursor();
         }
 
+        public static List<T> ToList<T>(this IAqlModifiable<T> source)
+        {
+            return ToList(source, true);
+        }
+
+        public static List<T> ToList<T>(this IAqlModifiable<T> source,bool returnNewResult)
+        {
+            var newSource = ReturnResult<T>(source, returnNewResult);
+            return newSource.AsAqlQueryable<T>().ToList();
+        }
+
+        public static void Execute<T>(this IAqlModifiable<T> source)
+        {
+            source.AsAqlQueryable<T>().ToList();
+        }
+
         /*Relinq Extentions*/
 
         private static ConcurrentDictionary<string, MethodInfo> _cachedMethodInfos = new ConcurrentDictionary<string, MethodInfo>();
@@ -146,43 +162,65 @@ namespace ArangoDB.Client
             return Limit<TSource>(source, 0, count);
         }
 
-        public static IQueryable<TSource> Update<TSource>(this IQueryable<TSource> source,
-            Expression<Func<TSource, object>> withSelector, Expression<Func<TSource, object>> keySelector=null, bool? returnNewResult = null)
-        { return Update<TSource, TSource>(source, withSelector, keySelector, returnNewResult); }
-
-        public static IQueryable<TModified> Update<TSource, TModified>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector,
-            Expression<Func<TSource, object>> keySelector = null, bool? returnNewResult = null)
+        public static IAqlModifiable<TSource> Update<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector)
         {
-            bool _returnModifiedResult = returnNewResult.HasValue;
-            bool _returnNewResult = returnNewResult.HasValue ? returnNewResult.Value : true;
-            Type type = typeof(TModified);
-            return Update<TSource, TModified>(source, withSelector, keySelector, _returnModifiedResult, _returnNewResult, typeof(TModified));
+            return Update<TSource>(source, withSelector, null);
         }
 
-        internal static IQueryable<TModified> Update<TSource, TModified>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector,
-             Expression<Func<TSource, object>> keySelector, bool returnModifiedResult, bool returnNewResult, Type type)
+        public static IAqlModifiable<TSource> Update<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
+            , Expression<Func<TSource, object>> keySelector)
         {
             if (withSelector.Body.NodeType != ExpressionType.MemberInit &&
                 withSelector.Body.NodeType != ExpressionType.New)
                 throw new InvalidOperationException(@"IQueryable.Update() 'withSelector' argument should be initialize within the function:
- for example use a defined type
- db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
- or an anonymous type
- db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
-");
-
+             for example use a defined type
+             db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
+             or an anonymous type
+             db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
+            ");
 
             if (keySelector == null)
                 keySelector = x => null;
 
-            return source.Provider.CreateQuery<TModified>(
+            var q = source.Provider.CreateQuery(
                 Expression.Call(
-                    FindCachedMethod("Update", 6, 2, typeof(TSource), typeof(TModified)),
+                    FindCachedMethod("Update",3,1, typeof(TSource)),
                     source.Expression,
                     Expression.Quote(withSelector),
+                    Expression.Quote(keySelector)
+                    ));
+
+            return q as IAqlModifiable<TSource>;
+        }
+
+        public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable source)
+        {
+            return source.Provider.CreateQuery<TResult>(
+                Expression.Call(
+                    FindCachedMethod("In", typeof(TResult)),
+                    source.Expression
+                    )) as IAqlModifiable<TResult>;
+        }
+
+        internal static IAqlModifiable<TResult> ReturnResult<TResult>(this IAqlModifiable<TResult> source,bool returnNewResult)
+        {
+            return source.Provider.CreateQuery<TResult>(
+                Expression.Call(
+                    FindCachedMethod("ReturnResult", typeof(TResult)),
+                    source.Expression,
+                    Expression.Constant(returnNewResult)
+                    )) as IAqlModifiable<TResult>;
+        }
+
+        internal static IQueryable<TModified> Remove<TSource, TModified>(this IQueryable<TSource> source,
+            Expression<Func<TSource, object>> keySelector, bool returnModifiedResult, Type type)
+        {
+            return source.Provider.CreateQuery<TModified>(
+                Expression.Call(
+                    FindCachedMethod("Remove", 6, 2, typeof(TSource), typeof(TModified)),
+                    source.Expression,
                     Expression.Quote(keySelector),
                     Expression.Constant(returnModifiedResult),
-                    Expression.Constant(returnNewResult),
                     Expression.Constant(type)
                     ));
         }

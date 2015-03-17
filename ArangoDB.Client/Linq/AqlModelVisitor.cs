@@ -31,16 +31,13 @@ namespace ArangoDB.Client.Linq
 
         internal int GroupByNameCounter { get; set; }
 
-        public bool HaveCrudReturn { get; set; }
-
-        public bool HaveCrudModifiedReturn { get; set; }
-
-        public string CrudReturnType { get; set; }
+        public VisitorCrudState CrudState { get; set; }
 
         public AqlModelVisitor(IArangoDatabase db)
         {
             QueryText = new StringBuilder();
             QueryData = new QueryData();
+            CrudState = new VisitorCrudState();
 
             this.Db = db;
         }
@@ -73,10 +70,11 @@ namespace ArangoDB.Client.Linq
             queryModel.MainFromClause.Accept(this, queryModel);
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
 
-            if (HaveCrudReturn)
+            if (CrudState.ModelVisitorHaveCrudOperation)
             {
-                if (HaveCrudModifiedReturn)
-                    QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudReturnType);
+                QueryText.AppendFormat(" in {0} ", CrudState.Collection);
+                if (CrudState.ReturnResult)
+                    QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudState.ReturnResultKind);
             }
             else
                 queryModel.SelectClause.Accept(this, queryModel);
@@ -155,12 +153,10 @@ namespace ArangoDB.Client.Linq
 
             GetAqlExpression(updateAndReturnClause.WithSelector, queryModel);
 
-            QueryText.AppendFormat(" in {0} ", LinqUtility.ResolveCollectionName(Db, (Type)(updateAndReturnClause.InCollection as ConstantExpression).Value));
-
-            HaveCrudReturn = true;
-            HaveCrudModifiedReturn = (bool)(updateAndReturnClause.ReturnModifiedResult as ConstantExpression).Value;
-            bool newResult = (bool)(updateAndReturnClause.ReturnNewResult as ConstantExpression).Value;
-            CrudReturnType = newResult ? "new" : "old";
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, updateAndReturnClause.CollectionType);
+            CrudState.ReturnResult = updateAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
         }
 
         public void VisitFilterClause(FilterClause filterClause, QueryModel queryModel, int index)

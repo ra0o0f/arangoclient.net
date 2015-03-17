@@ -265,7 +265,7 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
         {
             var db = DatabaseGenerator.Get();
 
-            var query = db.Query<Flight>().Update(f => new { Airline = "lufthansa" },keySelector: k => k.Key);
+            var query = db.Query<Flight>().Update(f => new { Airline = "lufthansa" }, keySelector: k => k.Key);
 
             var queryData = query.GetQueryData();
 
@@ -281,7 +281,7 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
         {
             var db = DatabaseGenerator.Get();
 
-            var query = db.Query<Flight>().Update(f => new Flight { Airline = "lufthansa" }, returnNewResult: true);
+            var query = db.Query<Flight>().Update(f => new Flight { Airline = "lufthansa" }).ReturnResult(true);
 
             var queryData = query.GetQueryData();
 
@@ -296,14 +296,15 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
         {
             var db = DatabaseGenerator.Get();
 
-            var query = db.Query<Flight>().Update(f => new Flight { Airline = "lufthansa" }, returnNewResult: false);
+            var query = db.Query<Flight>().Where(x => x.Code < 100).Update(f => new Flight { Airline = "lufthansa" }).ReturnResult(false);
 
             var queryData = query.GetQueryData();
 
-            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `f` in `Flight` update 
-`f` with { `Airline` : @P1 } in `Flight` let crudResult = old return crudResult".RemoveSpaces());
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` filter ( `x`.`Code` < @P1 ) update 
+`x` with { `Airline` : @P2 } in `Flight` let crudResult = old return crudResult".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "lufthansa");
+            Assert.Equal(queryData.BindVars[0].Value, 100);
+            Assert.Equal(queryData.BindVars[1].Value, "lufthansa");
         }
 
         [Fact]
@@ -311,7 +312,7 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
         {
             var db = DatabaseGenerator.Get();
 
-            var query = db.Query<Flight>().Update<Flight,Person>(f => new Flight { Airline = "lufthansa" }, returnNewResult: false);
+            var query = db.Query<Flight>().Update(f => new Flight { Airline = "lufthansa" }).In<Person>().ReturnResult(false);
 
             var queryData = query.GetQueryData();
 

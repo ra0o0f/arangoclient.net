@@ -69,6 +69,7 @@
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />
     <Compile Include="Extentions\AQL.cs" />
+    <Compile Include="Interface\IAqlModifiable.cs" />
     <Compile Include="Extentions\QueryableExtensions.cs" />
     <Compile Include="Http\HttpCommand.cs" />
     <Compile Include="Http\HttpConnection.cs" />
@@ -97,8 +98,12 @@
     <Compile Include="Linq\Clause\FilterExpressionNode.cs" />
     <Compile Include="Linq\Clause\GroupByClause.cs" />
     <Compile Include="Linq\Clause\GroupByExpressionNode.cs" />
+    <Compile Include="Linq\Clause\IModifyExpressionNode.cs" />
+    <Compile Include="Linq\Clause\InModifyExpressionNode.cs" />
     <Compile Include="Linq\Clause\LetClause.cs" />
     <Compile Include="Linq\Clause\LetExpressionNode.cs" />
+    <Compile Include="Linq\Clause\RemoveAndReturnExpressionNode.cs" />
+    <Compile Include="Linq\Clause\ReturnResultModifyExpressionNode.cs" />
     <Compile Include="Linq\Clause\SkipExpressionNode.cs" />
     <Compile Include="Linq\Clause\SkipTakeClause.cs" />
     <Compile Include="Linq\Clause\LimitExpressionNode.cs" />
@@ -109,6 +114,7 @@
     <Compile Include="Linq\GroupQuerySource.cs" />
     <Compile Include="Linq\LinqUtility.cs" />
     <Compile Include="Linq\NamedExpression.cs" />
+    <Compile Include="Linq\VisitorCrudState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property\CollectionPropertyAttribute.cs" />
     <Compile Include="Property\DatabaseCollectionSetting.cs" />
