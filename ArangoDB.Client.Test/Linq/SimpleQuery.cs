@@ -370,5 +370,56 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove 
 `x` in `Person` let crudResult = old return crudResult".RemoveSpaces());
         }
+
+        [Fact]
+        public void Insert()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Person>().Insert();
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Person` insert `x` in `Person`".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Insert_New()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Person>().Insert(p => new Person { Outfit = new Outfit { Color = "red" } });
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` insert { `Outfit` : { `Color` : @P1 } } in `Person`".RemoveSpaces());
+
+            Assert.Equal(queryData.BindVars[0].Value, "red");
+        }
+
+        [Fact]
+        public void Insert_WithResult()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Flight>().Insert().ReturnResult(false);
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` insert `x` in `Flight` let crudResult = new return crudResult".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Insert_InAnotherCollection()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Flight>().Insert().In<Person>().ReturnResult(false);
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` insert 
+`x` in `Person` let crudResult = new return crudResult".RemoveSpaces());
+        }
     }
 }

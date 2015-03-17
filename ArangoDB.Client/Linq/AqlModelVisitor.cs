@@ -144,7 +144,7 @@ namespace ArangoDB.Client.Linq
 
                 GetAqlExpression(updateAndReturnClause.KeySelector, queryModel);
 
-                QueryText.AppendFormat(" with ", LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
+                QueryText.AppendFormat(" with ");
             }
             else
             {
@@ -157,6 +157,25 @@ namespace ArangoDB.Client.Linq
             CrudState.Collection = LinqUtility.ResolveCollectionName(Db, updateAndReturnClause.CollectionType);
             CrudState.ReturnResult = updateAndReturnClause.ReturnResult;
             CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
+        }
+
+        public void VisitInsertAndReturnClause(InsertAndReturnClause insertAndReturnClause, QueryModel queryModel)
+        {
+            if (insertAndReturnClause.WithSelector != null)
+            {
+                QueryText.Append(" insert ");
+
+                GetAqlExpression(insertAndReturnClause.WithSelector, queryModel);
+            }
+            else
+            {
+                QueryText.AppendFormat(" insert {0} ", LinqUtility.ResolvePropertyName(insertAndReturnClause.ItemName));
+            }
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, insertAndReturnClause.CollectionType);
+            CrudState.ReturnResult = insertAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = "new";
         }
 
         public void VisitRemoveAndReturnClause(RemoveAndReturnClause removeAndReturnClause, QueryModel queryModel)

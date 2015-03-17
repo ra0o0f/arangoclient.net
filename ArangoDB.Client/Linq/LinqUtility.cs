@@ -49,6 +49,7 @@ namespace ArangoDB.Client.Linq
             customNodeTypeRegistry.Register(LimitExpressionNode.SupportedMethods, typeof(LimitExpressionNode));
             customNodeTypeRegistry.Register(UpdateAndReturnExpressionNode.SupportedMethods, typeof(UpdateAndReturnExpressionNode));
             customNodeTypeRegistry.Register(RemoveAndReturnExpressionNode.SupportedMethods, typeof(RemoveAndReturnExpressionNode));
+            customNodeTypeRegistry.Register(InsertAndReturnExpressionNode.SupportedMethods, typeof(InsertAndReturnExpressionNode));
             customNodeTypeRegistry.Register(InModifyExpressionNode.SupportedMethods, typeof(InModifyExpressionNode));
             customNodeTypeRegistry.Register(ReturnResultModifyExpressionNode.SupportedMethods, typeof(ReturnResultModifyExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderBySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByExpressionNode));

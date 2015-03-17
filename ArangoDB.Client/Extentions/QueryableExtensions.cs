@@ -186,7 +186,7 @@ namespace ArangoDB.Client
         {
             if (withSelector.Body.NodeType != ExpressionType.MemberInit &&
                 withSelector.Body.NodeType != ExpressionType.New)
-                throw new InvalidOperationException(@"IQueryable.Update() 'withSelector' argument should be initialize within the function:
+                throw new InvalidOperationException(@"IQueryable.Update() 'withSelector' object argument should be initialize within the function:
              for example use a defined type
              db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
              or an anonymous type
@@ -204,6 +204,41 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Quote(withSelector),
                     Expression.Quote(keySelector)
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+        }
+
+        public static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source)
+        {
+            return Insert(source, null);
+        }
+
+        public static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector)
+        {
+            return Insert(source, selector,typeof(TSource));
+        }
+
+        internal static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector, Type type)
+        {
+            if (selector!=null && selector.Body.NodeType != ExpressionType.MemberInit &&
+                selector.Body.NodeType != ExpressionType.New)
+                throw new InvalidOperationException(@"IQueryable.Insert() 'selector' object argument should be initialize within the function:
+             for example use a defined type
+             db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
+             or an anonymous type
+             db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
+            ");
+
+            if (selector == null)
+                selector = x => null;
+
+            source.AsAqlQueryable().StateValues["CrudFunction"] = "insert";
+
+            return source.Provider.CreateQuery<TSource>(
+                Expression.Call(
+                    FindCachedMethod("Insert", 3, 1, typeof(TSource)),
+                    source.Expression,
+                    Expression.Quote(selector),
+                    Expression.Constant(type)
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
         }
 

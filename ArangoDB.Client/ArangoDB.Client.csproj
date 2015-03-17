@@ -100,6 +100,8 @@
     <Compile Include="Linq\Clause\GroupByExpressionNode.cs" />
     <Compile Include="Linq\Clause\IModifyExpressionNode.cs" />
     <Compile Include="Linq\Clause\InModifyExpressionNode.cs" />
+    <Compile Include="Linq\Clause\InsertAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\InsertAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\LetClause.cs" />
     <Compile Include="Linq\Clause\LetExpressionNode.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnClause.cs" />
