@@ -11,90 +11,32 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq.Clause
 {
-    public class UpdateAndReturnClause : IBodyClause
+    public class UpdateAndReturnClause : IBodyClause, IModifyExpressionNode
     {
         private Expression _withSelector;
 
-        private Expression _returnNewResult;
+        public bool ReturnResult{get;set;}
 
-        private Expression _returnModifiedResult;
+        public bool ReturnNewResult { get; set; }
 
-        private Expression _inCollection;
+        public string ItemName { get; set; }
 
-        public string ItemName;
+        public Type CollectionType { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SelectClause"/> class.
         /// </summary>
         /// <param name="selector">The selector that projects the data items.</param>
-        public UpdateAndReturnClause(Expression withSelector,string itemName, Expression keySelector
-            , Expression returnModifiedResult, Expression returnNewResult,Expression inCollection)
+        public UpdateAndReturnClause(Expression withSelector,string itemName, Type collectionType, Expression keySelector)
         {
             Utils.CheckNotNull("selector", withSelector);
-            Utils.CheckNotNull("returnNewResult", returnNewResult);
 
             _withSelector = withSelector;
-            _returnNewResult = returnNewResult;
-            _returnModifiedResult = returnModifiedResult;
-            _inCollection = inCollection;
-
             KeySelector = keySelector;
 
             ItemName = itemName;
-        }
 
-        public Expression ReturnNewResult
-        {
-            get { return _returnNewResult; }
-            set
-            {
-                Utils.CheckNotNull("value", value);
-
-                var lambda = value as LambdaExpression;
-                if (lambda == null && value.Type != typeof(bool))
-                {
-                    var message = string.Format("The value expression returns '{0}', an expression returning 'System.Boolean' was expected.", value.Type);
-                    throw new ArgumentException(message, "value");
-                }
-
-                _returnNewResult = value;
-            }
-        }
-
-        public Expression ReturnModifiedResult
-        {
-            get { return _returnModifiedResult; }
-            set
-            {
-                Utils.CheckNotNull("value", value);
-
-                var lambda = value as LambdaExpression;
-                if (lambda == null && value.Type != typeof(bool))
-                {
-                    var message = string.Format("The value expression returns '{0}', an expression returning 'System.Boolean' was expected.", value.Type);
-                    throw new ArgumentException(message, "value");
-                }
-
-                _returnModifiedResult = value;
-            }
-        }
-
-        public Expression InCollection
-        {
-            get { return _inCollection; }
-            set
-            {
-                Utils.CheckNotNull("value", value);
-
-                var lambda = value as LambdaExpression;
-                if (lambda == null && value.Type != typeof(Type))
-                {
-                    var message = string.Format("The value expression returns '{0}', an expression returning 'System.Type' was expected.", value.Type);
-                    throw new ArgumentException(message, "value");
-                }
-
-                _inCollection = value;
-            }
+            CollectionType = collectionType;
         }
 
         public Expression WithSelector
@@ -132,7 +74,7 @@ namespace ArangoDB.Client.Linq.Clause
         {
             Utils.CheckNotNull("cloneContext", cloneContext);
 
-            var result = new UpdateAndReturnClause(WithSelector,ItemName,KeySelector,ReturnModifiedResult,ReturnNewResult,InCollection);
+            var result = new UpdateAndReturnClause(WithSelector,ItemName,CollectionType,KeySelector);
             return result;
         }
 
