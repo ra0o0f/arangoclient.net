@@ -11,11 +11,9 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq.Clause
 {
-    public class UpdateAndReturnClause : IBodyClause, IModifyExpressionNode
+    public class RemoveAndReturnClause : IBodyClause, IModifyExpressionNode
     {
-        private Expression _withSelector;
-
-        public bool ReturnResult{get;set;}
+        public bool ReturnResult { get; set; }
 
         public bool ReturnNewResult { get; set; }
 
@@ -27,22 +25,13 @@ namespace ArangoDB.Client.Linq.Clause
         /// Initializes a new instance of the <see cref="SelectClause"/> class.
         /// </summary>
         /// <param name="selector">The selector that projects the data items.</param>
-        public UpdateAndReturnClause(Expression withSelector,string itemName, Type collectionType, Expression keySelector)
+        public RemoveAndReturnClause(string itemName, Type collectionType, Expression keySelector)
         {
-            Utils.CheckNotNull("selector", withSelector);
-
-            _withSelector = withSelector;
             KeySelector = keySelector;
 
             ItemName = itemName;
 
             CollectionType = collectionType;
-        }
-
-        public Expression WithSelector
-        {
-            get { return _withSelector; }
-            set { _withSelector = Utils.CheckNotNull("value", value); }
         }
 
         public Expression KeySelector { get; set; }
@@ -62,7 +51,7 @@ namespace ArangoDB.Client.Linq.Clause
             if (aqlVisitor == null)
                 throw new Exception("QueryModelVisitor should be type of AqlModelVisitor");
 
-            aqlVisitor.VisitUpdateAndReturnClause(this, queryModel);
+            aqlVisitor.VisitRemoveAndReturnClause(this, queryModel);
         }
 
         /// <summary>
@@ -70,11 +59,11 @@ namespace ArangoDB.Client.Linq.Clause
         /// </summary>
         /// <param name="cloneContext">The clones of all query source clauses are registered with this <see cref="CloneContext"/>.</param>
         /// <returns>A clone of this clause.</returns>
-        public UpdateAndReturnClause Clone(CloneContext cloneContext)
+        public RemoveAndReturnClause Clone(CloneContext cloneContext)
         {
             Utils.CheckNotNull("cloneContext", cloneContext);
 
-            var result = new UpdateAndReturnClause(WithSelector,ItemName,CollectionType,KeySelector);
+            var result = new RemoveAndReturnClause(ItemName, CollectionType, KeySelector);
             return result;
         }
 
@@ -86,18 +75,12 @@ namespace ArangoDB.Client.Linq.Clause
         public virtual void TransformExpressions(Func<Expression, Expression> transformation)
         {
             Utils.CheckNotNull("transformation", transformation);
-            WithSelector = transformation(WithSelector);
             KeySelector = transformation(KeySelector);
         }
 
         IBodyClause IBodyClause.Clone(CloneContext cloneContext)
         {
             return Clone(cloneContext);
-        }
-
-        public override string ToString()
-        {
-            return "update " + FormattingExpressionTreeVisitor.Format(WithSelector);
         }
     }
 }

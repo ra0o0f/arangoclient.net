@@ -159,6 +159,25 @@ namespace ArangoDB.Client.Linq
             CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
         }
 
+        public void VisitRemoveAndReturnClause(RemoveAndReturnClause removeAndReturnClause, QueryModel queryModel)
+        {
+            if (removeAndReturnClause.KeySelector != null)
+            {
+                QueryText.Append(" remove ");
+
+                GetAqlExpression(removeAndReturnClause.KeySelector, queryModel);
+            }
+            else
+            {
+                QueryText.AppendFormat(" remove {0} ", LinqUtility.ResolvePropertyName(removeAndReturnClause.ItemName));
+            }
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, removeAndReturnClause.CollectionType);
+            CrudState.ReturnResult = removeAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = "old";
+        }
+
         public void VisitFilterClause(FilterClause filterClause, QueryModel queryModel, int index)
         {
             QueryText.Append(" filter ");

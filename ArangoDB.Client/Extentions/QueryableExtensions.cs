@@ -92,7 +92,21 @@ namespace ArangoDB.Client
 
         public static List<T> ToList<T>(this IAqlModifiable<T> source)
         {
-            return ToList(source, true);
+            bool returnNewResult = false;
+
+            switch(source.AsAqlQueryable().StateValues["CrudFunction"])
+            {
+                case "insert":
+                case "update":
+                case "replace":
+                    returnNewResult = true;
+                    break;
+                case "remove":
+                    returnNewResult = false;
+                    break;
+            }
+
+            return ToList(source, returnNewResult);
         }
 
         public static List<T> ToList<T>(this IAqlModifiable<T> source,bool returnNewResult)
@@ -182,15 +196,43 @@ namespace ArangoDB.Client
             if (keySelector == null)
                 keySelector = x => null;
 
-            var q = source.Provider.CreateQuery(
+            source.AsAqlQueryable().StateValues["CrudFunction"] = "update";
+
+            return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     FindCachedMethod("Update",3,1, typeof(TSource)),
                     source.Expression,
                     Expression.Quote(withSelector),
                     Expression.Quote(keySelector)
-                    ));
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+        }
 
-            return q as IAqlModifiable<TSource>;
+        public static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source)
+        {
+            return Remove(source, null);
+        }
+
+        public static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source,
+            Expression<Func<TSource, object>> keySelector)
+        {
+            return Remove(source, keySelector, typeof(TSource));
+        }
+
+        internal static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source,
+            Expression<Func<TSource, object>> keySelector,Type type)
+        {
+            if (keySelector == null)
+                keySelector = x => null;
+
+            source.AsAqlQueryable().StateValues["CrudFunction"] = "remove";
+
+            return  source.Provider.CreateQuery<TSource>(
+                Expression.Call(
+                    FindCachedMethod("Remove", 3, 1, typeof(TSource)),
+                    source.Expression,
+                    Expression.Quote(keySelector),
+                    Expression.Constant(type)
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
         }
 
         public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable source)
@@ -199,7 +241,7 @@ namespace ArangoDB.Client
                 Expression.Call(
                     FindCachedMethod("In", typeof(TResult)),
                     source.Expression
-                    )) as IAqlModifiable<TResult>;
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
         }
 
         internal static IAqlModifiable<TResult> ReturnResult<TResult>(this IAqlModifiable<TResult> source,bool returnNewResult)
@@ -209,20 +251,7 @@ namespace ArangoDB.Client
                     FindCachedMethod("ReturnResult", typeof(TResult)),
                     source.Expression,
                     Expression.Constant(returnNewResult)
-                    )) as IAqlModifiable<TResult>;
-        }
-
-        internal static IQueryable<TModified> Remove<TSource, TModified>(this IQueryable<TSource> source,
-            Expression<Func<TSource, object>> keySelector, bool returnModifiedResult, Type type)
-        {
-            return source.Provider.CreateQuery<TModified>(
-                Expression.Call(
-                    FindCachedMethod("Remove", 6, 2, typeof(TSource), typeof(TModified)),
-                    source.Expression,
-                    Expression.Quote(keySelector),
-                    Expression.Constant(returnModifiedResult),
-                    Expression.Constant(type)
-                    ));
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
         }
 
         public static IQueryable<TResult> Return<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)

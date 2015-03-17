@@ -18,4 +18,9 @@ namespace ArangoDB.Client
     {
 
     }
+
+    public interface IQueryableState
+    {
+        Dictionary<string, string> StateValues { get; set; }
+    }
 }

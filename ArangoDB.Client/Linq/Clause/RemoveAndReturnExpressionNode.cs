@@ -11,57 +11,56 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq.Clause
 {
-    //public class RemoveAndReturnExpressionNode : MethodCallExpressionNodeBase
-    //{
-    //    public static readonly MethodInfo[] SupportedMethods = new[]
-    //                                                            {
-    //                                                                GetSupportedMethod (() => QueryableExtensions.Remove<object,object>(null, o => null,false,null)),
-    //                                                            };
+    public class RemoveAndReturnExpressionNode : MethodCallExpressionNodeBase
+    {
+        public static readonly MethodInfo[] SupportedMethods = new[]
+                                                           {
+                                                               GetSupportedMethod(() => QueryableExtensions.Remove<object>(null,o=>null,null))
+                                                           };
 
-    //    private readonly ResolvedExpressionCache<Expression> _cachedKeySelector;
+        private readonly ResolvedExpressionCache<Expression> _cachedKeySelector;
 
-    //    public RemoveAndReturnExpressionNode(MethodCallExpressionParseInfo parseInfo, LambdaExpression keySelector,
-    //        Expression returnModifiedResult, Expression inCollection)
-    //        : base(parseInfo)
-    //    {
-    //        var keyConstant = keySelector.Body as ConstantExpression;
-    //        if (keyConstant ==null || keyConstant.Value != null)
-    //        {
-    //            KeySelector = keySelector;
-    //            _cachedKeySelector = new ResolvedExpressionCache<Expression>(this);
-    //        }
+        public RemoveAndReturnExpressionNode(MethodCallExpressionParseInfo parseInfo, LambdaExpression keySelector
+            ,ConstantExpression collection)
+            : base(parseInfo)
+        {
+            var keyConstant = keySelector.Body as ConstantExpression;
+            if (keyConstant == null || keyConstant.Value != null)
+            {
+                KeySelector = keySelector;
+                _cachedKeySelector = new ResolvedExpressionCache<Expression>(this);
+            }
 
-    //        ReturnModifiedResult = returnModifiedResult;
-    //        InCollection = inCollection;
-    //    }
+            Collection = collection;
+        }
 
-    //    public LambdaExpression KeySelector { get; private set; }
-    //    public Expression ReturnModifiedResult { get; private set; }
-    //    public Expression InCollection { get; private set; }
+        public LambdaExpression KeySelector { get; private set; }
 
-    //    public Expression GetResolvedKeyPredicate(ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        return _cachedKeySelector.GetOrCreate(r => r.GetResolvedExpression(KeySelector.Body, KeySelector.Parameters[0], clauseGenerationContext));
-    //    }
+        public ConstantExpression Collection { get; private set; }
 
-    //    public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        Utils.CheckNotNull("inputParameter", inputParameter);
-    //        Utils.CheckNotNull("expressionToBeResolved", expressionToBeResolved);
+        public Expression GetResolvedKeyPredicate(ClauseGenerationContext clauseGenerationContext)
+        {
+            return _cachedKeySelector.GetOrCreate(r => r.GetResolvedExpression(KeySelector.Body, KeySelector.Parameters[0], clauseGenerationContext));
+        }
 
-    //        return Source.Resolve(inputParameter, expressionToBeResolved, clauseGenerationContext);
-    //    }
+        public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
+        {
+            Utils.CheckNotNull("inputParameter", inputParameter);
+            Utils.CheckNotNull("expressionToBeResolved", expressionToBeResolved);
 
-    //    protected override QueryModel ApplyNodeSpecificSemantics(QueryModel queryModel, ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        Utils.CheckNotNull("queryModel", queryModel);
+            return Source.Resolve(inputParameter, expressionToBeResolved, clauseGenerationContext);
+        }
 
-    //        queryModel.BodyClauses.Add(new RemoveAndReturnClause(GetResolvedPredicate(clauseGenerationContext), WithSelector.Parameters[0].Name,
-    //             KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null
-    //             , ReturnModifiedResult, ReturnNewResult, InCollection));
+        protected override QueryModel ApplyNodeSpecificSemantics(QueryModel queryModel, ClauseGenerationContext clauseGenerationContext)
+        {
+            Utils.CheckNotNull("queryModel", queryModel);
 
+            queryModel.BodyClauses.Add(new RemoveAndReturnClause(
+                queryModel.MainFromClause.ItemName,
+                (Type)Collection.Value,
+                KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null));
 
-    //        return queryModel;
-    //    }
-    //}
+            return queryModel;
+        }
+    }
 }

@@ -102,6 +102,7 @@
     <Compile Include="Linq\Clause\InModifyExpressionNode.cs" />
     <Compile Include="Linq\Clause\LetClause.cs" />
     <Compile Include="Linq\Clause\LetExpressionNode.cs" />
+    <Compile Include="Linq\Clause\RemoveAndReturnClause.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\ReturnResultModifyExpressionNode.cs" />
     <Compile Include="Linq\Clause\SkipExpressionNode.cs" />

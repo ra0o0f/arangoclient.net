@@ -17,15 +17,6 @@ namespace ArangoDB.Client.Linq.Clause
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
                                                                GetSupportedMethod(() => QueryableExtensions.Update<object>(null,o=>null,o=>null))
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false,false,null)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false,false)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null, false)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null, o => null)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object,object>(null, o => null)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object>(null, o => null, o => null, false,false)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object>(null, o => null, o => null, false)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object>(null, o => null, o => null)),
-                                                               //GetSupportedMethod (() => QueryableExtensions.Update<object>(null, o => null))
                                                            };
 
         private readonly ResolvedExpressionCache<Expression> _cachedWithSelector;
@@ -53,10 +44,6 @@ namespace ArangoDB.Client.Linq.Clause
 
         public LambdaExpression WithSelector { get; private set; }
         public LambdaExpression KeySelector { get; private set; }
-
-        public Expression ReturnNewResult { get; private set; }
-        public Expression ReturnModifiedResult { get; private set; }
-        public Expression InCollection { get; private set; }
 
         public Expression GetResolvedPredicate(ClauseGenerationContext clauseGenerationContext)
         {

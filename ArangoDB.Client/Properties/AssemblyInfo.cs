@@ -15,7 +15,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
+
 [assembly: InternalsVisibleTo("ArangoDB.Client.Test")]
+[assembly: InternalsVisibleTo("ClientTesting")]
 
 // Version information for an assembly consists of the following four values:
 //

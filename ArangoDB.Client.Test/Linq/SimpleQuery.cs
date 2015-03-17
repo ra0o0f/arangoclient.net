@@ -321,5 +321,54 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
 
             Assert.Equal(queryData.BindVars[0].Value, "lufthansa");
         }
+
+        [Fact]
+        public void Remove()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Person>().Remove();
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Person` remove `x` in `Person`".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Remove_WithKey()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Flight>().Remove(keySelector: x => x.Key);
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove `x`.`_key` in `Flight`".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Remove_WithResult()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Flight>().Remove().ReturnResult(false);
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove `x` in `Flight` let crudResult = old return crudResult".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Remove_InAnotherCollection()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Flight>().Remove().In<Person>().ReturnResult(false);
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove 
+`x` in `Person` let crudResult = old return crudResult".RemoveSpaces());
+        }
     }
 }
