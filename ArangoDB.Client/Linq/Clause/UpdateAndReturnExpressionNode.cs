@@ -16,14 +16,14 @@ namespace ArangoDB.Client.Linq.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                               GetSupportedMethod(() => QueryableExtensions.Update<object>(null,o=>null,o=>null))
+                                                               GetSupportedMethod(() => QueryableExtensions.UpdateReplace<object>(null,o=>null,o=>null,null))
                                                            };
 
         private readonly ResolvedExpressionCache<Expression> _cachedWithSelector;
         private readonly ResolvedExpressionCache<Expression> _cachedKeySelector;
 
         public UpdateAndReturnExpressionNode(MethodCallExpressionParseInfo parseInfo, LambdaExpression withSelector
-            , LambdaExpression keySelector)
+            , LambdaExpression keySelector,ConstantExpression command)
             : base(parseInfo)
         {
             Utils.CheckNotNull("withSelector", withSelector);
@@ -40,10 +40,14 @@ namespace ArangoDB.Client.Linq.Clause
                 KeySelector = keySelector;
                 _cachedKeySelector = new ResolvedExpressionCache<Expression>(this);
             }
+
+            Command = command;
         }
 
         public LambdaExpression WithSelector { get; private set; }
         public LambdaExpression KeySelector { get; private set; }
+
+        public ConstantExpression Command { get; private set; }
 
         public Expression GetResolvedPredicate(ClauseGenerationContext clauseGenerationContext)
         {
@@ -70,7 +74,8 @@ namespace ArangoDB.Client.Linq.Clause
             queryModel.BodyClauses.Add(new UpdateAndReturnClause(GetResolvedPredicate(clauseGenerationContext),
                 queryModel.MainFromClause.ItemName,
                 WithSelector.Parameters[0].Type,
-                KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null));
+                KeySelector != null ? GetResolvedKeyPredicate(clauseGenerationContext) : null,
+                Command.Value.ToString()));
             
             return queryModel;
         }

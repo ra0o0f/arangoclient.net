@@ -184,26 +184,47 @@ namespace ArangoDB.Client
         public static IAqlModifiable<TSource> Update<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
             , Expression<Func<TSource, object>> keySelector)
         {
+            return UpdateReplace(source, withSelector, keySelector, "update");
+        }
+
+        public static IAqlModifiable<TSource> Replace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector)
+        {
+            return Replace<TSource>(source, withSelector, null);
+        }
+
+        public static IAqlModifiable<TSource> Replace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
+            , Expression<Func<TSource, object>> keySelector)
+        {
+            return UpdateReplace(source, withSelector, keySelector, "replace");
+        }
+
+        internal static IAqlModifiable<TSource> UpdateReplace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
+            , Expression<Func<TSource, object>> keySelector,string command)
+        {
+
             if (withSelector.Body.NodeType != ExpressionType.MemberInit &&
                 withSelector.Body.NodeType != ExpressionType.New)
-                throw new InvalidOperationException(@"IQueryable.Update() 'withSelector' object argument should be initialize within the function:
+            {
+                throw new InvalidOperationException(string.Format(@"IQueryable.{0}() 'withSelector' object argument should be initialize within the function:
              for example use a defined type
              db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
              or an anonymous type
              db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
-            ");
+            ",command == "replace" ? "Replace()" : "Update()"));
+            }
 
             if (keySelector == null)
                 keySelector = x => null;
 
-            source.AsAqlQueryable().StateValues["CrudFunction"] = "update";
+            source.AsAqlQueryable().StateValues["CrudFunction"] = command;
 
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("Update",3,1, typeof(TSource)),
+                    FindCachedMethod("UpdateReplace",typeof(TSource)),
                     source.Expression,
                     Expression.Quote(withSelector),
-                    Expression.Quote(keySelector)
+                    Expression.Quote(keySelector),
+                    Expression.Constant(command)
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
         }
 

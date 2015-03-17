@@ -23,11 +23,13 @@ namespace ArangoDB.Client.Linq.Clause
 
         public Type CollectionType { get; set; }
 
+        public string Command { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SelectClause"/> class.
         /// </summary>
         /// <param name="selector">The selector that projects the data items.</param>
-        public UpdateAndReturnClause(Expression withSelector,string itemName, Type collectionType, Expression keySelector)
+        public UpdateAndReturnClause(Expression withSelector,string itemName, Type collectionType, Expression keySelector,string command)
         {
             Utils.CheckNotNull("selector", withSelector);
 
@@ -37,6 +39,8 @@ namespace ArangoDB.Client.Linq.Clause
             ItemName = itemName;
 
             CollectionType = collectionType;
+
+            Command = command;
         }
 
         public Expression WithSelector
@@ -74,7 +78,7 @@ namespace ArangoDB.Client.Linq.Clause
         {
             Utils.CheckNotNull("cloneContext", cloneContext);
 
-            var result = new UpdateAndReturnClause(WithSelector,ItemName,CollectionType,KeySelector);
+            var result = new UpdateAndReturnClause(WithSelector,ItemName,CollectionType,KeySelector,Command);
             return result;
         }
 

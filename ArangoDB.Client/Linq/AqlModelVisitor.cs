@@ -140,7 +140,7 @@ namespace ArangoDB.Client.Linq
         {
             if (updateAndReturnClause.KeySelector != null)
             {
-                QueryText.Append(" update ");
+                QueryText.AppendFormat(" {0} ", updateAndReturnClause.Command);
 
                 GetAqlExpression(updateAndReturnClause.KeySelector, queryModel);
 
@@ -148,7 +148,7 @@ namespace ArangoDB.Client.Linq
             }
             else
             {
-                QueryText.AppendFormat(" update {0} with ", LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
+                QueryText.AppendFormat(" {0} {1} with ", updateAndReturnClause.Command, LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
             }
 
             GetAqlExpression(updateAndReturnClause.WithSelector, queryModel);
