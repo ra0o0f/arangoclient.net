@@ -1,6 +1,7 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json;
 using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Data;
+using ArangoDB.Client.Serialization.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -76,7 +77,12 @@ namespace ArangoDB.Client.Serialization
         {
             var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings 
             { 
-                ContractResolver = new DocumentContractResolver(db)
+                ContractResolver = new DocumentContractResolver(db),
+                Converters = new JsonConverter[] 
+                {
+                    new DateTimeConverter(db)
+                },
+                DateParseHandling = DateParseHandling.None
             });
 
             return jsonSerializer;

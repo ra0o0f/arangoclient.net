@@ -110,7 +110,7 @@ namespace ArangoDB.Client
         //}
 
         /// <summary>
-        /// Get Document JsonObject and Identifiers
+        /// Get Loaded Document JsonObject and Identifiers
         /// </summary>
         /// <param name="id">id of document</param>
         /// <returns>A DocumentContainer</returns>
@@ -120,7 +120,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Get Document JsonObject and Identifiers
+        /// Get Loaded Document JsonObject and Identifiers
         /// </summary>
         /// <param name="id">document object</param>
         /// <returns>A DocumentContainer</returns>

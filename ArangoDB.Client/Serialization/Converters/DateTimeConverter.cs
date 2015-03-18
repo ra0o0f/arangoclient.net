@@ -20,22 +20,17 @@ namespace ArangoDB.Client.Serialization.Converters
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var date = value as DateTime?;
-            if(date.HasValue)
-            {
-                if (date.Value.Kind == DateTimeKind.Utc)
-                    writer.WriteValue(date.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture));
-                else
-                    writer.WriteValue(date.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffff", CultureInfo.InvariantCulture));
-
-                return;
-            }
-
             var dateOffset = value as DateTimeOffset?;
             if (dateOffset.HasValue)
             {
                 writer.WriteValue(dateOffset.Value.ToString("o", CultureInfo.InvariantCulture));
+                return;
+            }
 
+            var date = value as DateTime?;
+            if(date.HasValue)
+            {
+                writer.WriteValue(date.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffff", CultureInfo.InvariantCulture));
                 return;
             }
 
@@ -47,19 +42,19 @@ namespace ArangoDB.Client.Serialization.Converters
             if (reader.TokenType == JsonToken.Null)
                 return null;
 
-            //if (reader.TokenType == JsonToken.Date)
-            //{
-            //    if (objectType == typeof(DateTimeOffset))
-            //        return reader.Value is DateTimeOffset ? reader.Value : new DateTimeOffset((DateTime)reader.Value);
+            if (reader.TokenType == JsonToken.Date)
+            {
+                if (objectType == typeof(DateTimeOffset))
+                    return reader.Value is DateTimeOffset ? reader.Value : new DateTimeOffset((DateTime)reader.Value);
 
-            //    return reader.Value;
-            //}
+                return reader.Value;
+            }
 
             if (reader.TokenType != JsonToken.String)
                 throw new Exception(string.Format("Unexpected token parsing date. Expected String, got {0}.",reader.TokenType.ToString()));
 
 
-            var time = existingValue as string;
+            var time = reader.Value as string;
 
             if (time == null)
                 return null;
