@@ -62,7 +62,7 @@ namespace ArangoDB.Client
         {
             this.db = db;
             collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-            //property = GetCollectionProperty(typeof(T));
+            collectionType = type;
         }
 
         //public ArangoCollection(ArangoDatabase db, string name)

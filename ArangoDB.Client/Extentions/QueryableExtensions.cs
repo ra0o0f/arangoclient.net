@@ -90,29 +90,65 @@ namespace ArangoDB.Client
             return source.AsAqlQueryable<T>().AsCursor();
         }
 
+        /*crud extentions*/
+
+        public static void ForEach<T>(this IAqlModifiable<T> source, Action<T> action)
+        {
+            ForEach<T>(source, x => action(x), IsNewResult(source));
+        }
+
+        public static void ForEach<T>(this IAqlModifiable<T> source, Action<T> action, bool returnNewResult)
+        {
+            var newSource = ReturnResult<T>(source, returnNewResult);
+            newSource.AsAqlQueryable<T>().ForEach(x => action(x));
+        }
+
+        public static async Task<List<T>> ToListAsync<T>(this IAqlModifiable<T> source)
+        {
+            return await ToListAsync<T>(source, IsNewResult(source));
+        }
+
+        public static async Task<List<T>> ToListAsync<T>(this IAqlModifiable<T> source, bool returnNewResult)
+        {
+            var newSource = ReturnResult<T>(source, returnNewResult);
+            return await source.AsAqlQueryable<T>().ToListAsync().ConfigureAwait(false);
+        }
+
+        public static async Task ForEachAsync<T>(this IAqlModifiable<T> source, Action<T> action)
+        {
+            await ForEachAsync<T>(source, action, IsNewResult(source)).ConfigureAwait(false);
+        }
+
+        public static async Task ForEachAsync<T>(this IAqlModifiable<T> source, Action<T> action, bool returnNewResult)
+        {
+            var newSource = ReturnResult<T>(source, returnNewResult);
+            await newSource.AsAqlQueryable<T>().ForEachAsync(x => action(x)).ConfigureAwait(false);
+        }
+
         public static List<T> ToList<T>(this IAqlModifiable<T> source)
         {
-            bool returnNewResult = false;
-
-            switch(source.AsAqlQueryable().StateValues["CrudFunction"])
-            {
-                case "insert":
-                case "update":
-                case "replace":
-                    returnNewResult = true;
-                    break;
-                case "remove":
-                    returnNewResult = false;
-                    break;
-            }
-
-            return ToList(source, returnNewResult);
+            return ToList(source, IsNewResult(source));
         }
 
         public static List<T> ToList<T>(this IAqlModifiable<T> source,bool returnNewResult)
         {
             var newSource = ReturnResult<T>(source, returnNewResult);
             return newSource.AsAqlQueryable<T>().ToList();
+        }
+
+        private static bool IsNewResult<T>(IAqlModifiable<T> source)
+        {
+            switch (source.AsAqlQueryable().StateValues["CrudFunction"])
+            {
+                case "insert":
+                case "update":
+                case "replace":
+                    return true;
+                case "remove":
+                    return false;
+                default:
+                    return false;
+            }
         }
 
         public static void Execute<T>(this IAqlModifiable<T> source)
