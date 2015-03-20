@@ -35,9 +35,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> SaveAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> InsertAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null)
         {
-            return await Collection<T>().SaveAsync(document, createCollection, waitForSync).ConfigureAwait(false);
+            return await Collection<T>().InsertAsync(document, createCollection, waitForSync).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Save<T>(object document, bool? createCollection = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Insert<T>(object document, bool? createCollection = null, bool? waitForSync = null)
         {
-            return Collection<T>().Save(document, createCollection, waitForSync);
+            return Collection<T>().Insert(document, createCollection, waitForSync);
         }
 
         /// <summary>
@@ -61,9 +61,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult SaveEdge<T>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
+        public DocumentIdentifierResult InsertEdge<T>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
         {
-            return EdgeCollection<T>().SaveEdge(from, to, edgeDocument, createCollection, waitForSync);
+            return EdgeCollection<T>().InsertEdge(from, to, edgeDocument, createCollection, waitForSync);
         }
 
         /// <summary>
@@ -75,9 +75,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> SaveEdgeAsync<T>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> InsertEdgeAsync<T>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
         {
-            return await EdgeCollection<T>().SaveEdgeAsync(from, to, edgeDocument, createCollection, waitForSync).ConfigureAwait(false);
+            return await EdgeCollection<T>().InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -65,7 +65,7 @@ namespace ArangoDB.Client.ChangeTracking
             }
             catch (KeyNotFoundException e)
             {
-                throw new Exception(string.Format("No tracked document found for {0}, change tracking maybe disabled", id), e);
+                throw new Exception(string.Format("No tracked document found for {0}, change tracking is maybe disabled", id), e);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ArangoDB.Client.ChangeTracking
             }
             catch(KeyNotFoundException e)
             {
-                throw new Exception("No tracked document found, change tracking maybe disabled", e);
+                throw new Exception("No tracked document found, change tracking is maybe disabled", e);
             }
         }
 
