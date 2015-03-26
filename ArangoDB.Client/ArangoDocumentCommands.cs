@@ -378,10 +378,44 @@ namespace ArangoDB.Client
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
         /// <returns>Returns a cursor</returns>
-        public ICursor<T> Near<T>(double latitude, double longitude, string distance=null, string geo=null
+        public ICursor<T> Near<T>(double latitude, double longitude, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
             return Collection<T>().Near(latitude, longitude, distance, geo, skip, limit, batchSize);
+        }
+
+        /// <summary>
+        /// Finds documents within a given radius around the coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="radius">The maximal radius</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Within<T>(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            return Collection<T>().Within(latitude, longitude, radius, distance, geo, skip, limit, batchSize);
+        }
+
+        /// <summary>
+        /// Finds all documents from the collection that match the fulltext query
+        /// </summary>
+        /// <param name="attribute">The attribute that contains the texts</param>
+        /// <param name="query">The fulltext query</param>
+        /// <param name="index">The identifier of the fulltext-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Fulltext<T>(Expression<Func<T, object>> attribute, string query, string index=null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            return Collection<T>().Fulltext(attribute, query, index, skip, limit, batchSize);
         }
     }
 }

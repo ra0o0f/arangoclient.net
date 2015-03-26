@@ -25,16 +25,25 @@ namespace ArangoDB.Client.Data
         public object Example { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Distance { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Geo { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string Query { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string Index { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public double? Radius { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Attribute { get; set; }

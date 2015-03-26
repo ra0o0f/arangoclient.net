@@ -656,12 +656,12 @@ namespace ArangoDB.Client
         /// <param name="latitude">The latitude of the coordinate</param>
         /// <param name="longitude">The longitude of the coordinate</param>
         /// <param name="distance">If True, distances are returned in meters</param>
-        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
         /// <param name="skip">The number of documents to skip in the query</param>
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
         /// <returns>Returns a cursor</returns>
-        public ICursor<T> Near(double latitude, double longitude, string distance=null, string geo=null
+        public ICursor<T> Near(double latitude, double longitude, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
             batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
@@ -670,7 +670,7 @@ namespace ArangoDB.Client
             {
                 Latitude = latitude,
                 Longitude = longitude,
-                Distance = distance,
+                Distance = distance!=null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
                 Geo = geo,
                 BatchSize = batchSize,
                 Collection = collectionName,
@@ -683,6 +683,82 @@ namespace ArangoDB.Client
                 Api = CommandApi.Simple,
                 Method = HttpMethod.Put,
                 Command = "near"
+            };
+
+            return command.CreateCursor<T>(data);
+        }
+
+        /// <summary>
+        /// Finds documents within a given radius around the coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="radius">The maximal radius</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Within(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                Radius = radius,
+                Distance = distance != null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
+                Geo = geo,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "within"
+            };
+
+            return command.CreateCursor<T>(data);
+        }
+
+        /// <summary>
+        /// Finds all documents from the collection that match the fulltext query
+        /// </summary>
+        /// <param name="attribute">The attribute that contains the texts</param>
+        /// <param name="query">The fulltext query</param>
+        /// <param name="index">The identifier of the fulltext-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Attribute = db.SharedSetting.Collection.ResolvePropertyName(attribute),
+                Query = query,
+                Index = index,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "fulltext"
             };
 
             return command.CreateCursor<T>(data);
