@@ -366,5 +366,22 @@ namespace ArangoDB.Client
         {
             return Collection<T>().Range(attribute, left, right, closed, skip, limit, batchSize);
         }
+
+        /// <summary>
+        /// Finds documents near the given coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Near<T>(double latitude, double longitude, string distance=null, string geo=null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            return Collection<T>().Near(latitude, longitude, distance, geo, skip, limit, batchSize);
+        }
     }
 }

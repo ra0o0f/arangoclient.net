@@ -651,6 +651,44 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Finds documents near the given coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Near(double latitude, double longitude, string distance=null, string geo=null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                Distance = distance,
+                Geo = geo,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "near"
+            };
+
+            return command.CreateCursor<T>(data);
+        }
+
+        /// <summary>
         /// Returns the first document matching a given example
         /// </summary>
         /// <param name="example">The example document</param>
