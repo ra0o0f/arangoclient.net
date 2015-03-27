@@ -70,5 +70,8 @@ namespace ArangoDB.Client
         public static double Abs(double value) { throw e; }
         public static double Sqrt(double value) { throw e; }
         public static double Rand(double value) { throw e; }
+
+        /*object-document*/
+        public static T Merge<T>(object document1, object document2) { throw e; }
     }
 }

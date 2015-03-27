@@ -498,5 +498,30 @@ return { `byAgebyHeight` : ( for `b` in `byAge` collect `Height` = `b`.`p`.`Heig
 
             Assert.Equal(queryData.BindVars[0].Value, "lufthansa");
         }
+
+        [Fact]
+        public void Subquery()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = from p in db.Query<Person>()
+                        let flights = from f in db.Query<Flight>() select f
+                        select new { p, flights };
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` 
+let `flights` = ( for `f` in `Flight` return `f` )
+return { `p` : `p` , `flights` : `flights` }".RemoveSpaces());
+        }
+
+        //[Fact]
+        //public void Join()
+        //{
+        //    var db = DatabaseGenerator.Get();
+
+        //    var query = from p in db.Query<Person>()
+        //                from 
+        //}
     }
 }

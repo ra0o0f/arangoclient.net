@@ -22,7 +22,9 @@ namespace ArangoDB.Client.Linq
         static Dictionary<string, string> aqlMethods;
         public AqlModelVisitor ModelVisitor;
 
-        public bool TreatNewWithoutBracket;
+        public bool TreatNewWithoutBracket { get; set; }
+
+        public bool HandleJoin { get; set; }
 
         static AqlExpressionTreeVisitor()
         {
@@ -90,6 +92,9 @@ namespace ArangoDB.Client.Linq
                 {"Sqrt","sqrt"},
                 {"Rand","rand"},
                 
+                /*object-document*/
+                {"Merge","merge"},
+
                 /*numeric*/
                 //{"",""},
                 //{"",""},
@@ -427,12 +432,15 @@ namespace ArangoDB.Client.Linq
 
         protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
-            ModelVisitor.QueryText.Append(" ( ");
+            if(!HandleJoin)
+                ModelVisitor.QueryText.Append(" ( ");
             var visitor = new AqlModelVisitor(ModelVisitor.Db);
             visitor.QueryText = this.ModelVisitor.QueryText;
             visitor.ParnetModelVisitor = this.ModelVisitor;
             visitor.VisitQueryModel(expression.QueryModel);
-            ModelVisitor.QueryText.Append(" ) ");
+
+            if (!HandleJoin)
+                ModelVisitor.QueryText.Append(" ) ");
 
             return expression;
         }

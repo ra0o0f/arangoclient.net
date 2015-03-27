@@ -44,7 +44,7 @@ namespace ArangoDB.Client
                                                                GetSupportedMethod (
                                                                    () => Enumerable.SelectMany<object, object[]> (null, o => null)),
                                                                GetSupportedMethod (
-                                                                   () => For<object, object[], object> (null, o => null, null))
+                                                                   () => For<object, object> (null, o => null))
                                                            };
 
         static MethodInfo GetSupportedMethod<T>(Expression<Func<T>> methodCall)
@@ -176,15 +176,25 @@ namespace ArangoDB.Client
                 .Where(x => x.Name == name && x.GetParameters().Count() == argCount && x.GetGenericArguments().Count()==genericCount).First().MakeGenericMethod(arguments));
         }
 
-        public static IQueryable<TResult> For<TSource, TCollection, TResult>(this IQueryable<TSource> source, 
-            Expression<Func<TSource, IEnumerable<TCollection>>> collectionSelector, Expression<Func<TSource, TCollection, TResult>> resultSelector)
+        //public static IQueryable<TResult> For<TSource, TCollection, TResult>(this IQueryable<TSource> source,
+        //    Expression<Func<TSource, IEnumerable<TCollection>>> collectionSelector, Expression<Func<TSource, TCollection, TResult>> resultSelector)
+        //{
+        //    return source.Provider.CreateQuery<TResult>(
+        //        Expression.Call(
+        //            FindCachedMethod("For", typeof(TSource), typeof(TCollection), typeof(TResult)),
+        //            source.Expression,
+        //            Expression.Quote(collectionSelector),
+        //            Expression.Quote(resultSelector)));
+        //}
+
+        public static IQueryable<TResult> For<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("For",typeof(TSource), typeof(TCollection),typeof(TResult)),
+                    FindCachedMethod("For", typeof(TSource), typeof(TResult)),
                     source.Expression,
-                    Expression.Quote(collectionSelector),
-                    Expression.Quote(resultSelector)));
+                    Expression.Quote(selector)
+                    ));
         }
 
         public static IQueryable<IGrouping<TKey, TSource>> Collect<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)

@@ -33,6 +33,8 @@ namespace ArangoDB.Client.Linq
 
         public VisitorCrudState CrudState { get; set; }
 
+        public bool DontReturn { get; set; }
+
         public AqlModelVisitor(IArangoDatabase db)
         {
             QueryText = new StringBuilder();
@@ -76,7 +78,7 @@ namespace ArangoDB.Client.Linq
                 if (CrudState.ReturnResult)
                     QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudState.ReturnResultKind);
             }
-            else
+            else if(!DontReturn)
                 queryModel.SelectClause.Accept(this, queryModel);
 
             if (aggregateFunction != null)
@@ -96,8 +98,17 @@ namespace ArangoDB.Client.Linq
 
         public override void VisitAdditionalFromClause(AdditionalFromClause fromClause, QueryModel queryModel, int index)
         {
-            string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
-            QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            var subQuery = fromClause.FromExpression as SubQueryExpression;
+            if (subQuery != null)
+            {
+                this.DontReturn = true;
+                GetAqlExpression(subQuery, queryModel, handleJoin: true);
+            }
+            else
+            {
+                string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
+                QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            }
         }
 
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
@@ -267,10 +278,11 @@ namespace ArangoDB.Client.Linq
 
         }
 
-        private void GetAqlExpression(Expression expression, QueryModel queryModel, bool? TreatNewWithoutBracket = false)
+        private void GetAqlExpression(Expression expression, QueryModel queryModel, bool? treatNewWithoutBracket = false,bool? handleJoin=false)
         {
             var visitor = new AqlExpressionTreeVisitor(this);
-            visitor.TreatNewWithoutBracket = TreatNewWithoutBracket.Value;
+            visitor.TreatNewWithoutBracket = treatNewWithoutBracket.Value;
+            visitor.HandleJoin = handleJoin.Value;
             visitor.VisitExpression(expression);
         }
     }

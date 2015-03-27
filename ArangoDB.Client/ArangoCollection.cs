@@ -159,7 +159,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
 
-            if (!db.Setting.DisableChangeTracking == true)
+            if (!db.Setting.DisableChangeTracking)
             {
                 var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
                 if (container != null)
