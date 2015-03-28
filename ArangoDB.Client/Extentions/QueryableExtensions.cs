@@ -168,24 +168,22 @@ namespace ArangoDB.Client
                 .Where(x => x.Name == name).First().MakeGenericMethod(arguments));
         }
 
-        private static MethodInfo FindCachedMethod(string name, int argCount,int genericCount, params Type[] arguments)
+        private static MethodInfo FindCachedDefaultMethod(string name, params Type[] arguments)
+        {
+            return FindCachedDefaultMethod(name, "default", arguments);
+        }
+
+        private static MethodInfo FindCachedDefaultMethod(string name, string defaultMethod, params Type[] arguments)
         {
             string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
             return _cachedMethodInfos.GetOrAdd(key,
                 typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == name && x.GetParameters().Count() == argCount && x.GetGenericArguments().Count()==genericCount).First().MakeGenericMethod(arguments));
+                .Where(x => 
+                    x.GetCustomAttribute<DefaultExtentionAttribute>() != null 
+                    && x.GetCustomAttribute<DefaultExtentionAttribute>().Name == defaultMethod
+                    && x.Name == name)
+                .First().MakeGenericMethod(arguments));
         }
-
-        //public static IQueryable<TResult> For<TSource, TCollection, TResult>(this IQueryable<TSource> source,
-        //    Expression<Func<TSource, IEnumerable<TCollection>>> collectionSelector, Expression<Func<TSource, TCollection, TResult>> resultSelector)
-        //{
-        //    return source.Provider.CreateQuery<TResult>(
-        //        Expression.Call(
-        //            FindCachedMethod("For", typeof(TSource), typeof(TCollection), typeof(TResult)),
-        //            source.Expression,
-        //            Expression.Quote(collectionSelector),
-        //            Expression.Quote(resultSelector)));
-        //}
 
         public static IQueryable<TResult> For<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
         {
@@ -206,12 +204,13 @@ namespace ArangoDB.Client
                     Expression.Quote(keySelector)));
         }
 
+        [DefaultExtention]
         public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source,int offset, int count)
         {
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     // 3 parameter for providing 0 for offset
-                    FindCachedMethod("Limit", 3,0, typeof(TSource)),
+                    FindCachedMethod("Limit", typeof(TSource)),
                     source.Expression,
                     Expression.Constant(count),
                     Expression.Constant(offset)));
@@ -284,6 +283,7 @@ namespace ArangoDB.Client
             return Insert(source, selector,typeof(TSource));
         }
 
+        [DefaultExtention]
         internal static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector, Type type)
         {
             if (selector!=null && selector.Body.NodeType != ExpressionType.MemberInit &&
@@ -302,7 +302,7 @@ namespace ArangoDB.Client
 
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("Insert", 3, 1, typeof(TSource)),
+                    FindCachedDefaultMethod("Insert", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(selector),
                     Expression.Constant(type)
@@ -320,6 +320,7 @@ namespace ArangoDB.Client
             return Remove(source, keySelector, typeof(TSource));
         }
 
+        [DefaultExtention]
         internal static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source,
             Expression<Func<TSource, object>> keySelector,Type type)
         {
@@ -330,7 +331,7 @@ namespace ArangoDB.Client
 
             return  source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("Remove", 3, 1, typeof(TSource)),
+                    FindCachedDefaultMethod("Remove", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(keySelector),
                     Expression.Constant(type)
@@ -383,14 +384,40 @@ namespace ArangoDB.Client
                     Expression.Quote(keySelector)));
         }
 
-        public static IQueryable<TResult> Let<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)
+        [DefaultExtention(Name = "Let1")]
+        public static IQueryable<TResult> Let<TSource, TLet, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TLet>> letSelector, Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> querySelector)
         {
+            //Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> newQuerySelector =
+            //    Expression.Lambda<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>>(
+            //        querySelector.Body,
+            //         new ParameterExpression[] { Expression.Parameter(typeof(IQueryable<TSource>)), querySelector.Parameters[1] }
+            //    );
+
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("Let", typeof(TSource), typeof(TResult)),
+                    FindCachedDefaultMethod("Let", "Let1", typeof(TSource), typeof(TLet), typeof(TResult)),
                     source.Expression,
-                    Expression.Quote(selector)));
+                    Expression.Quote(letSelector),
+                    Expression.Quote(querySelector)));
         }
+
+        //public static IQueryable<TResult> Let<TSource, TLet, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TLet>> letSelector, Expression<Func<TLet, IQueryable<TResult>>> querySelector)
+        //{
+        //    Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> newQuerySelector =
+        //        Expression.Lambda<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>>(
+        //            querySelector.Body,
+        //             new ParameterExpression[] { Expression.Parameter(typeof(IQueryable<TSource>)), querySelector.Parameters[0], querySelector.Parameters[1] }
+        //        );
+
+        //    return Let(source, letSelector, newQuerySelector);
+            
+        //    //return source.Provider.CreateQuery<TResult>(
+        //    //    Expression.Call(
+        //    //        FindCachedDefaultMethod("Let", "Let2", typeof(TSource), typeof(TLet), typeof(TResult)),
+        //    //        source.Expression,
+        //    //        Expression.Quote(letSelector),
+        //    //        Expression.Quote(querySelector)));
+        //}
 
         public static IQueryable<TSource> Filter<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {

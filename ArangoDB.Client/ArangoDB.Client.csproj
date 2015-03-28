@@ -97,6 +97,7 @@
     <Compile Include="Linq\AqlQueryProvider.cs" />
     <Compile Include="Linq\Clause\FilterClause.cs" />
     <Compile Include="Linq\Clause\FilterExpressionNode.cs" />
+    <Compile Include="Linq\Clause\LetLambdaExpressionNode.cs" />
     <Compile Include="Linq\Clause\GroupByClause.cs" />
     <Compile Include="Linq\Clause\GroupByExpressionNode.cs" />
     <Compile Include="Linq\Clause\IModifyExpressionNode.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Linq\Clause\TakeExpressionNode.cs" />
     <Compile Include="Linq\Clause\UpdateAndReturnClause.cs" />
     <Compile Include="Linq\Clause\UpdateAndReturnExpressionNode.cs" />
+    <Compile Include="Linq\DefaultExtentionAttribute.cs" />
     <Compile Include="Linq\Grouping.cs" />
     <Compile Include="Linq\GroupQuerySource.cs" />
     <Compile Include="Linq\LinqUtility.cs" />

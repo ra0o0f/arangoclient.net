@@ -43,6 +43,7 @@ namespace ArangoDB.Client.Linq
             //Register new clause type
             customNodeTypeRegistry.Register(FilterExpressionNode.SupportedMethods, typeof(FilterExpressionNode));
             customNodeTypeRegistry.Register(LetSelectExpressionNode.SupportedMethods, typeof(LetSelectExpressionNode));
+            customNodeTypeRegistry.Register(LetLambdaExpressionNode.SupportedMethods, typeof(LetLambdaExpressionNode));
             customNodeTypeRegistry.Register(TakeExpressionNode.SupportedMethods, typeof(TakeExpressionNode));
             customNodeTypeRegistry.Register(SkipExpressionNode.SupportedMethods, typeof(SkipExpressionNode));
             customNodeTypeRegistry.Register(GroupByExpressionNode.GroupBySupportedMethods, typeof(GroupByExpressionNode));

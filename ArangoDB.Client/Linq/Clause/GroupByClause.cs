@@ -19,11 +19,11 @@ namespace ArangoDB.Client.Linq.Clause
 
         public string IntoName;
 
-        public Func<string, string> funcIntoName;
+        public Func<string, string> FuncIntoName;
 
         string intoIdentifier;
 
-        public readonly string FromParameterName;
+        public string FromParameterName;
 
         public readonly bool GroupOnLastGroup;
 
@@ -37,23 +37,21 @@ namespace ArangoDB.Client.Linq.Clause
             if (memberExoression!=null && ((memberExoression.Expression as QuerySourceReferenceExpression).ReferencedQuerySource as MainFromClause).FromExpression.Type.Name == "IGrouping`2")
                 GroupOnLastGroup = true;
 
-            //intoName = "C" + Guid.NewGuid().ToString("N").Substring(0, 11);
-
             this.intoIdentifier = intoIdentifier;
 
             this.lambdaSelector = lambdaSelector;
 
             this.Visited = false;
 
-            this.FromParameterName = lambdaSelector.Parameters[0].Name;
+            //this.FromParameterName = lambdaSelector.Parameters[0].Name;
 
             _selector = selector;
         }
 
         public string TranslateIntoName()
         {
-            if (funcIntoName != null)
-                return funcIntoName(intoIdentifier);
+            if (FuncIntoName != null)
+                return FuncIntoName(intoIdentifier);
             else
                 return IntoName;
         }

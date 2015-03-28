@@ -27,13 +27,17 @@ namespace ArangoDB.Client.Linq
 
         public AqlModelVisitor ParnetModelVisitor { get; set; }
 
-        internal int ParameterNameCounter { get; set; }
+        public int ParameterNameCounter { get; set; }
 
-        internal int GroupByNameCounter { get; set; }
+        public int GroupByNameCounter { get; set; }
 
         public VisitorCrudState CrudState { get; set; }
 
         public bool DontReturn { get; set; }
+
+        public bool IgnoreFromClause { get; set; }
+
+        public string DefaultAssociatedIdentifier { get; set; }
 
         public AqlModelVisitor(IArangoDatabase db)
         {
@@ -58,7 +62,11 @@ namespace ArangoDB.Client.Linq
 
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            if (DefaultAssociatedIdentifier != null)
+                queryModel.MainFromClause.ItemName = DefaultAssociatedIdentifier;
+
             this.QueryModel = queryModel;
+            
             var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
             var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
                 ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
@@ -69,7 +77,9 @@ namespace ArangoDB.Client.Linq
             if (aggregateFunction != null)
                 QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
-            queryModel.MainFromClause.Accept(this, queryModel);
+            if(!IgnoreFromClause)
+                queryModel.MainFromClause.Accept(this, queryModel);
+
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
 
             if (CrudState.ModelVisitorHaveCrudOperation)
@@ -114,7 +124,7 @@ namespace ArangoDB.Client.Linq
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
             if (fromClause.FromExpression as SubQueryExpression != null)
-                throw new Exception("MainFromClause.FromExpression cant be SubQueryExpression because group by is handle in itself clause class");
+                throw new Exception("MainFromClause.FromExpression cant be SubQueryExpression because group by is handle in itself clause");
 
             string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
 
@@ -130,7 +140,14 @@ namespace ArangoDB.Client.Linq
                 fromName = LinqUtility.ResolvePropertyName(fromName);
             }
 
-            QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            if (fromClause.FromExpression.NodeType == ExpressionType.Constant
+                || fromClause.FromExpression.Type.Name == "IGrouping`2")
+                QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            else
+            {
+                QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                GetAqlExpression(fromClause.FromExpression, queryModel);
+            }
 
             base.VisitMainFromClause(fromClause, queryModel);
         }
@@ -139,6 +156,13 @@ namespace ArangoDB.Client.Linq
         {
             QueryText.AppendFormat(" let {0} = ", LinqUtility.ResolvePropertyName(letClause.ItemName));
             GetAqlExpression(letClause.LetExpression, queryModel);
+
+            var subQuery = letClause.SubqueryExpression as SubQueryExpression;
+            if (subQuery != null)
+            {
+                GetAqlExpression(subQuery, queryModel, handleLet: true);
+                this.DontReturn = true;
+            }
         }
 
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
@@ -239,7 +263,8 @@ namespace ArangoDB.Client.Linq
             var parentMVisitor = LinqUtility.FindParentModelVisitor(this);
             parentMVisitor.GroupByNameCounter++;
             groupByClause.IntoName = "C" + parentMVisitor.GroupByNameCounter;
-            groupByClause.funcIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
+            groupByClause.FuncIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
+            groupByClause.FromParameterName = queryModel.MainFromClause.ItemName;
 
             QueryText.Append(" collect ");
 
@@ -278,11 +303,14 @@ namespace ArangoDB.Client.Linq
 
         }
 
-        private void GetAqlExpression(Expression expression, QueryModel queryModel, bool? treatNewWithoutBracket = false,bool? handleJoin=false)
+        private void GetAqlExpression(Expression expression, QueryModel queryModel,
+            bool? treatNewWithoutBracket = false, bool? handleJoin = false, bool? handleLet = false)
         {
             var visitor = new AqlExpressionTreeVisitor(this);
             visitor.TreatNewWithoutBracket = treatNewWithoutBracket.Value;
+            visitor.QueryModel = queryModel;
             visitor.HandleJoin = handleJoin.Value;
+            visitor.HandleLet = handleLet.Value;
             visitor.VisitExpression(expression);
         }
     }

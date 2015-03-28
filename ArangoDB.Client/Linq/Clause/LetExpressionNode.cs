@@ -21,7 +21,7 @@ namespace ArangoDB.Client.Linq.Clause
                                                            {
                                                                GetSupportedMethod (() => Queryable.Select<object, object> (null, o => null)),
                                                                GetSupportedMethod (() => Enumerable.Select<object, object> (null, o => null)),
-                                                               GetSupportedMethod (() => QueryableExtensions.Let<object, object> (null, o => null)),
+                                                               //GetSupportedMethod (() => QueryableExtensions.Let<object, object> (null, o => null)),
                                                                GetSupportedMethod (() => QueryableExtensions.Return<object, object> (null, o => null))
                                                            };
 
@@ -130,69 +130,5 @@ namespace ArangoDB.Client.Linq.Clause
             return base.ApplyNodeSpecificSemantics(queryModel, clauseGenerationContext);
         }
     }
-
-    //public class LetExpressionNode : MethodCallExpressionNodeBase
-    //{
-    //    public static readonly MethodInfo[] SupportedMethods = new[]
-    //                                                       {
-    //                                                           GetSupportedMethod (() => QueryableExtensions.Let<object, object> (null, o => null))
-    //                                                       };
-
-    //    private readonly ResolvedExpressionCache<Expression> _cachedSelector;
-
-    //    public LetExpressionNode(MethodCallExpressionParseInfo parseInfo, LambdaExpression selector)
-    //        : base(parseInfo)
-    //    {
-    //        Utils.CheckNotNull("selector", selector);
-
-    //        if (selector.Parameters.Count != 1)
-    //            throw new ArgumentException("Selector must have exactly one parameter.", "selector");
-
-    //        Selector = selector;
-    //        _cachedSelector = new ResolvedExpressionCache<Expression>(this);
-    //    }
-
-    //    public LambdaExpression Selector { get; private set; }
-
-    //    public Expression GetResolvedSelector(ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        return _cachedSelector.GetOrCreate(r => r.GetResolvedExpression(Selector.Body, Selector.Parameters[0], clauseGenerationContext));
-    //    }
-
-    //    //public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
-    //    //{
-    //    //    Utils.CheckNotNull("inputParameter", inputParameter);
-    //    //    Utils.CheckNotNull("expressionToBeResolved", expressionToBeResolved);
-
-    //    //    return Source.Resolve(inputParameter, expressionToBeResolved, clauseGenerationContext);
-    //    //}
-
-    //    public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        Utils.CheckNotNull("inputParameter", inputParameter);
-    //        Utils.CheckNotNull("expressionToBeResolved", expressionToBeResolved);
-
-    //        // we modify the structure of the stream of data coming into this node by our selector,
-    //        // so we first resolve the selector, then we substitute the result for the inputParameter in the expressionToBeResolved
-    //        var resolvedSelector = GetResolvedSelector(clauseGenerationContext);
-    //        return ReplacingExpressionTreeVisitor.Replace(inputParameter, resolvedSelector, expressionToBeResolved);
-    //    }
-
-    //    protected override QueryModel ApplyNodeSpecificSemantics(QueryModel queryModel, ClauseGenerationContext clauseGenerationContext)
-    //    {
-    //        Utils.CheckNotNull("queryModel", queryModel);
-
-    //        queryModel.BodyClauses.Add(new LetClause(GetResolvedSelector(clauseGenerationContext), Selector.Parameters[0].Type));
-
-    //        return queryModel;
-    //    }
-
-    //    //protected override QueryModel ApplyNodeSpecificSemantics(QueryModel queryModel, ClauseGenerationContext clauseGenerationContext)
-    //    //{
-    //    //    Utils.CheckNotNull("queryModel", queryModel);
-    //    //    queryModel.SelectClause.Selector = GetResolvedSelector(clauseGenerationContext);
-    //    //    return queryModel;
-    //    //}
-    //}
 }
 
