@@ -277,7 +277,7 @@ namespace ArangoDB.Client.Linq
             parentModelVisitor.ParameterNameCounter++;
             string parameterName = "P" + parentModelVisitor.ParameterNameCounter;
 
-            this.ModelVisitor.QueryData.BindVars.Add(new QueryParameter() { Name = parameterName, Value = expression.Value });
+            parentModelVisitor.QueryData.BindVars.Add(new QueryParameter() { Name = parameterName, Value = expression.Value });
 
             ModelVisitor.QueryText.AppendFormat(" @{0} ", parameterName);
 

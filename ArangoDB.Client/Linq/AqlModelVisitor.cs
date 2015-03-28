@@ -77,7 +77,7 @@ namespace ArangoDB.Client.Linq
             if (aggregateFunction != null)
                 QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
-            if(!IgnoreFromClause)
+            if (!IgnoreFromClause && queryModel.MainFromClause.ItemType != typeof(AQL))
                 queryModel.MainFromClause.Accept(this, queryModel);
 
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
@@ -114,10 +114,15 @@ namespace ArangoDB.Client.Linq
                 this.DontReturn = true;
                 GetAqlExpression(subQuery, queryModel, handleJoin: true);
             }
-            else
+            else if(fromClause.FromExpression.Type.Name == "AqlQueryable`1")
             {
                 string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
                 QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            }
+            else
+            {
+                QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                GetAqlExpression(fromClause.FromExpression, queryModel);
             }
         }
 
@@ -142,7 +147,15 @@ namespace ArangoDB.Client.Linq
 
             if (fromClause.FromExpression.NodeType == ExpressionType.Constant
                 || fromClause.FromExpression.Type.Name == "IGrouping`2")
-                QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            {
+                if (fromClause.FromExpression.Type.Name == "AqlQueryable`1" || fromClause.FromExpression.Type.Name == "IGrouping`2")
+                    QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+                else
+                {
+                    QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                    GetAqlExpression(fromClause.FromExpression, queryModel);
+                }
+            }
             else
             {
                 QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));

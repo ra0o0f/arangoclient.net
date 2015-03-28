@@ -387,12 +387,6 @@ namespace ArangoDB.Client
         [DefaultExtention(Name = "Let1")]
         public static IQueryable<TResult> Let<TSource, TLet, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TLet>> letSelector, Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> querySelector)
         {
-            //Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> newQuerySelector =
-            //    Expression.Lambda<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>>(
-            //        querySelector.Body,
-            //         new ParameterExpression[] { Expression.Parameter(typeof(IQueryable<TSource>)), querySelector.Parameters[1] }
-            //    );
-
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     FindCachedDefaultMethod("Let", "Let1", typeof(TSource), typeof(TLet), typeof(TResult)),
@@ -400,24 +394,6 @@ namespace ArangoDB.Client
                     Expression.Quote(letSelector),
                     Expression.Quote(querySelector)));
         }
-
-        //public static IQueryable<TResult> Let<TSource, TLet, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TLet>> letSelector, Expression<Func<TLet, IQueryable<TResult>>> querySelector)
-        //{
-        //    Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> newQuerySelector =
-        //        Expression.Lambda<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>>(
-        //            querySelector.Body,
-        //             new ParameterExpression[] { Expression.Parameter(typeof(IQueryable<TSource>)), querySelector.Parameters[0], querySelector.Parameters[1] }
-        //        );
-
-        //    return Let(source, letSelector, newQuerySelector);
-            
-        //    //return source.Provider.CreateQuery<TResult>(
-        //    //    Expression.Call(
-        //    //        FindCachedDefaultMethod("Let", "Let2", typeof(TSource), typeof(TLet), typeof(TResult)),
-        //    //        source.Expression,
-        //    //        Expression.Quote(letSelector),
-        //    //        Expression.Quote(querySelector)));
-        //}
 
         public static IQueryable<TSource> Filter<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
