@@ -185,12 +185,14 @@ namespace ArangoDB.Client
                 .First().MakeGenericMethod(arguments));
         }
 
-        public static IQueryable<TResult> For<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
+        public static IQueryable<TResult> For<TSource, TResult>(this IEnumerable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
         {
-            return source.Provider.CreateQuery<TResult>(
+            var queryableSource = source.AsQueryable();
+
+            return queryableSource.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     FindCachedMethod("For", typeof(TSource), typeof(TResult)),
-                    source.Expression,
+                    queryableSource.Expression,
                     Expression.Quote(selector)
                     ));
         }

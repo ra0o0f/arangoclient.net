@@ -118,6 +118,47 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
             var db = DatabaseGenerator.Get();
 
             var query = db.Query<Person>()
+                .Let(p => p.Age, (q, a) => q
+                .Let(p => p.Fullname, (q2, f) => q2
+                .Select(p => new { p, a, f })));
+
+            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), @"
+for `p` in `Person`
+let `a` = `p`.`Age`
+let `f` = `p`.`Fullname`
+return { `p` : `p` , `a` : `a` , `f` : `f` }
+".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Let_WithoutUsingGenericQuery()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .Let(_ => 4, (q, number) => q
+                .Let(_ => "Some text", (q2, text) => q
+                .Select(_ => new { number, text })));
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"
+let `number` = @P1
+let `text` = @P2
+return { `number` : `number` , `text` : `text` }
+".RemoveSpaces());
+
+            Assert.Equal(queryData.BindVars.Count, 2);
+            Assert.Equal(queryData.BindVars[0].Value, 4);
+            Assert.Equal(queryData.BindVars[1].Value, "Some text");
+        }
+
+        [Fact]
+        public void LetWithLambda_SelectVersion()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Person>()
                 .Select(p => new { p, a = p.Age })
                 .Select(p => new { p, f = p.p.Fullname })
                 .Select(p => new { p.p.p, p.p.a, p.f });
@@ -515,13 +556,59 @@ let `flights` = ( for `f` in `Flight` return `f` )
 return { `p` : `p` , `flights` : `flights` }".RemoveSpaces());
         }
 
-        //[Fact]
-        //public void Join()
-        //{
-        //    var db = DatabaseGenerator.Get();
+        [Fact]
+        public void Join()
+        {
+            var db = DatabaseGenerator.Get();
 
-        //    var query = from p in db.Query<Person>()
-        //                from 
-        //}
+            var query = from p in db.Query<Person>()
+                        from f in db.Query<Flight>()
+                        where p.Age == f.Code
+                        select new { p, f };
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` 
+for `f` in `Flight`
+filter ( `p`.`Age` == `f`.`Code` )
+return { `p` : `p` , `f` : `f` }".RemoveSpaces());
+        }
+
+        [Fact]
+        public void JoinWithLambda()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Person>()
+                .For(p => db.Query<Flight>()
+                .Where(f => p.Age == f.Code)
+                .Select(f => new { p, f }));
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` 
+for `f` in `Flight`
+filter ( `p`.`Age` == `f`.`Code` )
+return { `p` : `p` , `f` : `f` }".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Join_WithoutUsingGenericQuery()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .For(_ => db.Query<Person>()
+                .For(p => db.Query<Flight>()
+                .Where(f => p.Age == f.Code)
+                .Select(f => new { p, f })));
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` 
+for `f` in `Flight`
+filter ( `p`.`Age` == `f`.`Code` )
+return { `p` : `p` , `f` : `f` }".RemoveSpaces());
+        }
     }
 }

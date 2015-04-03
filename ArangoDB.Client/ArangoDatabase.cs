@@ -137,11 +137,6 @@ namespace ArangoDB.Client
             return new AqlQueryable<T>(queryParser, executer, this);
         }
 
-        public IQueryable<T> Query<T>(IList<T> Array = null)
-        {
-            return Query<AQL>().For(x => Array);
-        }
-
         public IQueryable<AQL> Query()
         {
             return Query<AQL>();
