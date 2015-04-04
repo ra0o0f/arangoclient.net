@@ -8,11 +8,13 @@ namespace ArangoDB.Client
 {
     public class AQL
     {
-        static Exception e = new InvalidOperationException("Aql Functions should only be used in ArangoDatabase.Query");
+        static Exception e = new InvalidOperationException("Aql functions should only be used in ArangoDatabase.Query");
+
+        public static T As<T>(object any) { throw e; }
 
         /*type cast*/
         public static bool ToBool(object value) { throw e; }
-        public static int ToNumber(object value) { throw e; }
+        public static double ToNumber(object value) { throw e; }
         public static string ToString(object value) { throw e; }
         public static IList<T> ToArray<T>(T value) { throw e; }
         public static IList<T> ToList<T>(T value) { throw e; }
@@ -26,14 +28,8 @@ namespace ArangoDB.Client
         public static bool IsDocument(object value) { throw e; }
 
         /*string*/
-        public static string Concat(string str1,string str2) { throw e; }
-        public static string Concat(string str1, string str2, string str3) { throw e; }
-        public static string Concat(string str1, string str2, string str3, string str4) { throw e; }
-        public static string Concat(string str1, string str2, string str3, string str4, string str5) { throw e; }
-        public static string ConcatSeparator(string separator,string str1,string str2) { throw e; }
-        public static string ConcatSeparator(string separator,string str1, string str2, string str3) { throw e; }
-        public static string ConcatSeparator(string separator,string str1, string str2, string str3, string str4) { throw e; }
-        public static string ConcatSeparator(string separator,string str1, string str2, string str3, string str4, string str5) { throw e; }
+        public static string Concat(params string[] str) { throw e; }
+        public static string ConcatSeparator(string separator, params string[] str) { throw e; }
         public static int CharLength(string value) { throw e; }
         public static string Lower(string value) { throw e; }
         public static string Upper(string value) { throw e; }
@@ -64,9 +60,9 @@ namespace ArangoDB.Client
         public static bool Like(string text, string search, bool caseInsensitive) { throw e; }
         
         /*numeric*/
-        public static int Floor(double value) { throw e; }
-        public static int Ceil(double value) { throw e; }
-        public static int Round(double value) { throw e; }
+        public static long Floor(double value) { throw e; }
+        public static long Ceil(double value) { throw e; }
+        public static long Round(double value) { throw e; }
         public static double Abs(double value) { throw e; }
         public static double Sqrt(double value) { throw e; }
         public static double Rand(double value) { throw e; }
@@ -82,7 +78,7 @@ namespace ArangoDB.Client
         public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second) { throw e; }
         public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
         
-        public static string DateIso8601(string date) { throw e; }
+        public static string DateIso8601(string date) { throw e; } 
         public static string DateIso8601(long date) { throw e; }
         public static string DateIso8601(DateTime date) { throw e; }
         public static string DateIso8601(DateTimeOffset date) { throw e; }
@@ -125,6 +121,57 @@ namespace ArangoDB.Client
         public static int DateMilliSecond(DateTimeOffset date) { throw e; }
         public static long DateNow() { throw e; }
 
+        /*array*/
+        public static int Length(object array) { throw e; }
+        public static IList<T> Flatten<T>(object array) { throw e; }
+        public static IList<T> Flatten<T>(object array, int depth) { throw e; }
+        public static T Min<T>(IList<T> array) { throw e; }
+        public static T Max<T>(IList<T> array) { throw e; }
+        public static T Average<T>(IList<T> array) { throw e; }
+        public static T Sum<T>(IList<T> array) { throw e; }
+        public static T Median<T>(IList<T> array) { throw e; }
+        public static T Percentile<T>(IList<T> array, int n) { throw e; }
+        public static T Percentile<T>(IList<T> array, int n, string method) { throw e; }
+        public static T VariancePopulation<T>(IList<T> array) { throw e; }
+        public static T VarianceSample<T>(IList<T> array) { throw e; }
+        public static T StdDevPopulation<T>(IList<T> array) { throw e; }
+        public static IList<T> Reverse<T>(IList<T> array) { throw e; }
+        public static T First<T>(IList<T> array) { throw e; }
+        public static T Last<T>(IList<T> array) { throw e; }
+        public static T Nth<T>(IList<T> array, int position) { throw e; }
+        public static bool Position<T>(IList<T> array, T search) { throw e; }
+        public static object Position<T>(IList<T> array, T search, bool returnIndex) { throw e; }
+        public static IList<T> Slice<T>(IList<T> array, int start) { throw e; }
+        public static IList<T> Slice<T>(IList<T> array, int start, int length) { throw e; }
+        public static IList<T> Unique<T>(IList<T> array) { throw e; }
+        public static IList<T> Union<T>(IList<T> array1, IList<T> array2) { throw e; }
+        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
+        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
+        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
+        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2) { throw e; }
+        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
+        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
+        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
+        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2) { throw e; }
+        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
+        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
+        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
+        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2) { throw e; }
+        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
+        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
+        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
+        public static IList<T> Append<T>(IList<T> array, IList<T> values) { throw e; }
+        public static IList<T> Append<T>(IList<T> array, IList<T> values, bool unique) { throw e; }
+        public static IList<T> Push<T>(IList<T> array, T value) { throw e; }
+        public static IList<T> Push<T>(IList<T> array, T value, bool unique) { throw e; }
+        public static IList<T> UnShift<T>(IList<T> array, T value) { throw e; }
+        public static IList<T> UnShift<T>(IList<T> array, T value, bool unique) { throw e; }
+        public static IList<T> Pop<T>(IList<T> array) { throw e; }
+        public static IList<T> Shift<T>(IList<T> array) { throw e; }
+        public static IList<T> RemoveValue<T>(IList<T> array, T value) { throw e; }
+        public static IList<T> RemoveValue<T>(IList<T> array, T value, int limit) { throw e; }
+        public static IList<T> RemoveValues<T>(IList<T> array, IList<T> values) { throw e; }
+        public static IList<T> RemoveNth<T>(IList<T> array, int position) { throw e; }
 
         /*object-document*/
         public static T Merge<T>(object document1, object document2) { throw e; }

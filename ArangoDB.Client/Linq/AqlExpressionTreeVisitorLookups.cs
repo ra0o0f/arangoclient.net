@@ -78,9 +78,6 @@ namespace ArangoDB.Client.Linq
                 {"Sqrt","sqrt"},
                 {"Rand","rand"},
                 
-                /*object-document*/
-                {"Merge","merge"},
-
                 /*date*/
                 {"DateTimestamp","date_timestamp"},
                 {"DateIso8601","date_iso8601"},
@@ -94,15 +91,39 @@ namespace ArangoDB.Client.Linq
                 {"DateMilliSecond","date_millisecond"},
                 {"DateNow","date_now"},
 
+                /*array*/
+                {"Length","length"},
+                {"Flatten","flatten"},
+                {"Min","min"},
+                {"Max","max"},
+                {"Average","average"},
+                {"Sum","sum"},
+                {"Median","median"},
+                {"Percentile","percentile"},
+                {"VariancePopulation","variance_population"},
+                {"VarianceSample","variance_sample"},
+                {"StdDevPopulation","stddev_population"},
+                {"First","first"},
+                {"Last","last"},
+                {"Nth","nth"},
+                {"Position","position"},
+                {"Slice","slice"},
+                {"Unique","unique"},
+                {"Union","Union"},
+                {"UnionDistinct","union_distinct"},
+                {"Minus","minus"},
+                {"Intersection","intersection"},
+                {"Append","append"},
+                {"Push","push"},
+                {"UnShift","unshift"},
+                {"Pop","pop"},
+                {"Shift","shift"},
+                {"RemoveValue","remove_value"},
+                {"RemoveValues","remove_values"},
+                {"RemoveNth","remove_nth"},
 
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""}
+                /*object-document*/
+                {"Merge","merge"},
             };
         }
     }

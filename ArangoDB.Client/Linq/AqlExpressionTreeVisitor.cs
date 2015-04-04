@@ -32,6 +32,12 @@ namespace ArangoDB.Client.Linq
 
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
+            if (expression.Method.Name == "As")
+            {
+                VisitExpression(expression.Arguments[0]);
+                return expression;
+            }
+
             string methodName;
             if (aqlMethods.TryGetValue(expression.Method.Name, out methodName))
             {
@@ -48,18 +54,16 @@ namespace ArangoDB.Client.Linq
 
                 return expression;
             }
-            else if (expression.Method.Name == "get_Item")
+
+            if (expression.Method.Name == "get_Item")
             {
                 VisitExpression(expression.Object);
                 ModelVisitor.QueryText.AppendFormat("[{0}] ", (expression.Arguments[0] as ConstantExpression).Value);
 
                 return expression;
             }
-            else
-            {
-                return base.VisitMethodCallExpression(expression); // throws
-            }
 
+            return base.VisitMethodCallExpression(expression); // throws
         }
 
         // Called when a LINQ expression type is not handled above.
@@ -201,11 +205,15 @@ namespace ArangoDB.Client.Linq
 
         protected override Expression VisitNewArrayExpression(NewArrayExpression expression)
         {
-            ReadOnlyCollection<Expression> newExpressions = VisitAndConvert(expression.Expressions, "VisitNewArrayExpression");
+            //ReadOnlyCollection<Expression> newExpressions = VisitAndConvert(expression.Expressions, "VisitNewArrayExpression");
             ModelVisitor.QueryText.Append(" [ ");
-            foreach (var n in newExpressions)
+            int i = 0;
+            foreach (var n in expression.Expressions)
             {
                 VisitExpression(n);
+                if (i != expression.Expressions.Count - 1)
+                    ModelVisitor.QueryText.Append(" , ");
+                i++;
             }
             ModelVisitor.QueryText.Append(" ] ");
 

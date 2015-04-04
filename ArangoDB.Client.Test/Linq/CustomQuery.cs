@@ -49,7 +49,7 @@ for `quarter` in @P2
 return { 
     `y` : `year` , 
     `q` : `quarter` , 
-    `nice` : concat( to_string( `quarter` ) , @P3 , to_string( `year` ) ) 
+    `nice` : concat( [ to_string( `quarter` ) , @P3 , to_string( `year` ) ] ) 
 }
 ".RemoveSpaces());
 
