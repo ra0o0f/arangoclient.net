@@ -91,6 +91,7 @@
     <Compile Include="Interface\IDocumentPropertySetting.cs" />
     <Compile Include="Interface\IEdgeCollection.cs" />
     <Compile Include="Linq\AqlExpressionTreeVisitor.cs" />
+    <Compile Include="Linq\AqlExpressionTreeVisitorLookups.cs" />
     <Compile Include="Linq\AqlModelVisitor.cs" />
     <Compile Include="Linq\AqlQueryable.cs" />
     <Compile Include="Linq\AqlQueryExecuter.cs" />

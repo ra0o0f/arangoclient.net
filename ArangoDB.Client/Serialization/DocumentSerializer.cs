@@ -80,7 +80,8 @@ namespace ArangoDB.Client.Serialization
                 ContractResolver = new DocumentContractResolver(db),
                 Converters = new JsonConverter[] 
                 {
-                    new DateTimeConverter(db)
+                    new DateTimeConverter(db),
+                    new QueryParameterConverter(db)
                 },
                 DateParseHandling = DateParseHandling.None
             });

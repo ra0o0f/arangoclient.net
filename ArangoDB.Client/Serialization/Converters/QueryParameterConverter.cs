@@ -10,9 +10,21 @@ namespace ArangoDB.Client.Serialization.Converters
 {
     public class QueryParameterConverter : JsonConverter
     {
+        IArangoDatabase db;
+
+        public QueryParameterConverter()
+        {
+
+        }
+
+        public QueryParameterConverter(IArangoDatabase db)
+        {
+            this.db = db;
+        }
+
         public override bool CanConvert(Type type)
         {
-            throw new NotImplementedException("should use only with attribute");
+            return typeof(IList<QueryParameter>) == type;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -26,9 +38,8 @@ namespace ArangoDB.Client.Serialization.Converters
                 {
                     writer.WritePropertyName(p.Name);
 
-                    var jsonSerializer = JsonSerializer.Create();
+                    var jsonSerializer = new DocumentSerializer(db).CreateJsonSerializer();
                     jsonSerializer.Serialize(writer, p.Value);
-                    //writer.WriteValue(p.Value);
                 }
                 writer.WriteEnd();
             }

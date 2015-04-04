@@ -30,6 +30,8 @@ namespace ArangoDB.Client
 
         AqlQueryable<T> Query<T>();
 
+        IQueryable<AQL> Query();
+
         /// <summary>
         /// Get Document JsonObject and Identifiers
         /// </summary>

@@ -16,11 +16,8 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq
 {
-    public class AqlExpressionTreeVisitor : ThrowingExpressionTreeVisitor, INamedExpressionVisitor
+    public partial class AqlExpressionTreeVisitor : ThrowingExpressionTreeVisitor, INamedExpressionVisitor
     {
-        static Dictionary<ExpressionType, string> expressionTypes;
-        static Dictionary<string, string> aqlMethods;
-
         public AqlModelVisitor ModelVisitor { get; set; }
         public QueryModel QueryModel { get; set; }
 
@@ -28,90 +25,9 @@ namespace ArangoDB.Client.Linq
         public bool HandleLet { get; set; }
         public bool HandleJoin { get; set; }
 
-        static AqlExpressionTreeVisitor()
+        public AqlExpressionTreeVisitor(AqlModelVisitor modelVisitor)
         {
-            expressionTypes = new Dictionary<ExpressionType, string>()
-            {
-                {ExpressionType.Equal, " == "},
-                {ExpressionType.NotEqual, " != "},
-                {ExpressionType.LessThan, " < "},
-                {ExpressionType.LessThanOrEqual, " <= "},
-                {ExpressionType.GreaterThan, " > "},
-                {ExpressionType.GreaterThanOrEqual, " >= "},
-                {ExpressionType.And, " and "},
-                {ExpressionType.AndAlso, " and "},
-                {ExpressionType.Or, " or "},
-                {ExpressionType.OrElse, " or "},
-                {ExpressionType.Not, " not "},
-                {ExpressionType.Add, " + "},
-                {ExpressionType.Subtract, " - "},
-                {ExpressionType.Multiply, " * "},
-                {ExpressionType.Divide, " / "},
-                {ExpressionType.Modulo, " % "}
-            };
-
-            aqlMethods = new Dictionary<string, string>()
-            {
-                /*type cast*/
-                {"ToBool","to_bool"},
-                {"ToNumber","to_number"},
-                {"ToString","to_string"},
-                {"ToArray","to_array"},
-                {"IsNull","is_null"},
-                {"IsBool","is_bool"},
-                {"IsNumber","is_number"},
-                {"IsString","is_string"},
-                {"IsArray","is_array"},
-                {"IsList","is_list"},
-                {"IsObject","is_object"},
-                {"IsDocument","is_document"},
-
-                /*string*/
-                {"Concat","concat"},
-                {"ConcatSeparator","concat_separator"},
-                {"CharLength","char_length"},
-                {"Lower","lower"},
-                {"Upper","upper"},
-                {"Substitute","substitute"},
-                {"Substring","substring"},
-                {"Left","left"},
-                {"Right","right"},
-                {"Trim","trim"},
-                {"LTrim","ltrim"},
-                {"RTrim","rtrim"},
-                {"Split","split"},
-                {"Reverse","reverse"},
-                {"Contains","contains"},
-                {"FindFirst","find_first"},
-                {"FindLast","find_last"},
-                {"Like","like"},
-                
-                /*numeric*/
-                {"Floor","floor"},
-                {"Ceil","ceil"},
-                {"Round","round"},
-                {"Abs","abs"},
-                {"Sqrt","sqrt"},
-                {"Rand","rand"},
-                
-                /*object-document*/
-                {"Merge","merge"},
-
-                /*numeric*/
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""}
-            };
+            this.ModelVisitor = modelVisitor;
         }
 
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
@@ -152,11 +68,6 @@ namespace ArangoDB.Client.Linq
             string itemText = FormatUnhandledItem(unhandledItem);
             var message = string.Format("The expression '{0}' (type: {1}) is not supported by ArangoDB LINQ provider.", itemText, typeof(T));
             return new NotSupportedException(message);
-        }
-
-        public AqlExpressionTreeVisitor(AqlModelVisitor modelVisitor)
-        {
-            this.ModelVisitor = modelVisitor;
         }
 
         protected override Expression VisitParameterExpression(ParameterExpression expression)

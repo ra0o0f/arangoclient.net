@@ -71,6 +71,61 @@ namespace ArangoDB.Client
         public static double Sqrt(double value) { throw e; }
         public static double Rand(double value) { throw e; }
 
+        /*date*/
+        public static long DateTimestamp(string date) { throw e; }
+        public static long DateTimestamp(long date) { throw e; }
+        public static long DateTimestamp(DateTime date) { throw e; }
+        public static long DateTimestamp(DateTimeOffset date) { throw e; }
+        public static long DateTimestamp(int year, int month, int day) { throw e; }
+        public static long DateTimestamp(int year, int month, int day, int hour) { throw e; }
+        public static long DateTimestamp(int year, int month, int day, int hour, int minute) { throw e; }
+        public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second) { throw e; }
+        public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
+        
+        public static string DateIso8601(string date) { throw e; }
+        public static string DateIso8601(long date) { throw e; }
+        public static string DateIso8601(DateTime date) { throw e; }
+        public static string DateIso8601(DateTimeOffset date) { throw e; }
+        public static string DateIso8601(int year, int month, int day) { throw e; }
+        public static string DateIso8601(int year, int month, int day, int hour) { throw e; }
+        public static string DateIso8601(int year, int month, int day, int hour, int minute) { throw e; }
+        public static string DateIso8601(int year, int month, int day, int hour, int minute, int second) { throw e; }
+        public static string DateIso8601(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
+        public static int DateDayOfWeek(string date) { throw e; }
+        public static int DateDayOfWeek(long date) { throw e; }
+        public static int DateDayOfWeek(DateTime date) { throw e; }
+        public static int DateDayOfWeek(DateTimeOffset date) { throw e; }
+        public static int DateYear(string date) { throw e; }
+        public static int DateYear(long date) { throw e; }
+        public static int DateYear(DateTime date) { throw e; }
+        public static int DateYear(DateTimeOffset date) { throw e; }
+        public static int DateMonth(string date) { throw e; }
+        public static int DateMonth(long date) { throw e; }
+        public static int DateMonth(DateTime date) { throw e; }
+        public static int DateMonth(DateTimeOffset date) { throw e; }
+        public static int DateDay(string date) { throw e; }
+        public static int DateDay(long date) { throw e; }
+        public static int DateDay(DateTime date) { throw e; }
+        public static int DateDay(DateTimeOffset date) { throw e; }
+        public static int DateHour(string date) { throw e; }
+        public static int DateHour(long date) { throw e; }
+        public static int DateHour(DateTime date) { throw e; }
+        public static int DateHour(DateTimeOffset date) { throw e; }
+        public static int DateMinute(string date) { throw e; }
+        public static int DateMinute(long date) { throw e; }
+        public static int DateMinute(DateTime date) { throw e; }
+        public static int DateMinute(DateTimeOffset date) { throw e; }
+        public static int DateSecond(string date) { throw e; }
+        public static int DateSecond(long date) { throw e; }
+        public static int DateSecond(DateTime date) { throw e; }
+        public static int DateSecond(DateTimeOffset date) { throw e; }
+        public static int DateMilliSecond(string date) { throw e; }
+        public static int DateMilliSecond(long date) { throw e; }
+        public static int DateMilliSecond(DateTime date) { throw e; }
+        public static int DateMilliSecond(DateTimeOffset date) { throw e; }
+        public static long DateNow() { throw e; }
+
+
         /*object-document*/
         public static T Merge<T>(object document1, object document2) { throw e; }
     }
