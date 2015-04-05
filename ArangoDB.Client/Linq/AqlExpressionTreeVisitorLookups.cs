@@ -124,6 +124,16 @@ namespace ArangoDB.Client.Linq
 
                 /*object-document*/
                 {"Merge","merge"},
+                {"Matches","matches"},
+                {"MergeRecursive","merge_recursive"},
+                {"Translate","translate"},
+                {"Has","has"},
+                {"Attributes","attributes"},
+                {"Values","values"},
+                {"Zip","zip"},
+                {"Unset","unset"},
+                {"Keep","keep"},
+                {"ParseIdentifier","parse_identifier"}
             };
         }
     }

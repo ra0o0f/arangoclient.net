@@ -66,6 +66,7 @@
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
+    <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />
     <Compile Include="Extentions\AQL.cs" />

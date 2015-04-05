@@ -11,13 +11,6 @@ namespace ArangoDB.Client.Serialization.Converters
 {
     public class DateTimeConverter : DateTimeConverterBase
     {
-        IArangoDatabase db;
-
-        public DateTimeConverter(IArangoDatabase db)
-        {
-            this.db = db;
-        }
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var dateOffset = value as DateTimeOffset?;

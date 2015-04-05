@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -175,5 +176,26 @@ namespace ArangoDB.Client
 
         /*object-document*/
         public static T Merge<T>(object document1, object document2) { throw e; }
+        public static T Merge<T>(object document1, object document2, object document3) { throw e; }
+        public static T Merge<T>(object document1, object document2, object document3, object document4) { throw e; }
+        public static T Merge<T>(object document1, object document2, object document3, object document4, object document5) { throw e; }
+        public static bool Matches(object document, IList<object> examples) { throw e; }
+        public static object Matches(object document, IList<object> examples, bool returnIndex) { throw e; }
+        public static T MergeRecursive<T>(object document1, object document2) { throw e; }
+        public static T MergeRecursive<T>(object document1, object document2, object document3) { throw e; }
+        public static T MergeRecursive<T>(object document1, object document2, object document3, object document4) { throw e; }
+        public static T MergeRecursive<T>(object document1, object document2, object document3, object document4, object document5) { throw e; }
+        public static T Translate<T>(string value, object lookup) { throw e; }
+        public static T Translate<T>(string value, object lookup, object defaultValue) { throw e; }
+        public static bool Has(object document, string attributeName) { throw e; }
+        public static IList<string> Attributes(object document) { throw e; }
+        public static IList<string> Attributes(object document, bool removeInternal) { throw e; }
+        public static IList<string> Attributes(object document, bool removeInternal, bool sort) { throw e; }
+        public static IList<object> Values(object document) { throw e; }
+        public static IList<object> Values(object document, bool removeInternal) { throw e; }
+        public static T Zip<T>(IList<string> attributes, IList<object> values) { throw e; }
+        public static T Unset<T>(object document, params string[] attributeNames) { throw e; }
+        public static T Keep<T>(object document, params string[] attributeNames) { throw e; }
+        public static ParseIdentifierResult ParseIdentifier(string documentHandle) { throw e; }
     }
 }
