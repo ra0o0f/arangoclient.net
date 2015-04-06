@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -197,5 +198,18 @@ namespace ArangoDB.Client
         public static T Unset<T>(object document, params string[] attributeNames) { throw e; }
         public static T Keep<T>(object document, params string[] attributeNames) { throw e; }
         public static ParseIdentifierResult ParseIdentifier(string documentHandle) { throw e; }
+
+        /*geo*/
+        public static IList<T> Near<T>(double latitude, double longitude) { throw e; }
+        public static IList<T> Near<T>(double latitude, double longitude, int limit) { throw e; }
+        //TODO: add distance overload
+        //public static IList<T> Near<T>(double latitude, double longitude, int limit, Expression<Func<T, object>> distance) { throw e; }
+        public static IList<T> Within<T>(double latitude, double longitude, double radius) { throw e; }
+        //TODO: add distance overload
+        //public static IList<T> Within<T>(double latitude, double longitude, double radius, Expression<Func<T, object>> distance) { throw e; }
+        public static IList<T> WithinRectangle<T>(double latitude1, double longitude1, double latitude2, double longitude2) { throw e; }
+        public static bool IsInPolygon(double[][] polygon, double latitude, double longitude) { throw e; }
+        public static bool IsInPolygon(double[][] polygon, double[] coordinates) { throw e; }
+        public static bool IsInPolygon(double[][] polygon, double[] coordinates, bool reverseCoordinateOrder) { throw e; }
     }
 }

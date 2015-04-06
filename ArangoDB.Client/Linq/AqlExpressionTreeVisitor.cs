@@ -43,13 +43,20 @@ namespace ArangoDB.Client.Linq
             {
                 ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
 
+                if (methodName == "near" || methodName == "within" || methodName == "within_rectangle")
+                {
+                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
+                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
+                }
+
                 for (int i = 0; i < expression.Arguments.Count; i++)
                 {
                     VisitExpression(expression.Arguments[i]);
+
                     if (i != expression.Arguments.Count - 1)
                         ModelVisitor.QueryText.Append(" , ");
                 }
-
+                
                 ModelVisitor.QueryText.Append(" ) ");
 
                 return expression;

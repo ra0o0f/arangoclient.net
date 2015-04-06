@@ -133,7 +133,13 @@ namespace ArangoDB.Client.Linq
                 {"Zip","zip"},
                 {"Unset","unset"},
                 {"Keep","keep"},
-                {"ParseIdentifier","parse_identifier"}
+                {"ParseIdentifier","parse_identifier"},
+
+                /*geo*/
+                {"Near","near"},
+                {"Within","within"},
+                {"WithinRectangle","within_rectangle"},
+                {"IsInPolygon","is_in_polygon"}
             };
         }
     }
