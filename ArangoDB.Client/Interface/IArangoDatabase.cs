@@ -416,7 +416,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Within<T>(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null);
-
+        
         /// <summary>
         /// Finds all documents from the collection that match the fulltext query
         /// </summary>
@@ -429,5 +429,20 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Fulltext<T>(Expression<Func<T, object>> attribute, string query, string index=null
             , int? skip = null, int? limit = null, int? batchSize = null);
+        /// <summary>
+        /// Deletes a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <returns></returns>
+        void DeleteDatabase(string name);
+
+        /// <summary>
+        /// Creates a database
+        /// </summary>
+        /// <param name="name">Name of the database</param>
+        /// <param name="users">list of database user</param>
+        /// <returns></returns>
+        Task DeleteDatabaseAsync(string name);
+        
     }
 }
