@@ -1,6 +1,8 @@
 ### .Net client driver for http://www.arangodb.net
 ##### written in c# portable class library[.net 4.5, winphone 8.1]
 
+[![Join the chat at https://gitter.im/ra0o0f/arangoclient.net](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ra0o0f/arangoclient.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Project website: http://www.arangoclient.net
 
 <hr/>
