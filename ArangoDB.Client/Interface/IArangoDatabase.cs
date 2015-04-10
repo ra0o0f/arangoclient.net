@@ -429,20 +429,20 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Fulltext<T>(Expression<Func<T, object>> attribute, string query, string index=null
             , int? skip = null, int? limit = null, int? batchSize = null);
+
         /// <summary>
         /// Deletes a database
         /// </summary>
         /// <param name="name">Name of the database</param>
         /// <returns></returns>
-        void DeleteDatabase(string name);
+        void DropDatabase(string name, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Creates a database
+        /// Deletes a database
         /// </summary>
         /// <param name="name">Name of the database</param>
-        /// <param name="users">list of database user</param>
         /// <returns></returns>
-        Task DeleteDatabaseAsync(string name);
+        Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
         
     }
 }
