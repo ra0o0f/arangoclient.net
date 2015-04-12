@@ -211,5 +211,27 @@ namespace ArangoDB.Client
         public static bool IsInPolygon(double[][] polygon, double latitude, double longitude) { throw e; }
         public static bool IsInPolygon(double[][] polygon, double[] coordinates) { throw e; }
         public static bool IsInPolygon(double[][] polygon, double[] coordinates, bool reverseCoordinateOrder) { throw e; }
+
+        /*edge*/
+        public static IList<TEdgeCollection> Edges<TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
+        public static IList<TEdgeCollection> Edges<TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample) { throw e; }
+        public static IList<EdgeVertexResult<TVertexCollection, TEdgeCollection>> Neighbors<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
+        public static IList<EdgeVertexResult<TVertexCollection, TEdgeCollection>> Neighbors<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample) { throw e; }
+        public static IList<EdgeVertexResult<TVertexResult, TEdgeCollection>> Neighbors<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction) { throw e; }
+        public static IList<EdgeVertexResult<TVertexResult, TEdgeCollection>> Neighbors<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object edgeExample) { throw e; }
+        public static IList<VertexResult<TVertexCollection>> Traversal<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
+        public static IList<VertexResult<TVertexCollection>> Traversal<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction, object options) { throw e; }
+        public static IList<VertexResult<TVertexResult>> Traversal<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction) { throw e; }
+        public static IList<VertexResult<TVertexResult>> Traversal<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object options) { throw e; }
+        public static IList<TVertexResult> TraversalTree<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, string connectName) { throw e; }
+        public static IList<TVertexResult> TraversalTree<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, string connectName, object options) { throw e; }
+        public static IList<VertexResult<TVertexCollection>> ShortestPath<TVertexCollection, TEdgeCollection>(string startVertex, string endVertex, EdgeDirection direction) { throw e; }
+        public static IList<VertexResult<TVertexCollection>> ShortestPath<TVertexCollection, TEdgeCollection>(string startVertex, string endVertex, EdgeDirection direction, object options) { throw e; }
+        public static IList<VertexResult<TVertexResult>> ShortestPath<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, string endVertex, EdgeDirection direction) { throw e; }
+        public static IList<VertexResult<TVertexResult>> ShortestPath<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, string endVertex, EdgeDirection direction, object options) { throw e; }
+        public static IList<PathResult<TVertexCollection, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection>(EdgeDirection direction) { throw e; }
+        public static IList<PathResult<TVertexCollection, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection>(EdgeDirection direction, object options) { throw e; }
+        public static IList<PathResult<TVertexResult, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection, TVertexResult>(EdgeDirection direction) { throw e; }
+        public static IList<PathResult<TVertexResult, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection, TVertexResult>(EdgeDirection direction, object options) { throw e; }
     }
 }

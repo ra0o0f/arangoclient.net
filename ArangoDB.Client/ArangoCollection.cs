@@ -32,8 +32,9 @@ namespace ArangoDB.Client
 
     public enum EdgeDirection
     {
-        In = 0,
-        Out = 1
+        Any = 0,
+        Inbound = 1,
+        Outbound = 2
     }
 
     public class ArangoCollection<T> : IDocumentCollection<T>, IEdgeCollection<T>
@@ -572,8 +573,8 @@ namespace ArangoDB.Client
 
             command.Query.Add("vertex", vertexId);
 
-            if (direction.HasValue)
-                command.Query.Add("direction", direction.Value == EdgeDirection.In ? "in" : "out");
+            if (direction.HasValue && direction.Value != EdgeDirection.Any)
+                command.Query.Add("direction", direction.Value == EdgeDirection.Inbound ? "in" : "out");
 
             var result = await command.RequestGenericListResult<T, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
 

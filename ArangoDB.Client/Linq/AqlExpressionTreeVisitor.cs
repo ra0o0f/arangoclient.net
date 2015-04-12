@@ -5,6 +5,7 @@ using ArangoDB.Client.Common.Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using ArangoDB.Client.Common.Remotion.Linq.Parsing;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Linq.Clause;
+using ArangoDB.Client.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,15 +44,55 @@ namespace ArangoDB.Client.Linq
             {
                 ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
 
-                if (methodName == "near" || methodName == "within" || methodName == "within_rectangle")
+                if (methodName == "near" || methodName == "within" || methodName == "within_rectangle"
+                    || methodName == "edges" || methodName == "neighbors" || methodName == "traversal"
+                    || methodName == "traversal_tree" || methodName == "shortest_path" || methodName == "paths")
                 {
                     var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
                     ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
                 }
 
+                if (methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree"
+                    || methodName == "shortest_path" || methodName == "paths")
+                {
+                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[1]);
+                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
+                }
+
                 for (int i = 0; i < expression.Arguments.Count; i++)
                 {
-                    VisitExpression(expression.Arguments[i]);
+                    bool dontVisitArgument = false;
+
+                    if (i == 0)
+                    {
+                        if (methodName == "paths")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+                    if (i == 1)
+                    {
+                        if (methodName == "edges" || methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+                    if (i == 2)
+                    {
+                        if (methodName == "shortest_path")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+
+                    if(!dontVisitArgument)
+                        VisitExpression(expression.Arguments[i]);
 
                     if (i != expression.Arguments.Count - 1)
                         ModelVisitor.QueryText.Append(" , ");

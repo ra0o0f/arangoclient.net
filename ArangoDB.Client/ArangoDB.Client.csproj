@@ -65,6 +65,7 @@
     <Compile Include="Data\DistinctCommandResult.cs" />
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
+    <Compile Include="Data\EdgeVertexResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />

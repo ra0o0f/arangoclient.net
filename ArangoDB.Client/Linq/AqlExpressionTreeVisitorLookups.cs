@@ -139,7 +139,15 @@ namespace ArangoDB.Client.Linq
                 {"Near","near"},
                 {"Within","within"},
                 {"WithinRectangle","within_rectangle"},
-                {"IsInPolygon","is_in_polygon"}
+                {"IsInPolygon","is_in_polygon"},
+
+                /*edge*/
+                {"Edges","edges"},
+                {"Neighbors","neighbors"},
+                {"Traversal","traversal"},
+                {"TraversalTree","traversal_tree"},
+                {"ShortestPath","shortest_path"},
+                {"Paths","paths"}
             };
         }
     }
