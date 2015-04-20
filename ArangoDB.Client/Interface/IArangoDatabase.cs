@@ -443,6 +443,11 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the database</param>
         /// <returns></returns>
         Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
-        
+
+        Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
+        Task ExecuteTransactionAsync(TransactionData data, Action<BaseResult> baseResult = null);
+
+        TResult ExecuteTransaction<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
+        void ExecuteTransaction(TransactionData data, Action<BaseResult> baseResult = null);
     }
 }

@@ -237,5 +237,39 @@ namespace ArangoDB.Client
             if (baseResult != null)
                 baseResult(result.BaseResult);
         }
+
+        public void ExecuteTransaction(TransactionData data, Action<BaseResult> baseResult = null)
+        {
+            ExecuteTransactionAsync(data, baseResult).WaitSynchronizer();
+        }
+
+        public async Task ExecuteTransactionAsync(TransactionData data, Action<BaseResult> baseResult = null)
+        {
+            await ExecuteTransactionAsync<object>(data, baseResult).ConfigureAwait(false);
+        }
+
+        public TResult ExecuteTransaction<TResult>(TransactionData data, Action<BaseResult> baseResult = null)
+        {
+            return ExecuteTransactionAsync<TResult>(data, baseResult).ResultSynchronizer();
+        }
+
+        public async Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Transaction,
+                Method = HttpMethod.Post
+            };
+
+            if (data.Action != null)
+                data.Action = data.Action.Replace("\r\n", " ");
+
+            var result = await command.RequestGenericSingleResult<TResult, InheritedCommandResult<TResult>>(data).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
     }
 }

@@ -70,6 +70,7 @@
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />
+    <Compile Include="Data\TransactionData.cs" />
     <Compile Include="Extentions\AQL.cs" />
     <Compile Include="Http\AuthenticationException.cs" />
     <Compile Include="Interface\IAqlModifiable.cs" />
