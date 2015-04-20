@@ -19,17 +19,29 @@ namespace ArangoDB.Client.Common.Utility
 
         public static PropertyInfo GetProperty(Type type, string name)
         {
+#if PORTABLE
             return TypeExtensions.GetProperty(type, name);
+#else
+            return type.GetProperty(name);
+#endif
         }
 
         public static MemberInfo GetField(Type type,string name)
         {
+#if PORTABLE
             return TypeExtensions.GetField(type, name);
+#else
+            return type.GetField(name);
+#endif
         }
 
         public static MethodInfo GetSetMethod(PropertyInfo propertyInfo)
         {
+#if PORTABLE
             return TypeExtensions.GetSetMethod(propertyInfo);
+#else
+            return propertyInfo.GetSetMethod();
+#endif
         }
 
         public static List<MemberInfo> GetFieldsAndProperties_PublicInstance(Type type)
@@ -39,12 +51,20 @@ namespace ArangoDB.Client.Common.Utility
 
         public static MemberInfo[] GetMember(Type type, string member)
         {
+#if PORTABLE
             return TypeExtensions.GetMember(type, member);
+#else
+            return type.GetMember(member);
+#endif
         }
 
         public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
         {
+#if PORTABLE
             return TypeExtensions.GetConstructors(type);
+#else
+            return type.GetConstructors();
+#endif
         }
 
         public static Type GetItemTypeOfClosedGenericIEnumerable(Type enumerableType, string argumentName)
