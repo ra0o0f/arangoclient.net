@@ -76,7 +76,7 @@ namespace ArangoDB.Client
             action(FindSetting("default"));
         }
 
-        static DatabaseSharedSetting FindSetting(string identifier,bool? throwIfNotFound=false)
+        static DatabaseSharedSetting FindSetting(string identifier, bool? throwIfNotFound = false)
         {
             if (string.IsNullOrWhiteSpace(identifier))
                 throw new ArgumentNullException("Setting identifier");
@@ -85,7 +85,7 @@ namespace ArangoDB.Client
             if (!cachedSettings.TryGetValue(identifier, out setting))
             {
                 if (throwIfNotFound == true)
-                    throw new InvalidOperationException(string.Format("can not find identifier '{0}'",identifier));
+                    throw new InvalidOperationException(string.Format("can not find identifier '{0}'", identifier));
 
                 setting = new DatabaseSharedSetting();
                 setting.SettingIdentifier = identifier;
@@ -101,16 +101,11 @@ namespace ArangoDB.Client
 
         public static IArangoDatabase CreateWithSetting(string identifier)
         {
-            return new ArangoDatabase(FindSetting(identifier,true));
+            return new ArangoDatabase(FindSetting(identifier, true));
         }
 
-        //public static DatabaseSetting LoadConnectionStringSetting(string connectionStringName)
-        //{
-        //    throw new NotImplementedException("ConnectionStringSetting");
-        //}
-
         /// <summary>
-        /// Get Document JsonObject and Identifiers
+        /// Get Loaded Document JsonObject and Identifiers
         /// </summary>
         /// <param name="id">id of document</param>
         /// <returns>A DocumentContainer</returns>
@@ -120,7 +115,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Get Document JsonObject and Identifiers
+        /// Get Loaded Document JsonObject and Identifiers
         /// </summary>
         /// <param name="id">document object</param>
         /// <returns>A DocumentContainer</returns>
@@ -140,6 +135,11 @@ namespace ArangoDB.Client
             var executer = new AqlQueryExecuter(this);
 
             return new AqlQueryable<T>(queryParser, executer, this);
+        }
+
+        public IQueryable<AQL> Query()
+        {
+            return Query<AQL>();
         }
 
         public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,

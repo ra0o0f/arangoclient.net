@@ -26,7 +26,7 @@ namespace ArangoDB.Client
             this.Linq = new DatabaseLinqSetting(sharedSetting);
         }
 
-        public bool? CreateCollectionOnTheFly
+        public bool CreateCollectionOnTheFly
         {
             get
             {
@@ -41,7 +41,7 @@ namespace ArangoDB.Client
             set { _createCollectionOnTheFly = value; }
         }
 
-        public bool? WaitForSync 
+        public bool WaitForSync 
         {
             get
             {
@@ -53,7 +53,7 @@ namespace ArangoDB.Client
             set { _waitForSync = value; }
         }
 
-        public bool? ThrowForServerErrors
+        public bool ThrowForServerErrors
         {
             get
             {
@@ -65,7 +65,7 @@ namespace ArangoDB.Client
             set { _throwForServerErrors = value; }
         }
 
-        public bool? DisableChangeTracking
+        public bool DisableChangeTracking
         {
             get
             {
@@ -216,7 +216,7 @@ namespace ArangoDB.Client
             set { _replacePolicy = value; }
         }
 
-        public bool? MergeObjectsOnUpdate
+        public bool MergeObjectsOnUpdate
         {
             get
             {
@@ -228,7 +228,7 @@ namespace ArangoDB.Client
             set { _mergeObjectsOnUpdate = value; }
         }
 
-        public bool? KeepNullAttributesOnUpdate
+        public bool KeepNullAttributesOnUpdate
         {
             get
             {

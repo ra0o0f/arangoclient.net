@@ -6,6 +6,7 @@ using ArangoDB.Client.Linq.Clause;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,10 +44,16 @@ namespace ArangoDB.Client.Linq
             //Register new clause type
             customNodeTypeRegistry.Register(FilterExpressionNode.SupportedMethods, typeof(FilterExpressionNode));
             customNodeTypeRegistry.Register(LetSelectExpressionNode.SupportedMethods, typeof(LetSelectExpressionNode));
+            customNodeTypeRegistry.Register(LetLambdaExpressionNode.SupportedMethods, typeof(LetLambdaExpressionNode));
             customNodeTypeRegistry.Register(TakeExpressionNode.SupportedMethods, typeof(TakeExpressionNode));
             customNodeTypeRegistry.Register(SkipExpressionNode.SupportedMethods, typeof(SkipExpressionNode));
             customNodeTypeRegistry.Register(GroupByExpressionNode.GroupBySupportedMethods, typeof(GroupByExpressionNode));
             customNodeTypeRegistry.Register(LimitExpressionNode.SupportedMethods, typeof(LimitExpressionNode));
+            customNodeTypeRegistry.Register(UpdateAndReturnExpressionNode.SupportedMethods, typeof(UpdateAndReturnExpressionNode));
+            customNodeTypeRegistry.Register(RemoveAndReturnExpressionNode.SupportedMethods, typeof(RemoveAndReturnExpressionNode));
+            customNodeTypeRegistry.Register(InsertAndReturnExpressionNode.SupportedMethods, typeof(InsertAndReturnExpressionNode));
+            customNodeTypeRegistry.Register(InModifyExpressionNode.SupportedMethods, typeof(InModifyExpressionNode));
+            customNodeTypeRegistry.Register(ReturnResultModifyExpressionNode.SupportedMethods, typeof(ReturnResultModifyExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderBySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderByDescendingSupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByDescendingExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.SelectManySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.SelectManyExpressionNode));
@@ -66,6 +73,7 @@ namespace ArangoDB.Client.Linq
 
             return queryParser;
         }
+        
 
         public static AqlModelVisitor FindParentModelVisitor(AqlModelVisitor modelVisitor)
         {

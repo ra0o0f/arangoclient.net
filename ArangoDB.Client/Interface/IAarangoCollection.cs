@@ -15,14 +15,14 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        T Document(string id);
+        T Document(string id, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Reads a single document
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        Task<T> DocumentAsync(string id);
+        Task<T> DocumentAsync(string id, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Returns all documents of a collections
@@ -41,7 +41,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the document
@@ -52,7 +52,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the document with no change tracking
@@ -63,7 +63,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the document with no change tracking
@@ -74,7 +74,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the document without change tracking
@@ -87,7 +87,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the document without change tracking
@@ -100,7 +100,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the document
@@ -111,7 +111,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
 
         ///<summary>
@@ -123,7 +123,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document without change tracking
@@ -133,7 +133,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document without change tracking
@@ -143,7 +143,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document without change tracking
@@ -152,7 +152,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
+        DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document
@@ -161,7 +161,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null);
+        Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Finds all documents matching a given example
@@ -178,26 +178,26 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="example">The example document</param>
         /// <returns>A Document</returns>
-        T FirstExample(object example);
+        T FirstExample(object example, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Returns the first document matching a given example
         /// </summary>
         /// <param name="example">The example document</param>
         /// <returns>A Document</returns>
-        Task<T> FirstExampleAsync(object example);
+        Task<T> FirstExampleAsync(object example, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Returns a random document
         /// </summary>
         /// <returns>A Document</returns>
-        Task<T> AnyAsync();
+        Task<T> AnyAsync(Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Returns a random document
         /// </summary>
         /// <returns>A Document</returns>
-        T Any();
+        T Any(Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Finds all documents within a given range
@@ -212,5 +212,47 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Range(Expression<Func<T, object>> attribute, object left, object right, bool? closed = false,
             int? skip = null, int? limit = null, int? batchSize = null);
+
+        /// <summary>
+        /// Finds documents near the given coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        ICursor<T> Near(double latitude, double longitude, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null);
+
+        /// <summary>
+        /// Finds documents within a given radius around the coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="radius">The maximal radius</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        ICursor<T> Within(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null);
+
+        /// <summary>
+        /// Finds all documents from the collection that match the fulltext query
+        /// </summary>
+        /// <param name="attribute">The attribute that contains the texts</param>
+        /// <param name="query">The fulltext query</param>
+        /// <param name="index">The identifier of the fulltext-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
+            , int? skip = null, int? limit = null, int? batchSize = null);
     }
 }

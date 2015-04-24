@@ -401,7 +401,11 @@ namespace ArangoDB.Client.Common.Remotion.Linq.Parsing
     {
       ArgumentUtility.CheckNotNull ("expression", expression);
       ReadOnlyCollection<ParameterExpression> newParameters = VisitAndConvert (expression.Parameters, "VisitLambdaExpression");
-      Expression newBody = VisitExpression (expression.Body);
+
+      // original source
+      // Expression newBody = VisitExpression(expression.Body);
+      Expression newBody = expression.Body as MemberInitExpression == null ? VisitExpression(expression.Body) : expression.Body;
+
       if ((newBody != expression.Body) || (newParameters != expression.Parameters))
         return Expression.Lambda (expression.Type, newBody, newParameters);
       return expression;

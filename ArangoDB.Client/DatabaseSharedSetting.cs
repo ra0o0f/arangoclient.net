@@ -24,8 +24,8 @@ namespace ArangoDB.Client
             IdentifierModifier = new DocumentIdentifierModifier(this);
             CreateCollectionOnTheFly = true;
             Url = "http://localhost:8529";
-            Credentials = new NetworkCredential("root", "");
-            SystemDatabaseCredentials = new NetworkCredential("root", "");
+            Credential = new NetworkCredential("root", "");
+            SystemDatabaseCredential = new NetworkCredential("root", "");
             ThrowForServerErrors = true;
         }
 
@@ -44,7 +44,7 @@ namespace ArangoDB.Client
 
         public string Database { get; set; }
 
-        public ICredentials Credentials { get; set; }
+        public NetworkCredential Credential { get; set; }
 
         public string SettingIdentifier { get; internal set; }
 
@@ -61,7 +61,7 @@ namespace ArangoDB.Client
             set { _createCollectionOnTheFly = value; }
         }
 
-        public ICredentials SystemDatabaseCredentials { get; set; }
+        public NetworkCredential SystemDatabaseCredential { get; set; }
 
         public bool ClusterMode { get; set; }
 
@@ -76,16 +76,6 @@ namespace ArangoDB.Client
         public DatabaseCollectionSetting Collection;
 
         internal DocumentIdentifierModifier IdentifierModifier;
-    }
-
-    public class DatabaseSerializationSetting
-    {
-        public DatabaseSerializationSetting()
-        {
-            IgnoreOffsetForLocalDateTime = true;
-        }
-
-        public bool IgnoreOffsetForLocalDateTime { get; set; }
     }
 
     public class DatabaseLinqSharedSetting

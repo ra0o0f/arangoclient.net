@@ -198,7 +198,8 @@ namespace ArangoDB.Client.Http
 
         public async Task<HttpResponseMessage> SendCommandAsync(object data = null)
         {
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data).ConfigureAwait(false);
+            NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, credential).ConfigureAwait(false);
         }
 
         public ICursor<T> CreateCursor<T>(object data=null)

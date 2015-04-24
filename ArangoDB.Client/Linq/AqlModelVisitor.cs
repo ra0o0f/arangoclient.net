@@ -20,21 +20,30 @@ namespace ArangoDB.Client.Linq
         public IArangoDatabase Db;
 
         public StringBuilder QueryText { get; set; }
-        
+
         public QueryData QueryData { get; set; }
 
         public QueryModel QueryModel { get; set; }
 
         public AqlModelVisitor ParnetModelVisitor { get; set; }
 
-        internal int ParameterNameCounter { get; set; }
+        public int ParameterNameCounter { get; set; }
 
-        internal int GroupByNameCounter { get; set; }
+        public int GroupByNameCounter { get; set; }
+
+        public VisitorCrudState CrudState { get; set; }
+
+        public bool DontReturn { get; set; }
+
+        public bool IgnoreFromClause { get; set; }
+
+        public string DefaultAssociatedIdentifier { get; set; }
 
         public AqlModelVisitor(IArangoDatabase db)
         {
             QueryText = new StringBuilder();
             QueryData = new QueryData();
+            CrudState = new VisitorCrudState();
 
             this.Db = db;
         }
@@ -53,20 +62,34 @@ namespace ArangoDB.Client.Linq
 
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            if (DefaultAssociatedIdentifier != null)
+                queryModel.MainFromClause.ItemName = DefaultAssociatedIdentifier;
+
             this.QueryModel = queryModel;
-            var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
-            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType()) 
-                ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
             
+            var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
+            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
+                ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
+
             if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
                 queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
 
             if (aggregateFunction != null)
                 QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
-            queryModel.MainFromClause.Accept(this, queryModel);
+            if (!IgnoreFromClause && queryModel.MainFromClause.ItemType != typeof(AQL))
+                queryModel.MainFromClause.Accept(this, queryModel);
+
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
-            queryModel.SelectClause.Accept(this, queryModel);
+
+            if (CrudState.ModelVisitorHaveCrudOperation)
+            {
+                QueryText.AppendFormat(" in {0} ", CrudState.Collection);
+                if (CrudState.ReturnResult)
+                    QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudState.ReturnResultKind);
+            }
+            else if(!DontReturn)
+                queryModel.SelectClause.Accept(this, queryModel);
 
             if (aggregateFunction != null)
                 QueryText.Append(" )) ");
@@ -85,14 +108,28 @@ namespace ArangoDB.Client.Linq
 
         public override void VisitAdditionalFromClause(AdditionalFromClause fromClause, QueryModel queryModel, int index)
         {
-            string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
-            QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            var subQuery = fromClause.FromExpression as SubQueryExpression;
+            if (subQuery != null)
+            {
+                this.DontReturn = true;
+                GetAqlExpression(subQuery, queryModel, handleJoin: true);
+            }
+            else if(fromClause.FromExpression.Type.Name == "AqlQueryable`1")
+            {
+                string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
+                QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            }
+            else
+            {
+                QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                GetAqlExpression(fromClause.FromExpression, queryModel);
+            }
         }
 
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
             if (fromClause.FromExpression as SubQueryExpression != null)
-                throw new Exception("MainFromClause.FromExpression cant be SubQueryExpression because group by is handle in itself clause class");
+                throw new Exception("MainFromClause.FromExpression cant be SubQueryExpression because group by is handle in itself clause");
 
             string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
 
@@ -108,21 +145,104 @@ namespace ArangoDB.Client.Linq
                 fromName = LinqUtility.ResolvePropertyName(fromName);
             }
 
-            QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+            if (fromClause.FromExpression.NodeType == ExpressionType.Constant
+                || fromClause.FromExpression.Type.Name == "IGrouping`2")
+            {
+                if (fromClause.FromExpression.Type.Name == "AqlQueryable`1" || fromClause.FromExpression.Type.Name == "IGrouping`2")
+                    QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
+                else
+                {
+                    QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                    GetAqlExpression(fromClause.FromExpression, queryModel);
+                }
+            }
+            else
+            {
+                QueryText.AppendFormat(" for {0} in ", LinqUtility.ResolvePropertyName(fromClause.ItemName));
+                GetAqlExpression(fromClause.FromExpression, queryModel);
+            }
 
             base.VisitMainFromClause(fromClause, queryModel);
         }
 
         public void VisitLetClause(LetClause letClause, QueryModel queryModel, Type lhsType)
         {
-            QueryText.AppendFormat(" let `{0}` = ", letClause.ItemName);
+            QueryText.AppendFormat(" let {0} = ", LinqUtility.ResolvePropertyName(letClause.ItemName));
             GetAqlExpression(letClause.LetExpression, queryModel);
+
+            var subQuery = letClause.SubqueryExpression as SubQueryExpression;
+            if (subQuery != null)
+            {
+                GetAqlExpression(subQuery, queryModel, handleLet: true);
+                this.DontReturn = true;
+            }
         }
 
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
             QueryText.Append(" return ");
             GetAqlExpression(selectClause.Selector, queryModel);
+        }
+
+        public void VisitUpdateAndReturnClause(UpdateAndReturnClause updateAndReturnClause, QueryModel queryModel)
+        {
+            if (updateAndReturnClause.KeySelector != null)
+            {
+                QueryText.AppendFormat(" {0} ", updateAndReturnClause.Command);
+
+                GetAqlExpression(updateAndReturnClause.KeySelector, queryModel);
+
+                QueryText.AppendFormat(" with ");
+            }
+            else
+            {
+                QueryText.AppendFormat(" {0} {1} with ", updateAndReturnClause.Command, LinqUtility.ResolvePropertyName(updateAndReturnClause.ItemName));
+            }
+
+            GetAqlExpression(updateAndReturnClause.WithSelector, queryModel);
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, updateAndReturnClause.CollectionType);
+            CrudState.ReturnResult = updateAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
+        }
+
+        public void VisitInsertAndReturnClause(InsertAndReturnClause insertAndReturnClause, QueryModel queryModel)
+        {
+            if (insertAndReturnClause.WithSelector != null)
+            {
+                QueryText.Append(" insert ");
+
+                GetAqlExpression(insertAndReturnClause.WithSelector, queryModel);
+            }
+            else
+            {
+                QueryText.AppendFormat(" insert {0} ", LinqUtility.ResolvePropertyName(insertAndReturnClause.ItemName));
+            }
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, insertAndReturnClause.CollectionType);
+            CrudState.ReturnResult = insertAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = "new";
+        }
+
+        public void VisitRemoveAndReturnClause(RemoveAndReturnClause removeAndReturnClause, QueryModel queryModel)
+        {
+            if (removeAndReturnClause.KeySelector != null)
+            {
+                QueryText.Append(" remove ");
+
+                GetAqlExpression(removeAndReturnClause.KeySelector, queryModel);
+            }
+            else
+            {
+                QueryText.AppendFormat(" remove {0} ", LinqUtility.ResolvePropertyName(removeAndReturnClause.ItemName));
+            }
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, removeAndReturnClause.CollectionType);
+            CrudState.ReturnResult = removeAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = "old";
         }
 
         public void VisitFilterClause(FilterClause filterClause, QueryModel queryModel, int index)
@@ -133,27 +253,16 @@ namespace ArangoDB.Client.Linq
 
         public void VisitSkipTakeClause(SkipTakeClause skipTakeClause, QueryModel queryModel, int index)
         {
-            if(skipTakeClause.TakeCount==null)
+            if (skipTakeClause.TakeCount == null)
                 throw new InvalidOperationException("in limit[skip & take functions] count[take function] should be specified");
 
             QueryText.AppendFormat("  limit ");
-            if (skipTakeClause != null && skipTakeClause.SkipCount!=null)
+            if (skipTakeClause != null && skipTakeClause.SkipCount != null)
             {
                 GetAqlExpression(skipTakeClause.SkipCount, queryModel);
                 QueryText.AppendFormat("  , ");
             }
             GetAqlExpression(skipTakeClause.TakeCount, queryModel);
-
-            //int? skipCount = skipTakeClause.GetConstantSkipCount();
-            //int? takeCount = skipTakeClause.GetConstantTakeCount();
-
-            //if (!takeCount.HasValue)
-            //    throw new InvalidOperationException("Skip() should be used with Take() in query");
-
-            //if (skipCount.HasValue)
-            //    QueryText.AppendFormat("  limit {0},{1} ", skipCount.Value, takeCount.Value);
-            //else
-            //    QueryText.AppendFormat("  limit {0} ", takeCount.Value);
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
@@ -167,7 +276,8 @@ namespace ArangoDB.Client.Linq
             var parentMVisitor = LinqUtility.FindParentModelVisitor(this);
             parentMVisitor.GroupByNameCounter++;
             groupByClause.IntoName = "C" + parentMVisitor.GroupByNameCounter;
-            groupByClause.funcIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
+            groupByClause.FuncIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
+            groupByClause.FromParameterName = queryModel.MainFromClause.ItemName;
 
             QueryText.Append(" collect ");
 
@@ -206,10 +316,14 @@ namespace ArangoDB.Client.Linq
 
         }
 
-        private void GetAqlExpression(Expression expression, QueryModel queryModel, bool? TreatNewWithoutBracket = false)
+        private void GetAqlExpression(Expression expression, QueryModel queryModel,
+            bool? treatNewWithoutBracket = false, bool? handleJoin = false, bool? handleLet = false)
         {
             var visitor = new AqlExpressionTreeVisitor(this);
-            visitor.TreatNewWithoutBracket = TreatNewWithoutBracket.Value;
+            visitor.TreatNewWithoutBracket = treatNewWithoutBracket.Value;
+            visitor.QueryModel = queryModel;
+            visitor.HandleJoin = handleJoin.Value;
+            visitor.HandleLet = handleLet.Value;
             visitor.VisitExpression(expression);
         }
     }

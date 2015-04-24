@@ -27,6 +27,12 @@ namespace ArangoDB.Client.Linq.Clause
             _letExpression = letExpression;
         }
 
+        public LetClause(string itemName, Expression letExpression, Expression subQueryexpression)
+            : this(itemName,letExpression)
+        {
+            SubqueryExpression = subQueryexpression;
+        }
+
         public string ItemName
         {
             get { return _itemName; }
@@ -42,6 +48,8 @@ namespace ArangoDB.Client.Linq.Clause
             get { return _letExpression; }
             set { _letExpression = Utils.CheckNotNull("value", value); }
         }
+
+        public Expression SubqueryExpression { get; set; }
 
         public void TransformExpressions(Func<Expression, Expression> transformation)
         {

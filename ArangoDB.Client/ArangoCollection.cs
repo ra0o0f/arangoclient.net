@@ -32,8 +32,9 @@ namespace ArangoDB.Client
 
     public enum EdgeDirection
     {
-        In = 0,
-        Out = 1
+        Any = 0,
+        Inbound = 1,
+        Outbound = 2
     }
 
     public class ArangoCollection<T> : IDocumentCollection<T>, IEdgeCollection<T>
@@ -62,14 +63,8 @@ namespace ArangoDB.Client
         {
             this.db = db;
             collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-            //property = GetCollectionProperty(typeof(T));
+            collectionType = type;
         }
-
-        //public ArangoCollection(ArangoDatabase db, string name)
-        //{
-        //    this.db = db;
-        //    property = new CollectionProperty { Name = name, Type = typeof(object) };
-        //}
 
         /// <summary>
         /// Creates a new document in the collection
@@ -78,9 +73,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Save(object document, bool? createCollection = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Insert(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return SaveAsync(document, createCollection, waitForSync).ResultSynchronizer();
+            return InsertAsync(document, createCollection, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -90,7 +85,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> SaveAsync(object document, bool? createCollection = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> InsertAsync(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             createCollection = Utils.ChangeIfNotSpecified<bool>(createCollection, db.Setting.CreateCollectionOnTheFly);
             waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
@@ -108,10 +103,16 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
-            if (db.Setting.DisableChangeTracking==false)
-                db.ChangeTracker.TrackChanges(document, result.Result);
+            if (!result.BaseResult.Error)
+            {
+                if (db.Setting.DisableChangeTracking == false)
+                    db.ChangeTracker.TrackChanges(document, result.Result);
 
-            db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
+                db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
+            }
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
 
             return result.Result;
         }
@@ -125,9 +126,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult SaveEdge(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
+        public DocumentIdentifierResult InsertEdge(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return SaveEdgeAsync(from, to, edgeDocument, createCollection, waitForSync).ResultSynchronizer();
+            return InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -139,7 +140,8 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> SaveEdgeAsync(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> InsertEdgeAsync(string from, string to, object edgeDocument,
+            bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             createCollection = Utils.ChangeIfNotSpecified<bool>(createCollection, db.Setting.CreateCollectionOnTheFly);
             waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
@@ -159,17 +161,23 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(edgeDocument).ConfigureAwait(false);
 
-            if (!db.Setting.DisableChangeTracking == true)
+            if (!result.BaseResult.Error)
             {
-                var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
-                if (container != null)
+                if (!db.Setting.DisableChangeTracking)
                 {
-                    container.From = from;
-                    container.To = to;
+                    var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
+                    if (container != null)
+                    {
+                        container.From = from;
+                        container.To = to;
+                    }
                 }
+
+                db.SharedSetting.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
             }
 
-            db.SharedSetting.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
+            if(baseResult!=null)
+                baseResult(result.BaseResult);
 
             return result.Result;
         }
@@ -183,9 +191,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceByIdAsync(id, document, rev, policy, waitForSync).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, rev, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -197,7 +205,8 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null,
+            ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -220,7 +229,11 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
-            db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
+            if(!result.BaseResult.Error)
+                db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
 
             return result.Result;
         }
@@ -233,9 +246,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceAsync(document, policy, waitForSync).ResultSynchronizer();
+            return ReplaceAsync(document, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -247,7 +260,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use ReplaceById() instead");
@@ -256,7 +269,7 @@ namespace ArangoDB.Client
             policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
-            var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync).ConfigureAwait(false);
+            var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
             
             if (!result.Error)
             {
@@ -279,9 +292,10 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult UpdateById(string id, object document, bool? keepNull = null,
+            bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateByIdAsync(id, document, keepNull, mergeObjects, rev, policy, waitForSync).ResultSynchronizer();
+            return UpdateByIdAsync(id, document, keepNull, mergeObjects, rev, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -295,7 +309,8 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null,
+            bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -322,6 +337,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
             return result.Result;
         }
 
@@ -334,9 +352,10 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Update(object document, bool? keepNull = null, bool? mergeObjects = null,
+            ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync).ResultSynchronizer();
+            return UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         ///<summary>
@@ -348,7 +367,8 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null, bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> UpdateAsync(object document, bool? keepNull = null,
+            bool? mergeObjects = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use UpdateById() instead");
@@ -363,7 +383,7 @@ namespace ArangoDB.Client
 
             if (changed.Count != 0)
             {
-                var result = await UpdateByIdAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync).ConfigureAwait(false);
+                var result = await UpdateByIdAsync(container.Id, changed, keepNull, mergeObjects, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
 
                 if (!result.Error)
                 {
@@ -407,9 +427,10 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult RemoveById(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null)
         {
-            return RemoveByIdAsync(id, rev, policy, waitForSync).ResultSynchronizer();
+            return RemoveByIdAsync(id, rev, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -420,7 +441,8 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> RemoveByIdAsync(string id, string rev = null, ReplacePolicy? policy = null,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -443,6 +465,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>().ConfigureAwait(false);
 
+            if(baseResult!=null)
+                baseResult(result.BaseResult);
+
             return result.Result;
         }
 
@@ -453,9 +478,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public DocumentIdentifierResult Remove(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return RemoveAsync(document, policy, waitForSync).ResultSynchronizer();
+            return RemoveAsync(document, policy, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -465,7 +490,8 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null)
+        public async Task<DocumentIdentifierResult> RemoveAsync(object document, ReplacePolicy? policy = null,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use RemoveById() instead");
@@ -474,7 +500,7 @@ namespace ArangoDB.Client
             policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
-            var result = await RemoveByIdAsync(container.Id, rev, policy, waitForSync).ConfigureAwait(false);
+            var result = await RemoveByIdAsync(container.Id, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
 
             if (!result.Error)
                 db.ChangeTracker.StopTrackChanges(document);
@@ -487,9 +513,9 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public T Document(string id)
+        public T Document(string id, Action<BaseResult> baseResult = null)
         {
-            return DocumentAsync(id).ResultSynchronizer();
+            return DocumentAsync(id, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -497,7 +523,7 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public async Task<T> DocumentAsync(string id)
+        public async Task<T> DocumentAsync(string id, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
@@ -511,6 +537,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestDistinctResult<T>().ConfigureAwait(false);
 
+            if(baseResult != null)
+                baseResult(result.BaseResult);
+
             return result.Result;
         }
 
@@ -520,9 +549,9 @@ namespace ArangoDB.Client
         /// <param name="vertexId">The document handle of the start vertex</param>
         /// <param name="direction">Selects in or out direction for edges. If not set, any edges are returned</param>
         /// <returns>Returns a list of edges starting or ending in the vertex identified by vertex document handle</returns>
-        public List<T> Edges(string vertexId, EdgeDirection? direction = null)
+        public List<T> Edges(string vertexId, EdgeDirection? direction = null, Action<BaseResult> baseResult = null)
         {
-            return EdgesAsync(vertexId, direction).ResultSynchronizer();
+            return EdgesAsync(vertexId, direction, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -531,7 +560,7 @@ namespace ArangoDB.Client
         /// <param name="vertexId">The document handle of the start vertex</param>
         /// <param name="direction">Selects in or out direction for edges. If not set, any edges are returned</param>
         /// <returns>Returns a list of edges starting or ending in the vertex identified by vertex document handle</returns>
-        public async Task<List<T>> EdgesAsync(string vertexId, EdgeDirection? direction = null)
+        public async Task<List<T>> EdgesAsync(string vertexId, EdgeDirection? direction = null, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this.db)
             {
@@ -544,10 +573,13 @@ namespace ArangoDB.Client
 
             command.Query.Add("vertex", vertexId);
 
-            if (direction.HasValue)
-                command.Query.Add("direction", direction.Value == EdgeDirection.In ? "in" : "out");
+            if (direction.HasValue && direction.Value != EdgeDirection.Any)
+                command.Query.Add("direction", direction.Value == EdgeDirection.Inbound ? "in" : "out");
 
             var result = await command.RequestGenericListResult<T, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
+
+            if(baseResult != null)
+                baseResult(result.BaseResult);
 
             return result.Result;
         }
@@ -651,13 +683,117 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Returns the first document matching a given example
+        /// Finds documents near the given coordinate
         /// </summary>
-        /// <param name="example">The example document</param>
-        /// <returns>A Document</returns>
-        public T FirstExample(object example)
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Near(double latitude, double longitude, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null)
         {
-            return FirstExampleAsync(example).ResultSynchronizer();
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                Distance = distance!=null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
+                Geo = geo,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "near"
+            };
+
+            return command.CreateCursor<T>(data);
+        }
+
+        /// <summary>
+        /// Finds documents within a given radius around the coordinate
+        /// </summary>
+        /// <param name="latitude">The latitude of the coordinate</param>
+        /// <param name="longitude">The longitude of the coordinate</param>
+        /// <param name="radius">The maximal radius</param>
+        /// <param name="distance">If True, distances are returned in meters</param>
+        /// <param name="geo">The identifier of the geo-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Within(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                Radius = radius,
+                Distance = distance != null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
+                Geo = geo,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "within"
+            };
+
+            return command.CreateCursor<T>(data);
+        }
+
+        /// <summary>
+        /// Finds all documents from the collection that match the fulltext query
+        /// </summary>
+        /// <param name="attribute">The attribute that contains the texts</param>
+        /// <param name="query">The fulltext query</param>
+        /// <param name="index">The identifier of the fulltext-index to use</param>
+        /// <param name="skip">The number of documents to skip in the query</param>
+        /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
+        /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
+        /// <returns>Returns a cursor</returns>
+        public ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
+            , int? skip = null, int? limit = null, int? batchSize = null)
+        {
+            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+
+            SimpleData data = new SimpleData
+            {
+                Attribute = db.SharedSetting.Collection.ResolvePropertyName(attribute),
+                Query = query,
+                Index = index,
+                BatchSize = batchSize,
+                Collection = collectionName,
+                Limit = limit,
+                Skip = skip
+            };
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Simple,
+                Method = HttpMethod.Put,
+                Command = "fulltext"
+            };
+
+            return command.CreateCursor<T>(data);
         }
 
         /// <summary>
@@ -665,7 +801,17 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="example">The example document</param>
         /// <returns>A Document</returns>
-        public async Task<T> FirstExampleAsync(object example)
+        public T FirstExample(object example, Action<BaseResult> baseResult = null)
+        {
+            return FirstExampleAsync(example, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Returns the first document matching a given example
+        /// </summary>
+        /// <param name="example">The example document</param>
+        /// <returns>A Document</returns>
+        public async Task<T> FirstExampleAsync(object example, Action<BaseResult> baseResult = null)
         {
             SimpleData data = new SimpleData
             {
@@ -683,6 +829,9 @@ namespace ArangoDB.Client
 
             var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
+            if(baseResult != null)
+                baseResult(result.BaseResult);
+
             return result.Result;
         }
 
@@ -690,16 +839,16 @@ namespace ArangoDB.Client
         /// Returns a random document
         /// </summary>
         /// <returns>A Document</returns>
-        public T Any()
+        public T Any(Action<BaseResult> baseResult = null)
         {
-            return AnyAsync().ResultSynchronizer();
+            return AnyAsync(baseResult).ResultSynchronizer();
         }
 
         /// <summary>
         /// Returns a random document
         /// </summary>
         /// <returns>A Document</returns>
-        public async Task<T> AnyAsync()
+        public async Task<T> AnyAsync(Action<BaseResult> baseResult = null)
         {
             SimpleData data = new SimpleData
             {
@@ -715,6 +864,9 @@ namespace ArangoDB.Client
             };
 
             var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
+
+            if(baseResult != null)
+                baseResult(result.BaseResult);
 
             return result.Result;
         }

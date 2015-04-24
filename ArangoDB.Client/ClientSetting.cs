@@ -23,7 +23,7 @@ namespace ArangoDB.Client
             }
         }
 
-        internal bool IsHttpClientInitialied { get; set; }
+        internal volatile bool IsHttpClientInitialied;
 
     }
 }

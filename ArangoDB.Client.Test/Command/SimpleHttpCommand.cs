@@ -25,7 +25,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.SingleResult);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestDistinctResult<Person>();
 
@@ -52,7 +52,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestDistinctResult<Person>();
 
@@ -73,7 +73,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.Error, statusCode: HttpStatusCode.NotFound);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestDistinctResult<Person>());
         }
@@ -87,7 +87,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestDistinctResult<Person>());
         }
@@ -101,7 +101,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestDistinctResult<Person>();
 
@@ -121,7 +121,7 @@ namespace ArangoDB.Client.Test.Command
             mockDB.Db.Setting.DisableChangeTracking = true;
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestDistinctResult<Person>();
 
@@ -138,7 +138,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.NestedSingleResult);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
@@ -165,7 +165,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
@@ -186,7 +186,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.Error, statusCode: HttpStatusCode.NotFound);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>());
         }
@@ -200,7 +200,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>());
         }
@@ -214,7 +214,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
@@ -234,7 +234,7 @@ namespace ArangoDB.Client.Test.Command
             mockDB.Db.Setting.DisableChangeTracking = true;
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
@@ -251,7 +251,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.ListResult);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
@@ -289,7 +289,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
@@ -318,7 +318,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.Error, statusCode: HttpStatusCode.NotFound);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>());
         }
@@ -332,7 +332,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.DisableChangeTracking = true;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>());
         }
@@ -346,7 +346,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
@@ -366,7 +366,7 @@ namespace ArangoDB.Client.Test.Command
             mockDB.Db.Setting.DisableChangeTracking = true;
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
@@ -384,7 +384,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.MergeResult);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking};
 
             var result = await command.RequestMergedResult<Flight>();
 
@@ -404,7 +404,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.Error, statusCode: HttpStatusCode.NotFound);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             await Assert.ThrowsAsync<ArangoServerException>(() => command.RequestMergedResult<Flight>());
         }
@@ -418,7 +418,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.Db.Setting.ThrowForServerErrors = false;
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking.Value };
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestMergedResult<Flight>();
 
@@ -505,7 +505,7 @@ namespace ArangoDB.Client.Test.Command
             else
                 mockDB.SendCommandSequence(jsonList, statusCode: error.Value ? HttpStatusCode.NotFound : HttpStatusCode.OK);
 
-            mockDB.Db.Setting.DisableChangeTracking = disableChangeTracking;
+            mockDB.Db.Setting.DisableChangeTracking = disableChangeTracking.Value;
             mockDB.Db.Setting.ThrowForServerErrors = throwOnError.Value;
 
             HttpCommand command = new HttpCommand(mockDB.Db);

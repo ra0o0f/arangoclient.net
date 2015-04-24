@@ -59,5 +59,20 @@ namespace ArangoDB.Client.Utility
 
             return null;
         }
+
+        public static string EdgeDirectionToString(EdgeDirection direction)
+        {
+            switch (direction)
+            {
+                case EdgeDirection.Any:
+                    return "any";
+                case EdgeDirection.Inbound:
+                    return "inbound";
+                case EdgeDirection.Outbound:
+                    return "outbound";
+                default:
+                    return string.Empty;
+            }
+        }
     }
 }

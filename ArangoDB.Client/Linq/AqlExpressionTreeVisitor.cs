@@ -5,6 +5,7 @@ using ArangoDB.Client.Common.Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using ArangoDB.Client.Common.Remotion.Linq.Parsing;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Linq.Clause;
+using ArangoDB.Client.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,127 +17,101 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq
 {
-    public class AqlExpressionTreeVisitor : ThrowingExpressionTreeVisitor, INamedExpressionVisitor
+    public partial class AqlExpressionTreeVisitor : ThrowingExpressionTreeVisitor, INamedExpressionVisitor
     {
-        static Dictionary<ExpressionType, string> expressionTypes;
-        static Dictionary<string, string> aqlMethods;
-        public AqlModelVisitor ModelVisitor;
+        public AqlModelVisitor ModelVisitor { get; set; }
+        public QueryModel QueryModel { get; set; }
 
-        public bool TreatNewWithoutBracket;
+        public bool TreatNewWithoutBracket { get; set; }
+        public bool HandleLet { get; set; }
+        public bool HandleJoin { get; set; }
 
-        static AqlExpressionTreeVisitor()
+        public AqlExpressionTreeVisitor(AqlModelVisitor modelVisitor)
         {
-            expressionTypes = new Dictionary<ExpressionType, string>()
-            {
-                {ExpressionType.Equal, " == "},
-                {ExpressionType.NotEqual, " != "},
-                {ExpressionType.LessThan, " < "},
-                {ExpressionType.LessThanOrEqual, " <= "},
-                {ExpressionType.GreaterThan, " > "},
-                {ExpressionType.GreaterThanOrEqual, " >= "},
-                {ExpressionType.And, " and "},
-                {ExpressionType.AndAlso, " and "},
-                {ExpressionType.Or, " or "},
-                {ExpressionType.OrElse, " or "},
-                {ExpressionType.Not, " not "},
-                {ExpressionType.Add, " + "},
-                {ExpressionType.Subtract, " - "},
-                {ExpressionType.Multiply, " * "},
-                {ExpressionType.Divide, " / "},
-                {ExpressionType.Modulo, " % "}
-            };
-
-            aqlMethods = new Dictionary<string, string>()
-            {
-                /*type cast*/
-                {"ToBool","to_bool"},
-                {"ToNumber","to_number"},
-                {"ToString","to_string"},
-                {"ToArray","to_array"},
-                {"IsNull","is_null"},
-                {"IsBool","is_bool"},
-                {"IsNumber","is_number"},
-                {"IsString","is_string"},
-                {"IsArray","is_array"},
-                {"IsList","is_list"},
-                {"IsObject","is_object"},
-                {"IsDocument","is_document"},
-
-                /*string*/
-                {"Concat","concat"},
-                {"ConcatSeparator","concat_separator"},
-                {"CharLength","char_length"},
-                {"Lower","lower"},
-                {"Upper","upper"},
-                {"Substitute","substitute"},
-                {"Substring","substring"},
-                {"Left","left"},
-                {"Right","right"},
-                {"Trim","trim"},
-                {"LTrim","ltrim"},
-                {"RTrim","rtrim"},
-                {"Split","split"},
-                {"Reverse","reverse"},
-                {"Contains","contains"},
-                {"FindFirst","find_first"},
-                {"FindLast","find_last"},
-                {"Like","like"},
-                
-                /*numeric*/
-                {"Floor","floor"},
-                {"Ceil","ceil"},
-                {"Round","round"},
-                {"Abs","abs"},
-                {"Sqrt","sqrt"},
-                {"Rand","rand"},
-                
-                /*numeric*/
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""},
-                //{"",""}
-            };
+            this.ModelVisitor = modelVisitor;
         }
 
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
+            if (expression.Method.Name == "As")
+            {
+                VisitExpression(expression.Arguments[0]);
+                return expression;
+            }
+
             string methodName;
             if (aqlMethods.TryGetValue(expression.Method.Name, out methodName))
             {
                 ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
 
+                if (methodName == "near" || methodName == "within" || methodName == "within_rectangle"
+                    || methodName == "edges" || methodName == "neighbors" || methodName == "traversal"
+                    || methodName == "traversal_tree" || methodName == "shortest_path" || methodName == "paths")
+                {
+                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
+                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
+                }
+
+                if (methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree"
+                    || methodName == "shortest_path" || methodName == "paths")
+                {
+                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[1]);
+                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
+                }
+
                 for (int i = 0; i < expression.Arguments.Count; i++)
                 {
-                    VisitExpression(expression.Arguments[i]);
+                    bool dontVisitArgument = false;
+
+                    if (i == 0)
+                    {
+                        if (methodName == "paths")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+                    if (i == 1)
+                    {
+                        if (methodName == "edges" || methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+                    if (i == 2)
+                    {
+                        if (methodName == "shortest_path")
+                        {
+                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
+                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
+                            dontVisitArgument = true;
+                        }
+                    }
+
+                    if(!dontVisitArgument)
+                        VisitExpression(expression.Arguments[i]);
+
                     if (i != expression.Arguments.Count - 1)
                         ModelVisitor.QueryText.Append(" , ");
                 }
-
+                
                 ModelVisitor.QueryText.Append(" ) ");
 
                 return expression;
             }
-            else if (expression.Method.Name == "get_Item")
+
+            if (expression.Method.Name == "get_Item")
             {
                 VisitExpression(expression.Object);
                 ModelVisitor.QueryText.AppendFormat("[{0}] ", (expression.Arguments[0] as ConstantExpression).Value);
 
                 return expression;
             }
-            else
-            {
-                return base.VisitMethodCallExpression(expression); // throws
-            }
 
+            return base.VisitMethodCallExpression(expression); // throws
         }
 
         // Called when a LINQ expression type is not handled above.
@@ -147,9 +122,11 @@ namespace ArangoDB.Client.Linq
             return new NotSupportedException(message);
         }
 
-        public AqlExpressionTreeVisitor(AqlModelVisitor modelVisitor)
+        protected override Expression VisitParameterExpression(ParameterExpression expression)
         {
-            this.ModelVisitor = modelVisitor;
+            ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(expression.Name));
+
+            return expression;
         }
 
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
@@ -186,6 +163,10 @@ namespace ArangoDB.Client.Linq
                     return Expression.Not(operand);
                 }
             }
+            if(expression.NodeType == ExpressionType.Convert)
+            {
+                return VisitExpression(expression.Operand);
+            }
 
             return base.VisitUnaryExpression(expression);
         }
@@ -203,11 +184,11 @@ namespace ArangoDB.Client.Linq
             else
             {
                 ModelVisitor.QueryText.Append(" ( ");
-                VisitExpression(expression.Left);
+                var leftExp = VisitExpression(expression.Left);
 
                 ModelVisitor.QueryText.Append(expressionTypes[expression.NodeType]);
 
-                VisitExpression(expression.Right);
+                var rightExp = VisitExpression(expression.Right);
                 ModelVisitor.QueryText.Append(" ) ");
 
                 return expression;
@@ -247,7 +228,6 @@ namespace ArangoDB.Client.Linq
             else
             {
                 VisitExpression(expression.Expression);
-                //LinqUtility.ResolvePropertyName(expression.Member.Name)
                 ModelVisitor.QueryText.AppendFormat(".{0} ", LinqUtility.ResolveMemberName(ModelVisitor.Db,expression.Member) );
             }
 
@@ -260,7 +240,7 @@ namespace ArangoDB.Client.Linq
             parentModelVisitor.ParameterNameCounter++;
             string parameterName = "P" + parentModelVisitor.ParameterNameCounter;
 
-            this.ModelVisitor.QueryData.BindVars.Add(new QueryParameter() { Name = parameterName, Value = expression.Value });
+            parentModelVisitor.QueryData.BindVars.Add(new QueryParameter() { Name = parameterName, Value = expression.Value });
 
             ModelVisitor.QueryText.AppendFormat(" @{0} ", parameterName);
 
@@ -273,11 +253,15 @@ namespace ArangoDB.Client.Linq
 
         protected override Expression VisitNewArrayExpression(NewArrayExpression expression)
         {
-            ReadOnlyCollection<Expression> newExpressions = VisitAndConvert(expression.Expressions, "VisitNewArrayExpression");
+            //ReadOnlyCollection<Expression> newExpressions = VisitAndConvert(expression.Expressions, "VisitNewArrayExpression");
             ModelVisitor.QueryText.Append(" [ ");
-            foreach (var n in newExpressions)
+            int i = 0;
+            foreach (var n in expression.Expressions)
             {
                 VisitExpression(n);
+                if (i != expression.Expressions.Count - 1)
+                    ModelVisitor.QueryText.Append(" , ");
+                i++;
             }
             ModelVisitor.QueryText.Append(" ] ");
 
@@ -362,32 +346,33 @@ namespace ArangoDB.Client.Linq
             throw new NotSupportedException(string.Format("Constant value of type {0} cant be translate to aql", type.ToString()));
         }
 
-        //void VisitConstantGenericList<T>(T t,List<T> value)
-        //{
-        //    foreach (var v in value)
-        //        VisitConstantValue(v, t);
-        //}
-
         protected override Expression VisitMemberInitExpression(MemberInitExpression node)
         {
-            //NewExpression n = this.VisitNew(node.NewExpression);
-
             NewExpression n = Expression.New(node.NewExpression.Constructor, node.NewExpression.Arguments);
 
             if (!TreatNewWithoutBracket)
                 ModelVisitor.QueryText.Append(" { ");
 
-            IEnumerable<MemberBinding> bindings = this.VisitMemberBindingList(node.Bindings);
+            int bindingIndex = -1;
+            foreach (var b in node.Bindings)
+            {
+                bindingIndex++;
+
+                VisitMemberBinding(b);
+
+                if(bindingIndex!=node.Bindings.Count-1)
+                    ModelVisitor.QueryText.Append(" , ");
+            }
 
             if (!TreatNewWithoutBracket)
                 ModelVisitor.QueryText.Append(" } ");
 
-            if (n != node.NewExpression || bindings != node.Bindings)
-            {
-                var e = Expression.MemberInit(n, bindings);
+            //if (n != node.NewExpression || bindings != node.Bindings)
+            //{
+            //    var e = Expression.MemberInit(n, bindings);
 
-                return e;
-            }
+            //    return e;
+            //}
 
             return node;
         }
@@ -421,31 +406,24 @@ namespace ArangoDB.Client.Linq
             return e;
         }
 
-        //protected virtual NewExpression VisitNew(NewExpression node)
-        //{
-        //    IEnumerable<Expression> args = this.Visit(node.Arguments);
-        //    if (args != node.Arguments)
-        //    {
-        //        if (node.Members != null)
-        //        {
-        //            return Expression.New(node.Constructor, args, node.Members);
-        //        }
-        //        else
-        //        {
-        //            return Expression.New(node.Constructor, args);
-        //        }
-        //    }
-        //    return node;
-        //}
-
         protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
-            ModelVisitor.QueryText.Append(" ( ");
+            if(!HandleJoin && !HandleLet)
+                ModelVisitor.QueryText.Append(" ( ");
+
             var visitor = new AqlModelVisitor(ModelVisitor.Db);
+
+            if (HandleLet)
+                visitor.DefaultAssociatedIdentifier = QueryModel.MainFromClause.ItemName;
+
             visitor.QueryText = this.ModelVisitor.QueryText;
             visitor.ParnetModelVisitor = this.ModelVisitor;
+            visitor.IgnoreFromClause = HandleLet;
+
             visitor.VisitQueryModel(expression.QueryModel);
-            ModelVisitor.QueryText.Append(" ) ");
+
+            if (!HandleJoin && !HandleLet)
+                ModelVisitor.QueryText.Append(" ) ");
 
             return expression;
         }
@@ -453,9 +431,7 @@ namespace ArangoDB.Client.Linq
         public Expression VisitNamedExpression(NamedExpression expression)
         {
             ModelVisitor.QueryText.AppendFormat(" `{0}` {1} ", expression.Name, TreatNewWithoutBracket ? "= " : ": ");
-            VisitExpression(expression.Expression);
-
-            return expression;
+            return VisitExpression(expression.Expression);
         }
 
         private string FormatUnhandledItem<T>(T unhandledItem)

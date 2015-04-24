@@ -46,14 +46,20 @@ namespace ArangoDB.Client.Http
             this.db = db;
         }
 
-        public async Task<HttpResponseMessage>  SendCommandAsync(HttpMethod method,Uri uri,object data)
+        public async Task<HttpResponseMessage>  SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential)
         {
             var requestMessage = new HttpRequestMessage(method,uri);
+
+            string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
+            requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
 
             if(data!=null)
                 requestMessage.Content = new JsonContent(db,data);
 
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                throw new AuthenticationException("The user is not authorized");
 
             return responseMessage;
         }

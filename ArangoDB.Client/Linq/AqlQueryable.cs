@@ -10,19 +10,30 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Linq
 {
-    public class AqlQueryable<T> : QueryableBase<T>, ICursor<T>
+    public class AqlQueryable<T> : QueryableBase<T>, ICursor<T>, IAqlModifiable<T>, IAqlModifiable, IQueryableState
     {
         IArangoDatabase db;
+
+        public Dictionary<string, string> StateValues { get; set; }
+
+        public AqlQueryable<T> KeepState(IQueryableState state)
+        {
+            this.StateValues = state.StateValues;
+
+            return this;
+        }
 
         public AqlQueryable(IQueryParser queryParser, IQueryExecutor executor,IArangoDatabase db)
             : base(new AqlQueryProvider(typeof(AqlQueryable<>), queryParser, executor,db))
         {
+            this.StateValues = new Dictionary<string, string>();
             this.db = db;
         }
 
         public AqlQueryable(IQueryProvider provider, Expression expression, IArangoDatabase db)
             : base(provider, expression)
         {
+            this.StateValues = new Dictionary<string, string>();
             this.db = db;
         }
 

@@ -39,12 +39,6 @@ namespace ArangoDB.Client.Linq.Clause
             aqlVisotor.VisitFilterClause(this, queryModel, index);
         }
 
-        public void TransformExpressions(Func<Expression, Expression> transformation)
-        {
-            Utils.CheckNotNull("transformation", transformation);
-            Predicate = transformation(Predicate);
-        }
-
         public virtual FilterClause Clone(CloneContext cloneContext)
         {
             Utils.CheckNotNull("cloneContext", cloneContext);
@@ -52,6 +46,14 @@ namespace ArangoDB.Client.Linq.Clause
             var clone = new FilterClause(Predicate);
             return clone;
         }
+
+        public void TransformExpressions(Func<Expression, Expression> transformation)
+        {
+            Utils.CheckNotNull("transformation", transformation);
+            Predicate = transformation(Predicate);
+        }
+
+        
 
         IBodyClause IBodyClause.Clone(CloneContext cloneContext)
         {

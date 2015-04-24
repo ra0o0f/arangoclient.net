@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.Utility;
+﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,11 +15,53 @@ namespace ArangoDB.Client.Property
         ConcurrentDictionary<Type, CollectionPropertySetting> collectionProperties = new ConcurrentDictionary<Type, CollectionPropertySetting>();
         ConcurrentDictionary<IdentifierType, string> defaultIdentifierNames = new ConcurrentDictionary<IdentifierType, string>();
 
+        ConcurrentDictionary<IdentifierType, Func<Type, string>> defaultIdentifierFuncs = new ConcurrentDictionary<IdentifierType, Func<Type, string>>();
+        //ConcurrentDictionary<Type, Dictionary<IdentifierType, Func<Type, string>>> defaultIdentifierFuncs = new ConcurrentDictionary<Type, Dictionary<IdentifierType, Func<Type, string>>>();
+        ConcurrentDictionary<Type, Dictionary<IdentifierType, string>> defaultIdentifierNamesForType = new ConcurrentDictionary<Type, Dictionary<IdentifierType, string>>();
+
         DatabaseSharedSetting setting;
 
         public DatabaseCollectionSetting(DatabaseSharedSetting setting)
         {
             this.setting = setting;
+        }
+
+        public void ChangeIdentifierDefaultName(IdentifierType identifier, Func<Type,string> func)
+        {
+            if (IdentifierType.None == identifier)
+                throw new InvalidOperationException("Can not set default name for [IdentifierType.None]");
+
+            defaultIdentifierFuncs.AddOrUpdate(identifier, func, (oldIdentifier, oldFunc) => func);
+
+            setting.IdentifierModifier.ClearMethodCache();
+        }
+
+        internal bool FindIdentifierDefaultNameForType(Type type, IdentifierType identifier , string memberName)
+        {
+            Dictionary<IdentifierType, string> identifierNames = null;
+            if (defaultIdentifierNamesForType.TryGetValue(type, out identifierNames))
+            {
+                string resolvedName = null;
+                if (identifierNames.TryGetValue(identifier, out resolvedName))
+                    return memberName == resolvedName;
+            }
+            else
+            {
+                identifierNames = new Dictionary<IdentifierType, string>();
+                defaultIdentifierNamesForType.TryAdd(type, identifierNames);
+            }
+
+            Func<Type, string> f = null;
+            if (!defaultIdentifierFuncs.TryGetValue(identifier, out f))
+                return false;
+
+            if(memberName == f(type))
+            {
+                identifierNames[identifier] = memberName;
+                return true;
+            }
+
+            return false;
         }
 
         public void ChangeIdentifierDefaultName(IdentifierType identifier, string defaultName)
@@ -152,26 +195,18 @@ namespace ArangoDB.Client.Property
 
             }
 
+            /*************   default identifer setting for type   **************/
 
-            /*************   collection setting   **************/
-
-            ICollectionPropertySetting collectionProperty = null;
-            ChangeCollectionPropertyForType(type, x => collectionProperty = x);
-
-            // * return defined setting collection naming convention
-            if (collectionProperty.Naming == NamingConvention.ToCamelCase)
-                return StringUtils.ToCamelCase(memberName);
-
-
-            /*************  attribute collection setting   **************/
-
-            ICollectionPropertySetting collectionAttribute = CollectionPropertySetting.FindCollectionAttributeForType(type);
-
-            if(collectionAttribute!=null)
-            {
-                if(collectionAttribute.Naming== NamingConvention.ToCamelCase)
-                    return StringUtils.ToCamelCase(memberName);
-            }
+            if (FindIdentifierDefaultNameForType(type, IdentifierType.EdgeFrom, memberName))
+                return "_from";
+            if (FindIdentifierDefaultNameForType(type, IdentifierType.EdgeTo, memberName))
+                return "_to";
+            if (FindIdentifierDefaultNameForType(type, IdentifierType.Handle, memberName))
+                return "_id";
+            if (FindIdentifierDefaultNameForType(type, IdentifierType.Revision, memberName))
+                return "_rev";
+            if (FindIdentifierDefaultNameForType(type, IdentifierType.Key, memberName))
+                return "_key";
 
             /*************   default identifer setting   **************/
 
@@ -192,6 +227,26 @@ namespace ArangoDB.Client.Property
             if (defaultIdentifierNames.TryGetValue(IdentifierType.Revision, out defaultName))
                 if (defaultName == memberName)
                     return "_rev";
+
+            /*************   collection setting   **************/
+
+            ICollectionPropertySetting collectionProperty = null;
+            ChangeCollectionPropertyForType(type, x => collectionProperty = x);
+
+            // * return defined setting collection naming convention
+            if (collectionProperty.Naming == NamingConvention.ToCamelCase)
+                return StringUtils.ToCamelCase(memberName);
+
+
+            /*************  attribute collection setting   **************/
+
+            ICollectionPropertySetting collectionAttribute = CollectionPropertySetting.FindCollectionAttributeForType(type);
+
+            if (collectionAttribute != null)
+            {
+                if (collectionAttribute.Naming == NamingConvention.ToCamelCase)
+                    return StringUtils.ToCamelCase(memberName);
+            }
 
             return memberName;
         }

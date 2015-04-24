@@ -1,4 +1,6 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.Remotion.Linq.Utilities;
+using Remotion.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +45,21 @@ namespace ArangoDB.Client.Common.Utility
         public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
         {
             return TypeExtensions.GetConstructors(type);
+        }
+
+        public static Type GetItemTypeOfClosedGenericIEnumerable(Type enumerableType, string argumentName)
+        {
+            ArgumentUtility.CheckNotNull("enumerableType", enumerableType);
+            ArgumentUtility.CheckNotNullOrEmpty("argumentName", argumentName);
+
+            Type itemType = ReflectionUtility.TryGetItemTypeOfClosedGenericIEnumerable(enumerableType);
+            if (itemType == null)
+            {
+                var message = string.Format("Expected a closed generic type implementing IEnumerable<T>, but found '{0}'.", enumerableType);
+                throw new ArgumentException(message, argumentName);
+            }
+
+            return itemType;
         }
     }
 }
