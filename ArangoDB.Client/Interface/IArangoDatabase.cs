@@ -117,7 +117,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         DocumentIdentifierResult ReplaceById<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Completely updates the document with no change tracking
         /// </summary>
@@ -128,7 +128,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<DocumentIdentifierResult> ReplaceByIdAsync<T>(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-        
+
         ///<summary>
         ///Partially updates the document without change tracking
         ///</summary>
@@ -141,7 +141,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         DocumentIdentifierResult UpdateById<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-        
+
         ///<summary>
         ///Partially updates the document without change tracking
         ///</summary>
@@ -214,7 +214,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<DocumentIdentifierResult> RemoveAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Reads a single document
         /// </summary>
@@ -416,7 +416,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Within<T>(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null);
-        
+
         /// <summary>
         /// Finds all documents from the collection that match the fulltext query
         /// </summary>
@@ -427,7 +427,7 @@ namespace ArangoDB.Client
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
         /// <returns>Returns a cursor</returns>
-        ICursor<T> Fulltext<T>(Expression<Func<T, object>> attribute, string query, string index=null
+        ICursor<T> Fulltext<T>(Expression<Func<T, object>> attribute, string query, string index = null
             , int? skip = null, int? limit = null, int? batchSize = null);
 
         /// <summary>
@@ -443,6 +443,53 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the database</param>
         /// <returns></returns>
         Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
-        
+
+        /// <summary>
+        /// Creates a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
+        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
+        /// <returns>CreateGraphResult</returns>
+        CreateGraphResult CreateGraph(string name, List<EdgeDefinitionData> edgeDefinitions, List<string> orphanCollections = null);
+
+        /// <summary>
+        /// Creates a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
+        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
+        /// <returns>CreateGraphResult</returns>
+        Task<CreateGraphResult> CreateGraphAsync(string name, List<EdgeDefinitionData> edgeDefinitions, List<string> orphanCollections = null);
+
+        /// <summary>
+        /// Deletes a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
+        /// <returns></returns>
+        void DeleteGraph(string name, bool dropCollections = false);
+
+        /// <summary>
+        /// Deletes a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
+        /// <returns>Task</returns>
+        Task DeleteGraphAsync(string name, bool dropCollections = false);
+
+        /// <summary>
+        /// Get a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <returns>GraphIdentifierResult</returns>
+        GraphIdentifierResult GetGraph(string name);
+
+        /// <summary>
+        /// Deletes a graph
+        /// </summary>
+        /// <param name="name">Name of the graph</param>
+        /// <returns>GraphIdentifierResult</returns>
+        Task<GraphIdentifierResult> GetGraphAsync(string name);
     }
 }
