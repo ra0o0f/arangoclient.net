@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BBD66B39-78B8-477E-8ABC-C73CC3C17106}</ProjectGuid>
+    <ProjectGuid>{05ABCCD9-2EFF-4276-9328-CBA5DDD2A326}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ArangoDB.Client.Test</RootNamespace>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\Portable</OutputPath>
+    <OutputPath>bin\Debug\Net45</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\Portable</OutputPath>
+    <OutputPath>bin\Release\Net45</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -74,17 +74,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.csproj">
-      <Project>{041982ed-aa4e-4212-a9dc-822d6dff5414}</Project>
-      <Name>ArangoDB.Client.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ArangoDB.Client\ArangoDB.Client.csproj">
-      <Project>{bf30bb46-ffca-4725-af2f-806326770244}</Project>
-      <Name>ArangoDB.Client</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
+      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
+      <Name>ArangoDB.Client.Common.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArangoDB.Client\ArangoDB.Client.Net45.csproj">
+      <Project>{216d8159-a346-491a-973e-aee95575f111}</Project>
+      <Name>ArangoDB.Client.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
