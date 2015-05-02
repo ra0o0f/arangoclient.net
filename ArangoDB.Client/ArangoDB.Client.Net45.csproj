@@ -44,6 +44,7 @@
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
+    <Compile Include="ArangoGraphCommands.cs" />
     <Compile Include="ArangoServerException.cs" />
     <Compile Include="BaseResultAnalyzer.cs" />
     <Compile Include="ChangeTracking\DocumentContainer.cs" />
@@ -57,14 +58,18 @@
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />
+    <Compile Include="Data\CreateGraphData.cs" />
+    <Compile Include="Data\CreateGraphResult.cs" />
     <Compile Include="Data\DocumentIdentifierResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
     <Compile Include="Data\DatabaseInformationResult.cs" />
     <Compile Include="Data\DistinctCommandResult.cs" />
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
+    <Compile Include="Data\EdgeDefinitionData.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
+    <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />

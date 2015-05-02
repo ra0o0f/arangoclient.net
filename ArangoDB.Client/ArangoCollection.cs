@@ -87,8 +87,8 @@ namespace ArangoDB.Client
         /// <returns>Document identifiers</returns>
         public async Task<DocumentIdentifierResult> InsertAsync(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            createCollection = Utils.ChangeIfNotSpecified<bool>(createCollection, db.Setting.CreateCollectionOnTheFly);
-            waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
+            createCollection = createCollection ?? db.Setting.CreateCollectionOnTheFly;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(this.db)
             {
@@ -143,8 +143,8 @@ namespace ArangoDB.Client
         public async Task<DocumentIdentifierResult> InsertEdgeAsync(string from, string to, object edgeDocument,
             bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            createCollection = Utils.ChangeIfNotSpecified<bool>(createCollection, db.Setting.CreateCollectionOnTheFly);
-            waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
+            createCollection = createCollection ?? db.Setting.CreateCollectionOnTheFly;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(this.db)
             {
@@ -210,8 +210,8 @@ namespace ArangoDB.Client
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
-            waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(this.db)
             {
@@ -266,7 +266,7 @@ namespace ArangoDB.Client
                 throw new InvalidOperationException("Change tracking is disabled, use ReplaceById() instead");
 
             var container = db.ChangeTracker.FindDocumentInfo(document);
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -314,10 +314,10 @@ namespace ArangoDB.Client
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
-            keepNull = Utils.ChangeIfNotSpecified<bool>(keepNull, db.Setting.Document.KeepNullAttributesOnUpdate);
-            mergeObjects = Utils.ChangeIfNotSpecified<bool>(mergeObjects, db.Setting.Document.MergeObjectsOnUpdate);
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
-            waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
+            keepNull = keepNull ?? db.Setting.Document.KeepNullAttributesOnUpdate;
+            mergeObjects = mergeObjects ?? db.Setting.Document.MergeObjectsOnUpdate;
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(this.db)
             {
@@ -378,7 +378,7 @@ namespace ArangoDB.Client
             JObject jObject = null;
             var changed = db.ChangeTracker.GetChanges(document,out container, out jObject);
 
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             if (changed.Count != 0)
@@ -446,8 +446,8 @@ namespace ArangoDB.Client
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
-            waitForSync = Utils.ChangeIfNotSpecified<bool>(waitForSync, db.Setting.WaitForSync);
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(this.db)
             {
@@ -497,7 +497,7 @@ namespace ArangoDB.Client
                 throw new InvalidOperationException("Change tracking is disabled, use RemoveById() instead");
 
             var container = db.ChangeTracker.FindDocumentInfo(document);
-            policy = Utils.ChangeIfNotSpecified<ReplacePolicy>(policy, db.Setting.Document.ReplacePolicy);
+            policy = policy ?? db.Setting.Document.ReplacePolicy;
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             var result = await RemoveByIdAsync(container.Id, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -593,7 +593,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         public ICursor<T> All(int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {
@@ -627,7 +627,7 @@ namespace ArangoDB.Client
         public ICursor<T> Range(Expression<Func<T, object>> attribute, object left, object right, bool? closed = false,
             int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {
@@ -661,7 +661,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         public ICursor<T> ByExample(object example, int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {
@@ -696,7 +696,7 @@ namespace ArangoDB.Client
         public ICursor<T> Near(double latitude, double longitude, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {
@@ -735,7 +735,7 @@ namespace ArangoDB.Client
         public ICursor<T> Within(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {
@@ -773,7 +773,7 @@ namespace ArangoDB.Client
         public ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
-            batchSize = Utils.ChangeIfNotSpecified<int>(batchSize, db.Setting.Cursor.BatchSize);
+            batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
 
             SimpleData data = new SimpleData
             {

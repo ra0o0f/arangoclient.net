@@ -149,8 +149,8 @@ namespace ArangoDB.Client
 
             data.Query = query;
 
-            data.BatchSize = Utils.ChangeIfNotSpecified<int>(batchSize, Setting.Cursor.BatchSize);
-            data.Count = Utils.ChangeIfNotSpecified<bool>(count, Setting.Cursor.Count);
+            data.BatchSize = batchSize ?? Setting.Cursor.BatchSize;
+            data.Count = count ?? Setting.Cursor.Count;
 
             if (ttl.HasValue)
                 data.Ttl = ttl.Value.TotalSeconds;

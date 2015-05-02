@@ -44,7 +44,7 @@ namespace ArangoDB.Client.Http
                 {CommandApi.Simple,"simple"},
                 {CommandApi.AllEdges,"edges"},
                 {CommandApi.Collection,"collection"},
-                {CommandApi.Graph,"gharial"}
+                {CommandApi.Graph,"gharial"},
                 {CommandApi.Transaction,"transaction"}
             };
         }
