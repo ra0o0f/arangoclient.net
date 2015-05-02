@@ -39,6 +39,7 @@ namespace ArangoDB.Client
             set 
             {
                 _url = new UriBuilder(value).Uri.ToString();
+                HttpConnection.ConfigureServicePoint(_url);
             }
         }
 

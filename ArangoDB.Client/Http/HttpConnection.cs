@@ -46,7 +46,20 @@ namespace ArangoDB.Client.Http
             this.db = db;
         }
 
-        public async Task<HttpResponseMessage>  SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential)
+        internal static void ConfigureServicePoint(string url)
+        {
+#if !PORTABLE
+            Uri baseUri = new Uri(url);
+            var servicePoint = ArangoDatabase.ClientSetting.Proxy != null ? ServicePointManager.FindServicePoint(baseUri
+                , ArangoDatabase.ClientSetting.Proxy)
+            : ServicePointManager.FindServicePoint(baseUri);
+            servicePoint.UseNagleAlgorithm = false;
+            servicePoint.Expect100Continue = false;
+            servicePoint.ConnectionLimit = 256;
+#endif
+        }
+
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential)
         {
             var requestMessage = new HttpRequestMessage(method,uri);
 
