@@ -56,11 +56,16 @@
     <Compile Include="Cursor\CursorEnumerator.cs" />
     <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\BaseResult.cs" />
+    <Compile Include="Data\CollectionCountResult.cs" />
+    <Compile Include="Data\CollectionKeyOptions.cs" />
+    <Compile Include="Data\CollectionPropertiesResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
+    <Compile Include="Data\CollectionInformationResult.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />
     <Compile Include="Data\CreateGraphData.cs" />
     <Compile Include="Data\CreateGraphResult.cs" />
+    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\DocumentIdentifierResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
@@ -72,6 +77,7 @@
     <Compile Include="Data\EdgeVertexResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
+    <Compile Include="Data\KeyGenerationType.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />

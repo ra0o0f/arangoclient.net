@@ -254,5 +254,65 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
             , int? skip = null, int? limit = null, int? batchSize = null);
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        CollectionInformationResult Truncate();
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        Task<CollectionInformationResult> TruncateAsync();
+
+        /// <summary>
+        /// Returns information about a collection
+        /// </summary>
+        /// <returns>Collection information</returns>
+        CollectionInformationResult Information();
+
+        /// <summary>
+        /// Returns information about a collection
+        /// </summary>
+        /// <returns>Collection information</returns>
+        Task<CollectionInformationResult> InformationAsync();
+
+        /// <summary>
+        /// Reads properties of a collection
+        /// </summary>
+        /// <returns>Collection properties</returns>
+        CollectionPropertiesResult Proprties();
+
+        /// <summary>
+        /// Reads properties of a collection
+        /// </summary>
+        /// <returns>Collection properties</returns>
+        Task<CollectionPropertiesResult> ProprtiesAsync();
+
+        /// <summary>
+        /// Returns properties of a collection along with the number of documents. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Collection properties with document count</returns>
+        CollectionCountResult Count(Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Returns properties of a collection along with the number of documents. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Collection properties with document count</returns>
+        Task<CollectionCountResult> CountAsync(Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Returns number of documents in a collection. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        int DocumentCount();
+
+        /// <summary>
+        /// Returns number of documents in a collection. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        Task<int> DocumentCountAsync();
     }
 }

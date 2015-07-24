@@ -2,6 +2,7 @@
 using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,15 +11,25 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ArangoDB.Client.Serialization.Converters;
 
 namespace ArangoDB.Client.Http
 {
+    public enum HttpSerializationMethod
+    {
+        Documents = 1,
+        Array = 2
+    }
+
     // from http://stackoverflow.com/questions/25335897/using-json-net-to-serialize-object-into-httpclients-response-stream
     public class JsonContent : HttpContent
     {
         IArangoDatabase db;
 
         object data { get; set; }
+
+        public HttpSerializationMethod? SerializationMethod { get; set; }
+
         public JsonContent(IArangoDatabase db,object data)
         {
             this.db = db;
@@ -41,7 +52,23 @@ namespace ArangoDB.Client.Http
                 var streamWriter = new StreamWriter(stream);
                 var jsonWriter = new JsonTextWriter(streamWriter);
                 var serializer = docSerializer.CreateJsonSerializer();
-                serializer.Serialize(jsonWriter, data);
+                if (data is IEnumerable && SerializationMethod == HttpSerializationMethod.Documents)
+                {
+                    var first = true;
+                    foreach (var dataDocument in (IEnumerable)data)
+                    {
+                        if (!first)
+                        {
+                            streamWriter.Write('\n');
+                        }
+                        serializer.Serialize(jsonWriter, dataDocument);
+                        first = false;
+                    }
+                }
+                else
+                {
+                    serializer.Serialize(jsonWriter, data);
+                }
                 await streamWriter.FlushAsync().ConfigureAwait(false);
             }
         }

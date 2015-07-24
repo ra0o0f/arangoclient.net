@@ -10,6 +10,6 @@ namespace ArangoDB.Client.Http
 {
     public interface IHttpConnection
     {
-        Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, NetworkCredential credential);
+        Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, NetworkCredential credential, HttpSerializationMethod? serializationMethod = null);
     }
 }
