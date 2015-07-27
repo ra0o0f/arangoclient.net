@@ -137,20 +137,32 @@ namespace ArangoDB.Client
             return new AqlQueryable<T>(queryParser, executer, this);
         }
 
+        public AqlQueryable<T> Query<T>(string collectionName)
+        {
+            return Query<T>().In(collectionName).AsAqlQueryable();
+        }
+
         public IQueryable<AQL> Query()
         {
             return Query<AQL>();
         }
 
-        public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,
-            int? batchSize = 0, TimeSpan? ttl = null, QueryOption options = null)
+        public ICursor<T> CreateStatement<T>(
+            string query,
+            IList<QueryParameter> bindVars = null,
+            bool count = false,
+            int? batchSize = null,
+            TimeSpan? ttl = null,
+            QueryOption options = null)
         {
             QueryData data = new QueryData();
 
             data.Query = query;
 
+            if (count || Setting.Cursor.Count)
+                data.Count = true;
+
             data.BatchSize = batchSize ?? Setting.Cursor.BatchSize;
-            data.Count = count ?? Setting.Cursor.Count;
 
             if (ttl.HasValue)
                 data.Ttl = ttl.Value.TotalSeconds;
@@ -166,7 +178,7 @@ namespace ArangoDB.Client
             {
                 data.Options.MaxPlans = Setting.Cursor.MaxPlans;
                 foreach (var r in Setting.Cursor.Rules)
-                    options.Optimizer.Rules.Add(r);
+                    data.Options.Optimizer.Rules.Add(r);
             }
 
             var command = new HttpCommand(this)

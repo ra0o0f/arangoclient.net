@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
+      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
+      <Name>ArangoDB.Client.Common.Net45</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -64,13 +70,14 @@
     <Compile Include="Data\CreateDatabaseData.cs" />
     <Compile Include="Data\CreateGraphData.cs" />
     <Compile Include="Data\CreateGraphResult.cs" />
-    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\DocumentIdentifierResult.cs" />
+    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
     <Compile Include="Data\DatabaseInformationResult.cs" />
     <Compile Include="Data\DistinctCommandResult.cs" />
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
+    <Compile Include="Data\DropCollectionResult.cs" />
     <Compile Include="Data\EdgeDefinitionData.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
@@ -120,6 +127,11 @@
     <Compile Include="Linq\Clause\InsertAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\LetClause.cs" />
     <Compile Include="Linq\Clause\LetExpressionNode.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionAdditionalFromClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionRemoveAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionUpdateAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionInsertAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionMainFromClause.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnClause.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\ReturnResultModifyExpressionNode.cs" />
@@ -151,12 +163,6 @@
     <Compile Include="Utility\StringUtils.cs" />
     <Compile Include="Utility\SynchronizionUtils.cs" />
     <Compile Include="Utility\Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
-      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
-      <Name>ArangoDB.Client.Common.Net45</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
