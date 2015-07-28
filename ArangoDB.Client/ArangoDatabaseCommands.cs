@@ -233,8 +233,7 @@ namespace ArangoDB.Client
             {
                 Api = CommandApi.Collection,
                 Resource = collectionName,
-                Method = HttpMethod.Delete,
-                IsSystemCommand = true
+                Method = HttpMethod.Delete
             };
 
             var result = await command.RequestMergedResult<DropCollectionResult>().ConfigureAwait(false);
