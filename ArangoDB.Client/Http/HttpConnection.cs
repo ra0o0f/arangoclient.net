@@ -59,15 +59,22 @@ namespace ArangoDB.Client.Http
 #endif
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential)
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential, HttpSerializationMethod? serializationMethod = null)
         {
             var requestMessage = new HttpRequestMessage(method,uri);
 
             string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
             requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
 
-            if(data!=null)
-                requestMessage.Content = new JsonContent(db,data);
+            if (data != null)
+            {
+                var content = new JsonContent(db, data);
+                if (serializationMethod.HasValue)
+                {
+                    content.SerializationMethod = serializationMethod.Value;
+                }
+                requestMessage.Content = content;
+            }
 
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 

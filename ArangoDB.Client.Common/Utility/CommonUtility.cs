@@ -46,7 +46,10 @@ namespace ArangoDB.Client.Common.Utility
 
         public static List<MemberInfo> GetFieldsAndProperties_PublicInstance(Type type)
         {
-            return ReflectionUtils.GetFieldsAndProperties(type, BindingFlags.Public | BindingFlags.Instance);
+	        var typeIndexers = type.GetDefaultMembers().ToList();
+	        var typeMemberInfos = ReflectionUtils.GetFieldsAndProperties(type, BindingFlags.Public | BindingFlags.Instance);
+            typeMemberInfos.RemoveAll(m => typeIndexers.Contains(m));
+	        return typeMemberInfos;
         }
 
         public static MemberInfo[] GetMember(Type type, string member)

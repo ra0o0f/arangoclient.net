@@ -340,12 +340,24 @@ namespace ArangoDB.Client
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
         }
 
+        public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable<TResult> source, string collectionName)
+        {
+            return In<TResult>((IAqlModifiable)source, collectionName);
+        }
+
         public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable source)
+        {
+            return In<TResult>(source, null);
+        }
+
+        [DefaultExtention]
+        public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable source, string collectionName)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("In", typeof(TResult)),
-                    source.Expression
+                    FindCachedDefaultMethod("In", typeof(TResult)),
+                    source.Expression,
+                    Expression.Constant(collectionName)
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
         }
 

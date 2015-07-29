@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ArangoDB.Client.Utility;
 
 namespace ArangoDB.Client.Linq
 {
@@ -18,6 +19,13 @@ namespace ArangoDB.Client.Linq
         public static string ResolveCollectionName(IArangoDatabase db,Type itemType)
         {
             string collectionName = db.SharedSetting.Collection.ResolveCollectionName(itemType);
+            return AddBacktickToName(collectionName);
+        }
+
+        public static string ResolveCollectionName(IArangoDatabase db, string collectionName)
+        {
+            Utils.CheckNotNull("collectionName", collectionName);
+
             return AddBacktickToName(collectionName);
         }
 

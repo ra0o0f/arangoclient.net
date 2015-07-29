@@ -20,12 +20,30 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Gets the named collection for a specific type
+        /// </summary>
+        /// <returns></returns>
+        public IDocumentCollection<T> Collection<T>(string collectionName)
+        {
+            return new ArangoCollection<T>(this, collectionName);
+        }
+
+        /// <summary>
         /// Gets the edge collection for a specific type
         /// </summary>
         /// <returns></returns>
         public IEdgeCollection<T> EdgeCollection<T>()
         {
             return new ArangoCollection<T>(this, CollectionType.Edge);
+        }
+
+        /// <summary>
+        /// Gets the named edge collection for a specific type
+        /// </summary>
+        /// <returns></returns>
+        public IEdgeCollection<T> EdgeCollection<T>(string collectionName)
+        {
+            return new ArangoCollection<T>(this, CollectionType.Edge, collectionName);
         }
 
         /// <summary>
@@ -427,6 +445,72 @@ namespace ArangoDB.Client
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
             return Collection<T>().Fulltext(attribute, query, index, skip, limit, batchSize);
+        }
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        public BulkImportResult Import<T>(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null)
+        {
+            return Collection<T>().Import(documents, createCollection, waitForSync, complete, details, importMethod, baseResult);
+        }
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        public async Task<BulkImportResult> ImportAsync<T>(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null)
+        {
+            return await Collection<T>().ImportAsync(documents, createCollection, waitForSync, complete, details, importMethod, baseResult);
+        }
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public CollectionInformationResult Truncate<T>()
+        {
+            return Collection<T>().Truncate();
+        }
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public async Task<CollectionInformationResult> TruncateAsync<T>()
+        {
+            return await Collection<T>().TruncateAsync();
+        }
+
+        /// <summary>
+        /// Returns number of documents in a collection
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        public int DocumentCount<T>()
+        {
+            return Collection<T>().DocumentCount();
+        }
+
+        /// <summary>
+        /// Returns number of documents in a collection
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        public async Task<int> DocumentCountAsync<T>()
+        {
+            return await Collection<T>().DocumentCountAsync();
         }
     }
 }

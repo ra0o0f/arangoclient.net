@@ -24,6 +24,16 @@ namespace ArangoDB.Client
         Edge = 3
     }
 
+    public enum CollectionStatus
+    {
+        New = 1,
+        Unloaded = 2,
+        Loaded = 3,
+        Unloading = 4,
+        Deleted = 5,
+        Loading = 6
+    }
+
     public enum ReplacePolicy
     {
         Last = 0,
@@ -37,9 +47,16 @@ namespace ArangoDB.Client
         Outbound = 2
     }
 
+    public enum BulkImportMethod
+    {
+        Auto = 0,
+        Documents = 1,
+        Array = 2
+    }
+
     public class ArangoCollection<T> : IDocumentCollection<T>, IEdgeCollection<T>
     {
-        string collectionName;
+        readonly string collectionName;
 
         IArangoDatabase db;
 
@@ -56,14 +73,34 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Gets the name document collection for a specific type
+        /// </summary>
+        /// <returns></returns>
+        public ArangoCollection(IArangoDatabase db, string collectionName)
+            : this(db, CollectionType.Document, collectionName)
+        {
+
+        }
+
+        /// <summary>
         /// Gets the collection by its type
         /// </summary>
         /// <returns></returns>
         public ArangoCollection(IArangoDatabase db, CollectionType type)
+            : this(db, type, db.SharedSetting.Collection.ResolveCollectionName<T>())
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the collection by its type
+        /// </summary>
+        /// <returns></returns>
+        public ArangoCollection(IArangoDatabase db, CollectionType type, string collectionName)
         {
             this.db = db;
-            collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
             collectionType = type;
+            this.collectionName = collectionName;
         }
 
         /// <summary>
@@ -869,6 +906,205 @@ namespace ArangoDB.Client
                 baseResult(result.BaseResult);
 
             return result.Result;
+        }
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        public BulkImportResult Import(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null)
+        {
+            return ImportAsync(documents, createCollection, waitForSync, complete, details, importMethod, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        public async Task<BulkImportResult> ImportAsync(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null)
+        {
+            createCollection = createCollection ?? db.Setting.CreateCollectionOnTheFly;
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Import,
+                Method = HttpMethod.Post,
+                Query = new Dictionary<string, string>()
+            };
+
+            importMethod = importMethod ?? BulkImportMethod.Auto;
+
+            if (importMethod.Value == BulkImportMethod.Documents)
+            {
+                command.SerializationMethod = HttpSerializationMethod.Documents;
+            }
+
+            command.Query.Add("type", importMethod.Value.ToString().ToLowerInvariant());
+            command.Query.Add("collection", collectionName);
+            command.Query.Add("createCollection", createCollection.ToString());
+            command.Query.Add("waitForSync", waitForSync.ToString());
+            command.Query.Add("complete", complete.ToString());
+            command.Query.Add("details", details.ToString());
+
+            var result = await command.RequestMergedResult<BulkImportResult>(documents).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public CollectionInformationResult Truncate()
+        {
+            return TruncateAsync().ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Removes all documents from the collection, but leaves the indexes intact
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public async Task<CollectionInformationResult> TruncateAsync()
+        {
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Put,
+                Resource = collectionName,
+                Command = "truncate"
+            };
+
+            var result = await command.RequestMergedResult<CollectionInformationResult>().ConfigureAwait(false);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Returns information about a collection
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public CollectionInformationResult Information()
+        {
+            return InformationAsync().ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Returns information about a collection
+        /// </summary>
+        /// <returns>Collection information</returns>
+        public async Task<CollectionInformationResult> InformationAsync()
+        {
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Get,
+                Resource = collectionName
+            };
+
+            var result = await command.RequestMergedResult<CollectionInformationResult>().ConfigureAwait(false);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Reads properties of a collection
+        /// </summary>
+        /// <returns>Collection properties</returns>
+        public CollectionPropertiesResult Proprties()
+        {
+            return ProprtiesAsync().ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Reads properties of a collection
+        /// </summary>
+        /// <returns>Collection properties</returns>
+        public async Task<CollectionPropertiesResult> ProprtiesAsync()
+        {
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Get,
+                Resource = collectionName,
+                Command = "properties"
+            };
+
+            var result = await command.RequestMergedResult<CollectionPropertiesResult>().ConfigureAwait(false);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Returns properties of a collection along with the number of documents. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Collection properties with document count</returns>
+        public CollectionCountResult Count(Action<BaseResult> baseResult = null)
+        {
+            return CountAsync().ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Returns properties of a collection along with the number of documents. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Collection properties with document count</returns>
+        public async Task<CollectionCountResult> CountAsync(Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Get,
+                Resource = collectionName,
+                Command = "count"
+            };
+
+            var result = await command.RequestMergedResult<CollectionCountResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// Returns number of documents in a collection. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        public int DocumentCount()
+        {
+            return DocumentCountAsync().ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Returns number of documents in a collection. Note that this will always load the collection into memory.
+        /// </summary>
+        /// <returns>Number of documents</returns>
+        public async Task<int> DocumentCountAsync()
+        {
+            BaseResult baseResult = null;
+            var collectionCount = await CountAsync(x => baseResult = x);
+
+            var count = -1;
+
+            if (!baseResult.Error)
+                count = collectionCount.Count;
+
+            return count;
         }
     }
 }

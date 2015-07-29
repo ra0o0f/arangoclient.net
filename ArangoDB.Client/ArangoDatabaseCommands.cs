@@ -208,6 +208,43 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Drops a collection
+        /// </summary>
+        /// <param name="collectionName">Name of the collection</param>
+        /// <returns>DropCollectionResult</returns>
+        public DropCollectionResult DropCollection(string collectionName, Action<BaseResult> baseResult = null)
+        {
+            return DropCollectionAsync(collectionName, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Drops a collection
+        /// </summary>
+        /// <param name="collectionName">Name of the collection</param>
+        /// <returns>DropCollectionResult</returns>
+        public async Task<DropCollectionResult> DropCollectionAsync(string collectionName, Action<BaseResult> baseResult = null)
+        {
+            if (string.IsNullOrWhiteSpace(collectionName))
+            {
+                throw new ArgumentNullException("collectionName", "The name of the collection to drop is required");
+            }
+
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Collection,
+                Resource = collectionName,
+                Method = HttpMethod.Delete
+            };
+
+            var result = await command.RequestMergedResult<DropCollectionResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
         /// Deletes a database
         /// </summary>
         /// <param name="name">Name of the database</param>

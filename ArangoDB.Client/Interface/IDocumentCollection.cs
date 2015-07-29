@@ -26,5 +26,29 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         DocumentIdentifierResult Insert(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        BulkImportResult Import(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Bulk imports documents into the collection. Note that change tracking is disabled for bulk imports.
+        /// </summary>
+        /// <param name="documents">Representation of the set of documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="complete">Make the entire import fail if any of the uploaded documents is invalid and cannot be imported</param>
+        /// <param name="details">Make the import API return details about documents that could not be imported</param>
+        /// <param name="importMethod">Method that will be used to send the documents to the server</param>
+        /// <returns>Summary of import results and details of failed documents if requested</returns>
+        Task<BulkImportResult> ImportAsync(IEnumerable<object> documents, bool? createCollection = null, bool? waitForSync = null, bool? complete = false, bool? details = false, BulkImportMethod? importMethod = null, Action<BaseResult> baseResult = null);
     }
 }

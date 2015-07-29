@@ -3,6 +3,7 @@ using ArangoDB.Client.Cursor;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -24,7 +25,8 @@ namespace ArangoDB.Client.Http
         AllEdges=5,
         Collection=6,
         Graph=7,
-        Transaction = 8
+        Transaction = 8,
+        Import = 9
     }
 
     public class HttpCommand
@@ -45,7 +47,8 @@ namespace ArangoDB.Client.Http
                 {CommandApi.AllEdges,"edges"},
                 {CommandApi.Collection,"collection"},
                 {CommandApi.Graph,"gharial"},
-                {CommandApi.Transaction,"transaction"}
+                {CommandApi.Transaction,"transaction"},
+                {CommandApi.Import,"import"},
             };
         }
 
@@ -58,11 +61,15 @@ namespace ArangoDB.Client.Http
 
         public bool IsSystemCommand { get; set; }
 
+        public string Resource { get; set; }
+
         public string Command { get; set; }
 
         public CommandApi Api { get; set; }
 
         public Dictionary<string,string> Query { get; set; }
+
+        public HttpSerializationMethod? SerializationMethod { get; set; }
 
         public bool EnableChangeTracking { get; set; }
 
@@ -72,6 +79,9 @@ namespace ArangoDB.Client.Http
 
             UriBuilder builder = new UriBuilder(db.SharedSetting.Url);
             builder.Path = string.Format("/_db/{0}/_api/{1}", databaseName, ApiValues[Api]);
+
+            if (!string.IsNullOrEmpty(Resource))
+                builder.Path += string.Format("/{0}", Resource);
 
             if (!string.IsNullOrEmpty(Command))
                 builder.Path += string.Format("/{0}", Command);
@@ -201,7 +211,16 @@ namespace ArangoDB.Client.Http
         public async Task<HttpResponseMessage> SendCommandAsync(object data = null)
         {
             NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, credential).ConfigureAwait(false);
+            Task<HttpResponseMessage> command;
+            if (data is IEnumerable)
+            {
+                command = db.Connection.SendCommandAsync(Method, BuildUrl(), data, credential, SerializationMethod);
+            }
+            else
+            {
+                command = db.Connection.SendCommandAsync(Method, BuildUrl(), data, credential);
+            }
+            return await command.ConfigureAwait(false);
         }
 
         public ICursor<T> CreateCursor<T>(object data=null)

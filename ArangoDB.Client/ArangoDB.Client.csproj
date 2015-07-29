@@ -11,10 +11,10 @@
     <RootNamespace>ArangoDB.Client</RootNamespace>
     <AssemblyName>ArangoDB.Client</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,11 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
     <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.csproj">
       <Project>{041982ed-aa4e-4212-a9dc-822d6dff5414}</Project>
       <Name>ArangoDB.Client.Common</Name>
     </ProjectReference>
+    <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArangoCollection.cs" />
@@ -56,22 +56,29 @@
     <Compile Include="Cursor\CursorEnumerator.cs" />
     <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\BaseResult.cs" />
+    <Compile Include="Data\CollectionCountResult.cs" />
+    <Compile Include="Data\CollectionKeyOptions.cs" />
+    <Compile Include="Data\CollectionPropertiesResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
+    <Compile Include="Data\CollectionInformationResult.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />
     <Compile Include="Data\CreateGraphData.cs" />
     <Compile Include="Data\CreateGraphResult.cs" />
     <Compile Include="Data\DocumentIdentifierResult.cs" />
+    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
     <Compile Include="Data\DatabaseInformationResult.cs" />
     <Compile Include="Data\DistinctCommandResult.cs" />
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
+    <Compile Include="Data\DropCollectionResult.cs" />
     <Compile Include="Data\EdgeDefinitionData.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
+    <Compile Include="Data\KeyGenerationType.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />
@@ -115,6 +122,11 @@
     <Compile Include="Linq\Clause\InsertAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\LetClause.cs" />
     <Compile Include="Linq\Clause\LetExpressionNode.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionAdditionalFromClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionRemoveAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionUpdateAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionInsertAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\NamedCollectionMainFromClause.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnClause.cs" />
     <Compile Include="Linq\Clause\RemoveAndReturnExpressionNode.cs" />
     <Compile Include="Linq\Clause\ReturnResultModifyExpressionNode.cs" />
@@ -147,7 +159,6 @@
     <Compile Include="Utility\SynchronizionUtils.cs" />
     <Compile Include="Utility\Utils.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

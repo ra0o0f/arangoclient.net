@@ -116,7 +116,10 @@ namespace ArangoDB.Client.Linq
             }
             else if(fromClause.FromExpression.Type.Name == "AqlQueryable`1")
             {
-                string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
+                var namedFromClause = fromClause as NamedCollectionAdditionalFromClause;
+                var fromName = namedFromClause != null
+                    ? LinqUtility.ResolveCollectionName(this.Db, namedFromClause.CollectionName)
+                    : LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
                 QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
             }
             else
@@ -128,10 +131,13 @@ namespace ArangoDB.Client.Linq
 
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
-            if (fromClause.FromExpression as SubQueryExpression != null)
+            if (fromClause.FromExpression is SubQueryExpression)
                 throw new Exception("MainFromClause.FromExpression cant be SubQueryExpression because group by is handle in itself clause");
 
-            string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
+            var namedFromClause = fromClause as NamedCollectionMainFromClause;
+            var fromName = namedFromClause != null
+                ? LinqUtility.ResolveCollectionName(this.Db, namedFromClause.CollectionName)
+                : LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
 
             if (fromClause.FromExpression.Type.Name == "IGrouping`2")
             {
@@ -202,7 +208,10 @@ namespace ArangoDB.Client.Linq
             GetAqlExpression(updateAndReturnClause.WithSelector, queryModel);
 
             CrudState.ModelVisitorHaveCrudOperation = true;
-            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, updateAndReturnClause.CollectionType);
+            var namedClause = updateAndReturnClause as NamedCollectionUpdateAndReturnClause;
+            CrudState.Collection = namedClause != null
+                ? LinqUtility.ResolveCollectionName(this.Db, namedClause.CollectionName)
+                : LinqUtility.ResolveCollectionName(this.Db, updateAndReturnClause.CollectionType);
             CrudState.ReturnResult = updateAndReturnClause.ReturnResult;
             CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
         }
@@ -221,7 +230,10 @@ namespace ArangoDB.Client.Linq
             }
 
             CrudState.ModelVisitorHaveCrudOperation = true;
-            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, insertAndReturnClause.CollectionType);
+            var namedClause = insertAndReturnClause as NamedCollectionInsertAndReturnClause;
+            CrudState.Collection = namedClause != null
+                ? LinqUtility.ResolveCollectionName(this.Db, namedClause.CollectionName)
+                : LinqUtility.ResolveCollectionName(this.Db, insertAndReturnClause.CollectionType);
             CrudState.ReturnResult = insertAndReturnClause.ReturnResult;
             CrudState.ReturnResultKind = "new";
         }
@@ -240,7 +252,10 @@ namespace ArangoDB.Client.Linq
             }
 
             CrudState.ModelVisitorHaveCrudOperation = true;
-            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, removeAndReturnClause.CollectionType);
+            var namedClause = removeAndReturnClause as NamedCollectionRemoveAndReturnClause;
+            CrudState.Collection = namedClause != null
+                ? LinqUtility.ResolveCollectionName(this.Db, namedClause.CollectionName)
+                : LinqUtility.ResolveCollectionName(this.Db, removeAndReturnClause.CollectionType);
             CrudState.ReturnResult = removeAndReturnClause.ReturnResult;
             CrudState.ReturnResultKind = "old";
         }

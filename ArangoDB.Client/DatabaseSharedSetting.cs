@@ -101,14 +101,22 @@ namespace ArangoDB.Client
 
     public class DatabaseCursorSharedSetting
     {
+        public const int DefaultBatchSize = 128;
+
+        private int? _batchSize;
+
         public DatabaseCursorSharedSetting()
         {
             Rules = new List<string>();
         }
 
-        public int? BatchSize { get; set; }
+        public int BatchSize
+        {
+            get { return _batchSize ?? DefaultBatchSize; }
+            set { _batchSize = value; }
+        }
 
-        public bool? Count { get; set; }
+        public bool Count { get; set; }
 
         public TimeSpan? Ttl { get; set; }
 

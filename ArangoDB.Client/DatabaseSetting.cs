@@ -114,7 +114,7 @@ namespace ArangoDB.Client
 
         private int? _batchSize;
 
-        private bool? _count;
+        private bool _count;
 
         private TimeSpan? _ttl;
 
@@ -128,7 +128,7 @@ namespace ArangoDB.Client
             this.Rules = new List<string>();
         }
 
-        public int? BatchSize
+        public int BatchSize
         {
             get
             {
@@ -140,14 +140,11 @@ namespace ArangoDB.Client
             set { _batchSize = value; }
         }
 
-        public bool? Count
+        public bool Count
         {
             get
             {
-                if (_count.HasValue)
-                    return _count.Value;
-
-                return sharedSetting.Cursor.Count;
+                return _count || sharedSetting.Cursor.Count;
             }
             set { _count = value; }
         }
