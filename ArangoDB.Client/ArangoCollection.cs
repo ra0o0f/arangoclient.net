@@ -176,7 +176,7 @@ namespace ArangoDB.Client
                 db.SharedSetting.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
             }
 
-            if(baseResult!=null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
@@ -229,7 +229,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>(document).ConfigureAwait(false);
 
-            if(!result.BaseResult.Error)
+            if (!result.BaseResult.Error)
                 db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
 
             if (baseResult != null)
@@ -270,7 +270,7 @@ namespace ArangoDB.Client
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
-            
+
             if (!result.Error)
             {
                 container.Rev = result.Rev;
@@ -376,7 +376,7 @@ namespace ArangoDB.Client
 
             DocumentContainer container = null;
             JObject jObject = null;
-            var changed = db.ChangeTracker.GetChanges(document,out container, out jObject);
+            var changed = db.ChangeTracker.GetChanges(document, out container, out jObject);
 
             policy = policy ?? db.Setting.Document.ReplacePolicy;
             string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
@@ -396,7 +396,7 @@ namespace ArangoDB.Client
             }
             else
                 return new DocumentIdentifierResult() { Id = container.Id, Key = container.Key, Rev = container.Rev };
-            
+
         }
 
         private async Task<DocumentIdentifierResult> DocumentHeaderAsync(string id, string rev = null)
@@ -465,7 +465,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestMergedResult<DocumentIdentifierResult>().ConfigureAwait(false);
 
-            if(baseResult!=null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
@@ -535,12 +535,65 @@ namespace ArangoDB.Client
                 EnableChangeTracking = db.Setting.DisableChangeTracking == false
             };
 
+            var defaultThrowForServerErrors = db.Setting.ThrowForServerErrors;
+            db.Setting.ThrowForServerErrors = false;
+
             var result = await command.RequestDistinctResult<T>().ConfigureAwait(false);
 
-            if(baseResult != null)
+            db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
+
+            if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
+                (result.BaseResult.Error && result.BaseResult.ErrorNum != 1202))
+                new BaseResultAnalyzer(db).Throw(result.BaseResult);
+
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
+        }
+
+        /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        public bool Exists(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null)
+        {
+            return ExistsAsync(id, onDocumentLoad, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        public async Task<bool> ExistsAsync(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null)
+        {
+            var defaultThrowForServerErrors = db.Setting.ThrowForServerErrors;
+            db.Setting.ThrowForServerErrors = false;
+
+            bool exists = false;
+            var document = await DocumentAsync(id, (b) =>
+            {
+                if (b.Error && b.ErrorNum != 1202)
+                    new BaseResultAnalyzer(db).Throw(b);
+
+                exists = !b.Error;
+
+                if (baseResult != null)
+                    baseResult(b);
+            }).ConfigureAwait(false);
+
+            if (onDocumentLoad != null)
+                onDocumentLoad(document);
+
+            db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
+
+            return exists;
         }
 
         /// <summary>
@@ -578,7 +631,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestGenericListResult<T, EdgesInheritedCommandResult<List<T>>>().ConfigureAwait(false);
 
-            if(baseResult != null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
@@ -702,7 +755,7 @@ namespace ArangoDB.Client
             {
                 Latitude = latitude,
                 Longitude = longitude,
-                Distance = distance!=null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
+                Distance = distance != null ? db.SharedSetting.Collection.ResolvePropertyName(distance) : null,
                 Geo = geo,
                 BatchSize = batchSize,
                 Collection = collectionName,
@@ -770,7 +823,7 @@ namespace ArangoDB.Client
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
         /// <returns>Returns a cursor</returns>
-        public ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index=null
+        public ICursor<T> Fulltext(Expression<Func<T, object>> attribute, string query, string index = null
             , int? skip = null, int? limit = null, int? batchSize = null)
         {
             batchSize = batchSize ?? db.Setting.Cursor.BatchSize;
@@ -829,7 +882,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
-            if(baseResult != null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
@@ -865,7 +918,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestGenericSingleResult<T, DocumentInheritedCommandResult<T>>(data).ConfigureAwait(false);
 
-            if(baseResult != null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;

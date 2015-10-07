@@ -40,32 +40,8 @@ namespace ArangoDB.Client.Linq
 
         public static Expression CreateNewExpressionWithNamedArguments(NewExpression expression, IEnumerable<Expression> processedArguments)
         {
-            //List<string> changedNames = new List<string>();
-            //for(int i=0;i<expression.Arguments.Count;i++)
-            //{
-            //    string memberName=expression.Members[0].Name;
-            //    var source = expression.Arguments[i] as MemberExpression;
-            //    if(source.Expression.Type.Name=="IGrouping`2")
-            //        changedNames.Add()
-            //    //+		ee	{[100001].Key}	System.Linq.Expressions.Expression {System.Linq.Expressions.PropertyExpression}
-            //    //
-
-            //}
-
-            //FormattingExpressionTreeVisitor.Format(newArguments[1])
             var newArguments = processedArguments.Select((e, i) => WrapIntoNamedExpression(GetMemberName(expression.Members, i), e)).ToArray();
-
-            //string format = FormattingExpressionTreeVisitor.Format(newArguments[0]);//[g]=all
-
-            //foreach(var na in newArguments)
-            //{
-            //    if(na.Type.Name=="IGrouping`2")
-            //    {
-            //        string groupName = FormattingExpressionTreeVisitor.Format(na);
-            //        groupName = groupName.Substring(1, groupName.IndexOf("]"));
-            //    }
-            //}
-
+            
             if (!newArguments.SequenceEqual(expression.Arguments))
             {
                 // ReSharper disable ConditionIsAlwaysTrueOrFalse - ReSharper is wrong, expression.Members can be null
@@ -80,8 +56,6 @@ namespace ArangoDB.Client.Linq
 
             return expression;
         }
-
-        //bool isGroupKey = false;
 
         public static NamedExpression CreateFromMemberName(string memberName, Expression innerExpression)
         {

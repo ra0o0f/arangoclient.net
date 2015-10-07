@@ -23,5 +23,11 @@ namespace ArangoDB.Client
                 throw new ArangoServerException(baseResult);
             }
         }
+
+        public void Throw(BaseResult baseResult)
+        {
+            if (baseResult.Error)
+                throw new ArangoServerException(baseResult);
+        }
     }
 }

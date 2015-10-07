@@ -25,6 +25,24 @@ namespace ArangoDB.Client
         Task<T> DocumentAsync(string id, Action<BaseResult> baseResult = null);
 
         /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        Task<bool> ExistsAsync(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        bool Exists(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
         /// Returns all documents of a collections
         /// </summary>
         /// <param name="skip">The number of documents to skip in the query</param>

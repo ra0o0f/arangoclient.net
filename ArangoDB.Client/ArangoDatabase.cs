@@ -8,6 +8,7 @@ using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -67,7 +68,7 @@ namespace ArangoDB.Client
         {
             action(FindSetting(identifier));
         }
-
+        
         /// <summary>
         /// Change Default Setting
         /// </summary>
@@ -85,7 +86,7 @@ namespace ArangoDB.Client
             if (!cachedSettings.TryGetValue(identifier, out setting))
             {
                 if (throwIfNotFound == true)
-                    throw new InvalidOperationException(string.Format("can not find identifier '{0}'", identifier));
+                    throw new InvalidOperationException(string.Format("Can not find database setting identifier '{0}'", identifier));
 
                 setting = new DatabaseSharedSetting();
                 setting.SettingIdentifier = identifier;
@@ -102,6 +103,16 @@ namespace ArangoDB.Client
         public static IArangoDatabase CreateWithSetting(string identifier)
         {
             return new ArangoDatabase(FindSetting(identifier, true));
+        }
+
+        public void Log(string message)
+        {
+            this.Setting.Log?.Invoke(message);
+        }
+
+        public bool LoggerAvailable
+        {
+            get { return this.Setting.Log != null; }
         }
 
         /// <summary>
@@ -175,6 +186,17 @@ namespace ArangoDB.Client
                 Method = HttpMethod.Post,
                 Command = ""
             };
+
+            if (LoggerAvailable)
+            {
+                Log("==============================");
+                Log(DateTime.Now.ToString());
+                Log($"creating an AQL query:");
+                Log($"query: {data.Query}");
+                Log($"bindVars:");
+                foreach (var b in data.BindVars)
+                    Log($"name: {b.Name} value: {new DocumentSerializer(this).SerializeWithoutReader(b.Value)}");
+            }
 
             return command.CreateCursor<T>(data);
         }

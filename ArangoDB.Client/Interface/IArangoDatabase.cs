@@ -32,6 +32,10 @@ namespace ArangoDB.Client
 
         IQueryable<AQL> Query();
 
+        void Log(string message);
+
+        bool LoggerAvailable { get; }
+
         /// <summary>
         /// Get Document JsonObject and Identifiers
         /// </summary>
@@ -230,6 +234,24 @@ namespace ArangoDB.Client
         Task<T> DocumentAsync<T>(string id, Action<BaseResult> baseResult = null);
 
         /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        Task<bool> ExistsAsync<T>(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        bool Exists<T>(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
         /// Read in or outbound edges
         /// </summary>
         /// <param name="vertexId">The document handle of the start vertex</param>
@@ -371,6 +393,22 @@ namespace ArangoDB.Client
         /// <returns>CreateCollectionResult</returns>
         CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null, decimal? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null, string shardKeys = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// List of collections
+        /// </summary>
+        /// <param name="excludeSystem">Exclude system collections</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        List<CreateCollectionResult> ListCollections(bool excludeSystem = true, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// List of collections
+        /// </summary>
+        /// <param name="excludeSystem">Exclude system collections</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem = true, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a collection

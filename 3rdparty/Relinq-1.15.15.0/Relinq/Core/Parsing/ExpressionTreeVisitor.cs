@@ -403,8 +403,8 @@ namespace ArangoDB.Client.Common.Remotion.Linq.Parsing
       ReadOnlyCollection<ParameterExpression> newParameters = VisitAndConvert (expression.Parameters, "VisitLambdaExpression");
 
       // original source
-      // Expression newBody = VisitExpression(expression.Body);
-      Expression newBody = expression.Body as MemberInitExpression == null ? VisitExpression(expression.Body) : expression.Body;
+      Expression newBody = VisitExpression(expression.Body);
+      //Expression newBody = expression.Body as MemberInitExpression == null ? VisitExpression(expression.Body) : expression.Body;
 
       if ((newBody != expression.Body) || (newParameters != expression.Parameters))
         return Expression.Lambda (expression.Type, newBody, newParameters);

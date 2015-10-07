@@ -47,6 +47,9 @@
     <Compile Include="ArangoDocumentCommands.cs" />
     <Compile Include="ArangoGraphCommands.cs" />
     <Compile Include="ArangoServerException.cs" />
+    <Compile Include="Attributes\CollectionPropertyAttribute.cs" />
+    <Compile Include="Attributes\DocumentPropertyAttribute.cs" />
+    <Compile Include="Attributes\UserFunctionAttribute.cs" />
     <Compile Include="BaseResultAnalyzer.cs" />
     <Compile Include="ChangeTracking\DocumentContainer.cs" />
     <Compile Include="ChangeTracking\DocumentTracker.cs" />
@@ -56,6 +59,7 @@
     <Compile Include="Cursor\CursorEnumerator.cs" />
     <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\BaseResult.cs" />
+    <Compile Include="Data\CollectionsInheritedCommandResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />
@@ -100,6 +104,7 @@
     <Compile Include="Interface\IEdgeCollection.cs" />
     <Compile Include="Linq\AqlExpressionTreeVisitor.cs" />
     <Compile Include="Linq\AqlExpressionTreeVisitorLookups.cs" />
+    <Compile Include="Linq\AqlFunctionCache.cs" />
     <Compile Include="Linq\AqlModelVisitor.cs" />
     <Compile Include="Linq\AqlQueryable.cs" />
     <Compile Include="Linq\AqlQueryExecuter.cs" />
@@ -131,11 +136,9 @@
     <Compile Include="Linq\NamedExpression.cs" />
     <Compile Include="Linq\VisitorCrudState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property\CollectionPropertyAttribute.cs" />
     <Compile Include="Property\DatabaseCollectionSetting.cs" />
     <Compile Include="Property\DocumentIdentifierModifier.cs" />
     <Compile Include="Property\DocumentPropertySetting.cs" />
-    <Compile Include="Property\DocumentPropertyAttribute.cs" />
     <Compile Include="Serialization\Converters\DateTimeConverter.cs" />
     <Compile Include="Serialization\Converters\QueryParameterConverter.cs" />
     <Compile Include="Serialization\DocumentContractResolver.cs" />

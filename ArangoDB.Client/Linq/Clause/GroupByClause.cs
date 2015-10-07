@@ -28,6 +28,8 @@ namespace ArangoDB.Client.Linq.Clause
         public readonly bool GroupOnLastGroup;
 
         public bool Visited { get; set; }
+        
+        public string CollectVariableName { get; set; }
 
         public GroupByClause(Expression selector,LambdaExpression lambdaSelector,string intoIdentifier)
         {
@@ -42,8 +44,6 @@ namespace ArangoDB.Client.Linq.Clause
             this.lambdaSelector = lambdaSelector;
 
             this.Visited = false;
-
-            //this.FromParameterName = lambdaSelector.Parameters[0].Name;
 
             _selector = selector;
         }

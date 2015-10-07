@@ -248,18 +248,6 @@ namespace ArangoDB.Client
         internal static IAqlModifiable<TSource> UpdateReplace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
             , Expression<Func<TSource, object>> keySelector,string command)
         {
-
-            if (withSelector.Body.NodeType != ExpressionType.MemberInit &&
-                withSelector.Body.NodeType != ExpressionType.New)
-            {
-                throw new InvalidOperationException(string.Format(@"IQueryable.{0}() 'withSelector' object argument should be initialize within the function:
-             for example use a defined type
-             db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
-             or an anonymous type
-             db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
-            ",command == "replace" ? "Replace()" : "Update()"));
-            }
-
             if (keySelector == null)
                 keySelector = x => null;
 
@@ -288,15 +276,6 @@ namespace ArangoDB.Client
         [DefaultExtention]
         internal static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector, Type type)
         {
-            if (selector!=null && selector.Body.NodeType != ExpressionType.MemberInit &&
-                selector.Body.NodeType != ExpressionType.New)
-                throw new InvalidOperationException(@"IQueryable.Insert() 'selector' object argument should be initialize within the function:
-             for example use a defined type
-             db.Query<SomeClass>.Update( x => new SomeClass { SomeCounter = x.SomeCounter + 1 }
-             or an anonymous type
-             db.Query<SomeClass>.Update( x => new { SomeCounter = x.SomeCounter + 1 }
-            ");
-
             if (selector == null)
                 selector = x => null;
 
@@ -375,6 +354,11 @@ namespace ArangoDB.Client
                     FindCachedMethod("Sort", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
+        }
+
+        public static IOrderedQueryable<TSource> SortDescending<TSource, TKey>(this IEnumerable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+        {
+            return source.AsQueryable().SortDescending(keySelector);
         }
 
         public static IOrderedQueryable<TSource> SortDescending<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)

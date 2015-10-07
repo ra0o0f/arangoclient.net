@@ -299,6 +299,30 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        public bool Exists<T>(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null)
+        {
+            return Collection<T>().Exists(id, onDocumentLoad, baseResult);
+        }
+
+        /// <summary>
+        /// Check if document exists
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="onDocumentLoad">Runs when document loaded</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>A Document</returns>
+        public async Task<bool> ExistsAsync<T>(string id, Action<T> onDocumentLoad = null, Action<BaseResult> baseResult = null)
+        {
+            return await Collection<T>().ExistsAsync(id, onDocumentLoad, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Returns all documents of a collections
         /// </summary>
         /// <param name="skip">The number of documents to skip in the query</param>

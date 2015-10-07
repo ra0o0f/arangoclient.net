@@ -16,6 +16,8 @@ namespace ArangoDB.Client
 
         private bool? _disableChangeTracking;
 
+        private Action<string> _log;
+
         DatabaseSharedSetting sharedSetting;
 
         public DatabaseSetting(DatabaseSharedSetting sharedSetting)
@@ -75,6 +77,18 @@ namespace ArangoDB.Client
                 return sharedSetting.DisableChangeTracking;
             }
             set { _disableChangeTracking = value; }
+        }
+
+        public Action<string> Log
+        {
+            get
+            {
+                if (_log!=null)
+                    return _log;
+
+                return sharedSetting.Log;
+            }
+            set { _log = value; }
         }
 
         public DatabaseCursorSetting Cursor;
@@ -199,6 +213,8 @@ namespace ArangoDB.Client
 
         private bool? _keepNullAttributesOnUpdate;
 
+        private bool? _throwIfDocumentDoesNotExists;
+
         public DatabaseDocumentSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
@@ -238,6 +254,18 @@ namespace ArangoDB.Client
                 return sharedSetting.Document.KeepNullAttributesOnUpdate;
             }
             set { _keepNullAttributesOnUpdate = value; }
+        }
+
+        public bool ThrowIfDocumentDoesNotExists
+        {
+            get
+            {
+                if (_throwIfDocumentDoesNotExists.HasValue)
+                    return _throwIfDocumentDoesNotExists.Value;
+
+                return sharedSetting.Document.ThrowIfDocumentDoesNotExists;
+            }
+            set { _throwIfDocumentDoesNotExists = value; }
         }
     }
 }

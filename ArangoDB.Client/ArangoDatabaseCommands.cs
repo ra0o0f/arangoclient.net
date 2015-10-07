@@ -208,6 +208,42 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// List of collections
+        /// </summary>
+        /// <param name="excludeSystem">Exclude system collections</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        public List<CreateCollectionResult> ListCollections(bool excludeSystem = true, Action<BaseResult> baseResult = null)
+        {
+            return ListCollectionsAsync(excludeSystem, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// List of collections
+        /// </summary>
+        /// <param name="excludeSystem">Exclude system collections</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        public async Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem=true, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Get,
+                Query = new Dictionary<string, string>()
+            };
+
+            command.Query.Add("excludeSystem", excludeSystem.ToString());
+
+            var result = await command.RequestGenericListResult<CreateCollectionResult, CollectionsInheritedCommandResult<List<CreateCollectionResult>>>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
         /// Deletes a database
         /// </summary>
         /// <param name="name">Name of the database</param>

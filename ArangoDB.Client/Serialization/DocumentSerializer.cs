@@ -75,18 +75,31 @@ namespace ArangoDB.Client.Serialization
 
         public JsonSerializer CreateJsonSerializer()
         {
-            var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings 
-            { 
-                ContractResolver = new DocumentContractResolver(db),
-                Converters = new JsonConverter[] 
+            var jsonSerializer = JsonSerializer.Create(SerializerSetting);
+            
+            return jsonSerializer;
+        }
+
+        public JsonSerializerSettings SerializerSetting
+        {
+            get
+            {
+                return new JsonSerializerSettings
+                {
+                    ContractResolver = new DocumentContractResolver(db),
+                    Converters = new JsonConverter[]
                 {
                     new DateTimeConverter(),
                     new QueryParameterConverter()
                 },
-                DateParseHandling = DateParseHandling.None
-            });
+                    DateParseHandling = DateParseHandling.None
+                };
+            }
+        }
 
-            return jsonSerializer;
+        public string SerializeWithoutReader(object document)
+        {
+            return JsonConvert.SerializeObject(document, SerializerSetting);
         }
     }
 }

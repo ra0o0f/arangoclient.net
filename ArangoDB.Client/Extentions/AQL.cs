@@ -124,64 +124,66 @@ namespace ArangoDB.Client
         public static long DateNow() { throw e; }
 
         /*array*/
+        public static bool In<T>(T member,IEnumerable<T> array) { throw e; }
         public static int Length(object array) { throw e; }
         public static IList<T> Flatten<T>(object array) { throw e; }
         public static IList<T> Flatten<T>(object array, int depth) { throw e; }
-        public static T Min<T>(IList<T> array) { throw e; }
-        public static T Max<T>(IList<T> array) { throw e; }
-        public static T Average<T>(IList<T> array) { throw e; }
-        public static T Sum<T>(IList<T> array) { throw e; }
-        public static T Median<T>(IList<T> array) { throw e; }
-        public static T Percentile<T>(IList<T> array, int n) { throw e; }
-        public static T Percentile<T>(IList<T> array, int n, string method) { throw e; }
-        public static T VariancePopulation<T>(IList<T> array) { throw e; }
-        public static T VarianceSample<T>(IList<T> array) { throw e; }
-        public static T StdDevPopulation<T>(IList<T> array) { throw e; }
-        public static IList<T> Reverse<T>(IList<T> array) { throw e; }
-        public static T First<T>(IList<T> array) { throw e; }
-        public static T Last<T>(IList<T> array) { throw e; }
-        public static T Nth<T>(IList<T> array, int position) { throw e; }
-        public static bool Position<T>(IList<T> array, T search) { throw e; }
-        public static object Position<T>(IList<T> array, T search, bool returnIndex) { throw e; }
-        public static IList<T> Slice<T>(IList<T> array, int start) { throw e; }
-        public static IList<T> Slice<T>(IList<T> array, int start, int length) { throw e; }
-        public static IList<T> Unique<T>(IList<T> array) { throw e; }
-        public static IList<T> Union<T>(IList<T> array1, IList<T> array2) { throw e; }
-        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
-        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
-        public static IList<T> Union<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
-        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2) { throw e; }
-        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
-        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
-        public static IList<T> UnionDistinct<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
-        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2) { throw e; }
-        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
-        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
-        public static IList<T> Minus<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
-        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2) { throw e; }
-        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3) { throw e; }
-        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4) { throw e; }
-        public static IList<T> Intersection<T>(IList<T> array1, IList<T> array2, IList<T> array3, IList<T> array4, IList<T> array5) { throw e; }
-        public static IList<T> Append<T>(IList<T> array, IList<T> values) { throw e; }
-        public static IList<T> Append<T>(IList<T> array, IList<T> values, bool unique) { throw e; }
-        public static IList<T> Push<T>(IList<T> array, T value) { throw e; }
-        public static IList<T> Push<T>(IList<T> array, T value, bool unique) { throw e; }
-        public static IList<T> UnShift<T>(IList<T> array, T value) { throw e; }
-        public static IList<T> UnShift<T>(IList<T> array, T value, bool unique) { throw e; }
-        public static IList<T> Pop<T>(IList<T> array) { throw e; }
-        public static IList<T> Shift<T>(IList<T> array) { throw e; }
-        public static IList<T> RemoveValue<T>(IList<T> array, T value) { throw e; }
-        public static IList<T> RemoveValue<T>(IList<T> array, T value, int limit) { throw e; }
-        public static IList<T> RemoveValues<T>(IList<T> array, IList<T> values) { throw e; }
-        public static IList<T> RemoveNth<T>(IList<T> array, int position) { throw e; }
+        public static T Min<T>(IEnumerable<T> array) { throw e; }
+        public static T Max<T>(IEnumerable<T> array) { throw e; }
+        public static T Average<T>(IEnumerable<T> array) { throw e; }
+        public static T Sum<T>(IEnumerable<T> array) { throw e; }
+        public static T Median<T>(IEnumerable<T> array) { throw e; }
+        public static T Percentile<T>(IEnumerable<T> array, int n) { throw e; }
+        public static T Percentile<T>(IEnumerable<T> array, int n, string method) { throw e; }
+        public static T VariancePopulation<T>(IEnumerable<T> array) { throw e; }
+        public static T VarianceSample<T>(IEnumerable<T> array) { throw e; }
+        public static T StdDevPopulation<T>(IEnumerable<T> array) { throw e; }
+        public static IList<T> Reverse<T>(IEnumerable<T> array) { throw e; }
+        public static T First<T>(IEnumerable<T> array) { throw e; }
+        //public static T First<T>(object array) { throw e; }
+        public static T Last<T>(IEnumerable<T> array) { throw e; }
+        public static T Nth<T>(IEnumerable<T> array, int position) { throw e; }
+        public static bool Position<T>(IEnumerable<T> array, T search) { throw e; }
+        public static object Position<T>(IEnumerable<T> array, T search, bool returnIndex) { throw e; }
+        public static IList<T> Slice<T>(IEnumerable<T> array, int start) { throw e; }
+        public static IList<T> Slice<T>(IEnumerable<T> array, int start, int length) { throw e; }
+        public static IList<T> Unique<T>(IEnumerable<T> array) { throw e; }
+        public static IList<T> Union<T>(IEnumerable<T> array1, IEnumerable<T> array2) { throw e; }
+        public static IList<T> Union<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3) { throw e; }
+        public static IList<T> Union<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4) { throw e; }
+        public static IList<T> Union<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4, IEnumerable<T> array5) { throw e; }
+        public static IList<T> UnionDistinct<T>(IEnumerable<T> array1, IEnumerable<T> array2) { throw e; }
+        public static IList<T> UnionDistinct<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3) { throw e; }
+        public static IList<T> UnionDistinct<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4) { throw e; }
+        public static IList<T> UnionDistinct<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4, IEnumerable<T> array5) { throw e; }
+        public static IList<T> Minus<T>(IEnumerable<T> array1, IEnumerable<T> array2) { throw e; }
+        public static IList<T> Minus<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3) { throw e; }
+        public static IList<T> Minus<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4) { throw e; }
+        public static IList<T> Minus<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4, IEnumerable<T> array5) { throw e; }
+        public static IList<T> Intersection<T>(IEnumerable<T> array1, IEnumerable<T> array2) { throw e; }
+        public static IList<T> Intersection<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3) { throw e; }
+        public static IList<T> Intersection<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4) { throw e; }
+        public static IList<T> Intersection<T>(IEnumerable<T> array1, IEnumerable<T> array2, IEnumerable<T> array3, IEnumerable<T> array4, IEnumerable<T> array5) { throw e; }
+        public static IList<T> Append<T>(IEnumerable<T> array, IEnumerable<T> values) { throw e; }
+        public static IList<T> Append<T>(IEnumerable<T> array, IEnumerable<T> values, bool unique) { throw e; }
+        public static IList<T> Push<T>(IEnumerable<T> array, T value) { throw e; }
+        public static IList<T> Push<T>(IEnumerable<T> array, T value, bool unique) { throw e; }
+        public static IList<T> UnShift<T>(IEnumerable<T> array, T value) { throw e; }
+        public static IList<T> UnShift<T>(IEnumerable<T> array, T value, bool unique) { throw e; }
+        public static IList<T> Pop<T>(IEnumerable<T> array) { throw e; }
+        public static IList<T> Shift<T>(IEnumerable<T> array) { throw e; }
+        public static IList<T> RemoveValue<T>(IEnumerable<T> array, T value) { throw e; }
+        public static IList<T> RemoveValue<T>(IEnumerable<T> array, T value, int limit) { throw e; }
+        public static IList<T> RemoveValues<T>(IEnumerable<T> array, IEnumerable<T> values) { throw e; }
+        public static IList<T> RemoveNth<T>(IEnumerable<T> array, int position) { throw e; }
 
         /*object-document*/
         public static T Merge<T>(object document1, object document2) { throw e; }
         public static T Merge<T>(object document1, object document2, object document3) { throw e; }
         public static T Merge<T>(object document1, object document2, object document3, object document4) { throw e; }
         public static T Merge<T>(object document1, object document2, object document3, object document4, object document5) { throw e; }
-        public static bool Matches(object document, IList<object> examples) { throw e; }
-        public static object Matches(object document, IList<object> examples, bool returnIndex) { throw e; }
+        public static bool Matches(object document, IEnumerable<object> examples) { throw e; }
+        public static object Matches(object document, IEnumerable<object> examples, bool returnIndex) { throw e; }
         public static T MergeRecursive<T>(object document1, object document2) { throw e; }
         public static T MergeRecursive<T>(object document1, object document2, object document3) { throw e; }
         public static T MergeRecursive<T>(object document1, object document2, object document3, object document4) { throw e; }
@@ -194,7 +196,7 @@ namespace ArangoDB.Client
         public static IList<string> Attributes(object document, bool removeInternal, bool sort) { throw e; }
         public static IList<object> Values(object document) { throw e; }
         public static IList<object> Values(object document, bool removeInternal) { throw e; }
-        public static T Zip<T>(IList<string> attributes, IList<object> values) { throw e; }
+        public static T Zip<T>(IEnumerable<string> attributes, IEnumerable<object> values) { throw e; }
         public static T Unset<T>(object document, params string[] attributeNames) { throw e; }
         public static T Keep<T>(object document, params string[] attributeNames) { throw e; }
         public static ParseIdentifierResult ParseIdentifier(string documentHandle) { throw e; }

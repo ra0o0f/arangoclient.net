@@ -16,9 +16,16 @@ namespace ArangoDB.Client.Test.Model
         public int Height { get; set; }
 
         public Outfit Outfit { get; set; }
+
+        public List<Shoe> Shoes { get; set; }
     }
 
     public class Outfit
+    {
+        public string Color { get; set; }
+    }
+
+    public class Shoe
     {
         public string Color { get; set; }
     }

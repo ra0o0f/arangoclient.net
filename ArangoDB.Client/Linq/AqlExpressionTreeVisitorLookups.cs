@@ -92,6 +92,7 @@ namespace ArangoDB.Client.Linq
                 {"DateNow","date_now"},
 
                 /*array*/
+                {"In","in"},
                 {"Length","length"},
                 {"Flatten","flatten"},
                 {"Min","min"},

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -66,13 +67,23 @@ namespace ArangoDB.Client.Http
             string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
             requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
 
+            if(db.LoggerAvailable)
+            {
+                db.Log("==============================");
+                db.Log(DateTime.Now.ToString());
+                db.Log("sending http request:");
+                db.Log($"url: {uri.ToString()}");
+                db.Log($"method: {method.ToString()}");
+                db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
+            }
+
             if(data!=null)
                 requestMessage.Content = new JsonContent(db,data);
 
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                throw new AuthenticationException("The user is not authorized");
+                throw new AuthenticationException($"The user '{credential.UserName}' is not authorized");
 
             return responseMessage;
         }

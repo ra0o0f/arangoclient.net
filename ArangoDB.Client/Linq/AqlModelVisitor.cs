@@ -138,7 +138,7 @@ namespace ArangoDB.Client.Linq
                 var groupByClause = LinqUtility.PriorGroupBy(ParnetModelVisitor);
 
                 var parentMVisitor = LinqUtility.FindParentModelVisitor(this);
-                parentMVisitor.GroupByNameCounter++;
+                //parentMVisitor.GroupByNameCounter++;
 
                 fromName = groupByClause[0].TranslateIntoName();
 
@@ -278,13 +278,15 @@ namespace ArangoDB.Client.Linq
             groupByClause.IntoName = "C" + parentMVisitor.GroupByNameCounter;
             groupByClause.FuncIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
             groupByClause.FromParameterName = queryModel.MainFromClause.ItemName;
-
+            
             QueryText.Append(" collect ");
 
-            var memberExpression = groupByClause.Selector as MemberExpression;
-            if (memberExpression != null)
-                QueryText.AppendFormat(" {0} = ", LinqUtility.ResolvePropertyName(memberExpression.Member.Name));
-
+            if(groupByClause.Selector.NodeType != ExpressionType.New)
+            {
+                groupByClause.CollectVariableName = "CV" + parentMVisitor.GroupByNameCounter;
+                QueryText.AppendFormat(" {0} = ", LinqUtility.ResolvePropertyName(groupByClause.CollectVariableName));
+            }
+            
             GetAqlExpression(groupByClause.Selector, queryModel, true);
 
             QueryText.AppendFormat(" into {0} ", LinqUtility.ResolvePropertyName(groupByClause.TranslateIntoName()));
