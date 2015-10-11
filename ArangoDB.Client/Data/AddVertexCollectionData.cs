@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    public class GraphResult : BaseResult
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
+    public class AddVertexCollectionData
     {
-        public GraphIdentifierResult Graph { get; set; }
+        public string Collection { get; set; }
     }
 }

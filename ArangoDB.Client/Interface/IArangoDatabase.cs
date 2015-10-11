@@ -36,6 +36,8 @@ namespace ArangoDB.Client
 
         bool LoggerAvailable { get; }
 
+        IArangoGraph Graph { get; }
+
         /// <summary>
         /// Get Document JsonObject and Identifiers
         /// </summary>
@@ -482,72 +484,6 @@ namespace ArangoDB.Client
         /// <returns></returns>
         Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
         
-        /// <summary>
-        /// Creates a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
-        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
-        /// <returns>CreateGraphResult</returns>
-        CreateGraphResult CreateGraph(string name, IList<EdgeDefinitionData> edgeDefinitions, IList<string> orphanCollections = null);
-
-        /// <summary>
-        /// Creates a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
-        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
-        /// <returns>CreateGraphResult</returns>
-        Task<CreateGraphResult> CreateGraphAsync(string name, IList<EdgeDefinitionData> edgeDefinitions, IList<string> orphanCollections = null);
-
-        /// <summary>
-        /// Creates a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
-        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
-        /// <returns>CreateGraphResult</returns>
-        CreateGraphResult CreateGraph(string name, IList<EdgeDefinitionTypedData> edgeDefinitions, IList<Type> orphanCollections = null);
-
-        /// <summary>
-        /// Creates a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="edgeDefinitions">If true then the data is synchronised to disk before returning from a document create, update, replace or removal operation</param>
-        /// <param name="orphanCollection">Whether or not the collection will be compacted</param>
-        /// <returns>CreateGraphResult</returns>
-        Task<CreateGraphResult> CreateGraphAsync(string name, IList<EdgeDefinitionTypedData> edgeDefinitions, IList<Type> orphanCollections = null);
-
-        /// <summary>
-        /// Deletes a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
-        /// <returns></returns>
-        DropGraphResult DropGraph(string name, bool dropCollections = false);
-
-        /// <summary>
-        /// Deletes a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
-        /// <returns>Task</returns>
-        Task<DropGraphResult> DropGraphAsync(string name, bool dropCollections = false);
-
-        /// <summary>
-        /// Get a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <returns>GraphIdentifierResult</returns>
-        GraphIdentifierResult GraphInfo(string name);
-
-        /// <summary>
-        /// Deletes a graph
-        /// </summary>
-        /// <param name="name">Name of the graph</param>
-        /// <returns>GraphIdentifierResult</returns>
-        Task<GraphIdentifierResult> GraphInfoAsync(string name);
-
         Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
         Task ExecuteTransactionAsync(TransactionData data, Action<BaseResult> baseResult = null);
 

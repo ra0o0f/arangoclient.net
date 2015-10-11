@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    public class GraphResult : BaseResult
+    public class GraphVerticesResult : BaseResult
     {
-        public GraphIdentifierResult Graph { get; set; }
+        public List<string> Collections { get; set; }
     }
 }

@@ -45,7 +45,7 @@
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
-    <Compile Include="ArangoGraphCommands.cs" />
+    <Compile Include="ArangoGraph.cs" />
     <Compile Include="ArangoServerException.cs" />
     <Compile Include="Attributes\CollectionPropertyAttribute.cs" />
     <Compile Include="Attributes\DocumentPropertyAttribute.cs" />
@@ -58,6 +58,7 @@
     <Compile Include="Cursor\CursorEnumerable.cs" />
     <Compile Include="Cursor\CursorEnumerator.cs" />
     <Compile Include="DatabaseSharedSetting.cs" />
+    <Compile Include="Data\AddVertexCollectionData.cs" />
     <Compile Include="Data\BaseResult.cs" />
     <Compile Include="Data\CollectionsInheritedCommandResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
@@ -76,9 +77,12 @@
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
+    <Compile Include="Data\GraphListResult.cs" />
+    <Compile Include="Data\GraphVerticesResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
+    <Compile Include="Data\RemoveVertexData.cs" />
     <Compile Include="Data\SimpleAllData.cs" />
     <Compile Include="Data\TransactionData.cs" />
     <Compile Include="Extentions\AQL.cs" />
@@ -93,6 +97,7 @@
     <Compile Include="Http\JsonContent.cs" />
     <Compile Include="Interface\IAarangoCollection.cs" />
     <Compile Include="Interface\IArangoDatabase.cs" />
+    <Compile Include="Interface\IArangoGraph.cs" />
     <Compile Include="Interface\IAsyncEnumerator.cs" />
     <Compile Include="Interface\ICollectionPropertySetting.cs" />
     <Compile Include="Interface\ICommandResult.cs" />
