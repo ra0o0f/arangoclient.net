@@ -92,11 +92,11 @@ namespace ArangoDB.Client
                 graphEdgeDefinitions.Add(new EdgeDefinitionData
                 {
                     Collection = db.SharedSetting.Collection.ResolveCollectionName(e.Collection),
-                    From = e.From.Select(f=> db.SharedSetting.Collection.ResolveCollectionName(f)).ToList(),
-                    To = e.From.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList()
+                    From = e.From.Select(f => db.SharedSetting.Collection.ResolveCollectionName(f)).ToList(),
+                    To = e.To.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList()
                 });
             }
-            
+
             List<string> graphOrphanCollections = orphanCollections?.Select(o => db.SharedSetting.Collection.ResolveCollectionName(o)).ToList();
 
             return await CreateAsync(name, graphEdgeDefinitions, graphOrphanCollections, baseResult).ConfigureAwait(false);
@@ -230,7 +230,7 @@ namespace ArangoDB.Client
                 Command = $"{graphName}/vertex"
             };
 
-            var result = await command.RequestMergedResult<GraphVerticesResult>().ConfigureAwait(false);
+            var result = await command.RequestMergedResult<GraphCollectionResult>().ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -350,7 +350,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync(string graphName, string collection, bool dropCollection=false, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync(string graphName, string collection, bool dropCollection = false, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(db)
             {
@@ -359,7 +359,7 @@ namespace ArangoDB.Client
                 Command = $"{graphName}/vertex/{collection}"
             };
 
-            var data = new RemoveVertexData
+            var data = new DropGraphCollectionData
             {
                 DropCollection = dropCollection
             };
@@ -370,6 +370,272 @@ namespace ArangoDB.Client
                 baseResult(result.BaseResult);
 
             return result.Result.Graph;
+        }
+
+        /// <summary>
+        /// Lists all edge definitions
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public List<string> ListEdgeDefinitions(string graphName, Action<BaseResult> baseResult = null)
+        {
+            return ListEdgeDefinitionsAsync(graphName, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Lists all edge definitions
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<List<string>> ListEdgeDefinitionsAsync(string graphName, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Get,
+                Command = $"{graphName}/edge"
+            };
+
+            var result = await command.RequestMergedResult<GraphCollectionResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Collections;
+        }
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult ExtendEdgeDefinitions(string graphName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        {
+            return ExtendEdgeDefinitionsAsync(graphName, collection, from, to, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string graphName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Post,
+                Command = $"{graphName}/edge"
+            };
+
+            EdgeDefinitionData data = new EdgeDefinitionData
+            {
+                Collection = collection,
+                From = from,
+                To = to
+            };
+
+            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Graph;
+        }
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string graphName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        {
+            var collectionName = db.SharedSetting.Collection.ResolveCollectionName(collection);
+            var fromNames = from.Select(f => db.SharedSetting.Collection.ResolveCollectionName(f)).ToList();
+            var toNames = to.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList();
+
+            return await ExtendEdgeDefinitionsAsync(graphName, collectionName, fromNames, toNames, baseResult);
+        }
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult ExtendEdgeDefinitions(string graphName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        {
+            return ExtendEdgeDefinitionsAsync(graphName, collection, from, to, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult EditEdgeDefinition(string graphName, string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        {
+            return EditEdgeDefinitionAsync(graphName, definitionName, collection, from, to, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string graphName, string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Post,
+                Command = $"{graphName}/edge/{definitionName}"
+            };
+
+            EdgeDefinitionData data = new EdgeDefinitionData
+            {
+                Collection = collection,
+                From = from,
+                To = to
+            };
+
+            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Graph;
+        }
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string graphName, Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        {
+            var collectionName = db.SharedSetting.Collection.ResolveCollectionName(collection);
+            var definitionCollectionName = db.SharedSetting.Collection.ResolveCollectionName(definitionName);
+            var fromNames = from.Select(f => db.SharedSetting.Collection.ResolveCollectionName(f)).ToList();
+            var toNames = to.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList();
+
+            return await EditEdgeDefinitionAsync(graphName, definitionCollectionName, collectionName, fromNames, toNames, baseResult);
+        }
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult EditEdgeDefinition(string graphName, Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        {
+            return EditEdgeDefinitionAsync(graphName, definitionName, collection, from, to, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult DeleteEdgeDefinition(string graphName, string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null)
+        {
+            return DeleteEdgeDefinitionAsync(graphName, definitionName, dropCollection, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync(string graphName, string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Delete,
+                Command = $"{graphName}/edge/{definitionName}"
+            };
+
+            DropGraphCollectionData data = new DropGraphCollectionData
+            {
+                DropCollection = dropCollection
+            };
+
+            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Graph;
+        }
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public GraphIdentifierResult DeleteEdgeDefinition<T>(string graphName, bool dropCollection = false, Action<BaseResult> baseResult = null)
+        {
+            return DeleteEdgeDefinitionAsync<T>(graphName, dropCollection, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(string graphName, bool dropCollection = false, Action<BaseResult> baseResult = null)
+        {
+            string definitionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
+
+            return await DeleteEdgeDefinitionAsync(graphName, definitionName, dropCollection, baseResult).ConfigureAwait(false);
         }
     }
 }

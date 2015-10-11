@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ArangoDB.Client.Data
 {
     [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
-    public class RemoveVertexData
+    public class DropGraphCollectionData
     {
         public bool DropCollection { get; set; }
     }

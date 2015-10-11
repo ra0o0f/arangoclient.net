@@ -177,5 +177,152 @@ namespace ArangoDB.Client
         /// <returns></returns>
         GraphIdentifierResult RemoveVertexCollection<T>(string graphName, bool dropCollection = false, Action<BaseResult> baseResult = null);
 
+        /// <summary>
+        /// Lists all edge definitions
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<List<string>> ListEdgeDefinitionsAsync(string graphName, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Lists all edge definitions
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        List<string> ListEdgeDefinitions(string graphName, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string graphName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult ExtendEdgeDefinitions(string graphName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string graphName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult ExtendEdgeDefinitions(string graphName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult EditEdgeDefinition(string graphName, string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
+
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The name of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string graphName, string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string graphName, Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Replace an existing edge definition
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="collection">The types of the edge collection to be used</param>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult EditEdgeDefinition(string graphName, Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync(string graphName, string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="definitionName">The name of the edge collection used in the definition</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult DeleteEdgeDefinition(string graphName, string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        GraphIdentifierResult DeleteEdgeDefinition<T>(string graphName, bool dropCollection = false, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Remove an edge definition form the graph
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(string graphName, bool dropCollection = false, Action<BaseResult> baseResult = null);
+
     }
 }
