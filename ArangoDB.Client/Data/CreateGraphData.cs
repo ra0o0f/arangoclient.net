@@ -13,10 +13,10 @@ namespace ArangoDB.Client.Data
         public string Name { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<EdgeDefinitionData> EdgeDefinitions { get; set; }
+        public IList<EdgeDefinitionData> EdgeDefinitions { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> OrphanCollections { get; set; }
+        public IList<string> OrphanCollections { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool? DropCollections { get; set; }

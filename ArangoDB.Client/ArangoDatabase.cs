@@ -196,6 +196,10 @@ namespace ArangoDB.Client
                 Log($"bindVars:");
                 foreach (var b in data.BindVars)
                     Log($"name: {b.Name} value: {new DocumentSerializer(this).SerializeWithoutReader(b.Value)}");
+                Log("");
+                Log("parsed query with variables replaced:");
+                Log(data.QueryReplacedWithVariables(this));
+                Log("");
             }
 
             return command.CreateCursor<T>(data);

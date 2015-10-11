@@ -17,5 +17,7 @@ namespace ArangoDB.Client.Data
         public string Name { get; set; }
 
         public List<EdgeDefinitionData> EdgeDefinitions { get; set; }
+
+        public List<string> OrphanCollections { get; set; }
     }
 }
