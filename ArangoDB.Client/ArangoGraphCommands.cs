@@ -94,9 +94,9 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the graph</param>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns></returns>
-        public void DropGraph(string name, bool dropCollections = false)
+        public DropGraphResult DropGraph(string name, bool dropCollections = false)
         {
-            DropGraphAsync(name, dropCollections).WaitSynchronizer();
+            return DropGraphAsync(name, dropCollections).ResultSynchronizer();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the graph</param>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns>Task</returns>
-        public async Task DropGraphAsync(string name, bool dropCollections = false)
+        public async Task<DropGraphResult> DropGraphAsync(string name, bool dropCollections = false)
         {
             var command = new HttpCommand(this)
             {
@@ -120,7 +120,9 @@ namespace ArangoDB.Client
                 DropCollections = dropCollections
             };
 
-            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>(data).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DropGraphResult>(data).ConfigureAwait(false);
+
+            return result.Result;
         }
 
         /// <summary>

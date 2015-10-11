@@ -524,7 +524,7 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the graph</param>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns></returns>
-        void DropGraph(string name, bool dropCollections = false);
+        DropGraphResult DropGraph(string name, bool dropCollections = false);
 
         /// <summary>
         /// Deletes a graph
@@ -532,7 +532,7 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the graph</param>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns>Task</returns>
-        Task DropGraphAsync(string name, bool dropCollections = false);
+        Task<DropGraphResult> DropGraphAsync(string name, bool dropCollections = false);
 
         /// <summary>
         /// Get a graph

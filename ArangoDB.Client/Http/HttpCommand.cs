@@ -146,7 +146,7 @@ namespace ArangoDB.Client.Http
             return result;
         }
 
-        // T can be any type that derived from BaseResult
+        // T can be any type that derived from BaseResult and results are not change tracked
         public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
