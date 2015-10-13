@@ -9,6 +9,14 @@ namespace ArangoDB.Client
 {
     public interface IArangoGraph
     {
+        IArangoGraphVertex Vertex(string collection);
+
+        IArangoGraphVertex<T> Vertex<T>();
+
+        IArangoGraphEdge Edge(string collection);
+
+        IArangoGraphEdge<T> Edge<T>();
+
         /// <summary>
         /// Create graph
         /// </summary>
@@ -80,23 +88,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         List<string> ListVertexCollections(Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Add an additional vertex collection to the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> AddVertexCollectionAsync(string collection, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Add an additional vertex collection to the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        GraphIdentifierResult AddVertexCollection(string collection, Action<BaseResult> baseResult = null);
-
+        
         /// <summary>
         /// Add an additional vertex collection to the graph
         /// </summary>
@@ -110,25 +102,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         GraphIdentifierResult AddVertexCollection<T>(Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Remove a vertex collection form the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        GraphIdentifierResult RemoveVertexCollection(string collection, bool dropCollection = false, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Remove a vertex collection form the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> RemoveVertexCollectionAsync(string collection, bool dropCollection = false, Action<BaseResult> baseResult = null);
-
+        
         /// <summary>
         /// Remove a vertex collection form the graph
         /// </summary>
@@ -158,109 +132,42 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         List<string> ListEdgeDefinitions(Action<BaseResult> baseResult = null);
+        
+        /// <summary>
+        /// Add a new edge definition to the graph
+        /// </summary>
+        /// <param name="from">One or many vertex collections that can contain source vertices</param>
+        /// <param name="to">One or many edge collections that can contain target vertices</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync<T>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Add a new edge definition to the graph
         /// </summary>
-        /// <param name="collection">The name of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
-
+        GraphIdentifierResult ExtendEdgeDefinitions<T>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+        
         /// <summary>
-        /// Add a new edge definition to the graph
+        /// Replace an existing edge definition
         /// </summary>
-        /// <param name="collection">The name of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult ExtendEdgeDefinitions(string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Add a new edge definition to the graph
-        /// </summary>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Add a new edge definition to the graph
-        /// </summary>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        GraphIdentifierResult ExtendEdgeDefinitions(Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> EditEdgeDefinitionAsync<T, TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Replace an existing edge definition
         /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The name of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult EditEdgeDefinition(string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
-
-
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The name of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> EditEdgeDefinitionAsync(Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        GraphIdentifierResult EditEdgeDefinition(Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Remove an edge definition form the graph
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync(string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Remove an edge definition form the graph
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        GraphIdentifierResult DeleteEdgeDefinition(string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult EditEdgeDefinition<T, TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove an edge definition form the graph
@@ -277,27 +184,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Creates a new vertex
-        /// </summary>
-        /// <param name="document">The vertex document</param>
-        /// <param name="collection">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
-        /// <param name="baseResult"></param>
-        /// <returns>DocumentIdentifierResult</returns>
-        IDocumentIdentifierResult InsertVertex(object document, string collection, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Creates a new vertex
-        /// </summary>
-        /// <param name="document">The vertex document</param>
-        /// <param name="collection">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
-        /// <param name="baseResult"></param>
-        /// <returns>DocumentIdentifierResult</returns>
-        Task<IDocumentIdentifierResult> InsertVertexAsync(object document, string collection, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-
+        
         /// <summary>
         /// Creates a new vertex
         /// </summary>
@@ -315,26 +202,6 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
         Task<IDocumentIdentifierResult> InsertVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Fetches an existing vertex
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="baseResult"></param>
-        /// <returns>T</returns>
-        T GetVertex<T>(string id, string collectionName, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Fetches an existing vertex
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="baseResult"></param>
-        /// <returns>T</returns>
-        Task<T> GetVertexAsync<T>(string id, string collectionName, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing vertex
@@ -359,12 +226,11 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the patch document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        IDocumentIdentifierResult UpdateVertexById(string id, object document, string collectionName
+        IDocumentIdentifierResult UpdateVertexById<T>(string id, object document
             , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -372,12 +238,11 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the patch document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<IDocumentIdentifierResult> UpdateVertexByIdAsync(string id, object document, string collectionName
+        Task<IDocumentIdentifierResult> UpdateVertexByIdAsync<T>(string id, object document
             , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
 
 
@@ -400,5 +265,42 @@ namespace ArangoDB.Client
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateVertexAsync<T>(object document,
            bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+
+        
+        /// <summary>
+        /// Completely updates the vertex with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        IDocumentIdentifierResult ReplaceVertexById<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Completely updates the vertex with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        Task<IDocumentIdentifierResult> ReplaceVertexByIdAsync<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
     }
 }

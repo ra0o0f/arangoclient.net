@@ -45,6 +45,8 @@
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
     <Compile Include="ArangoGraph.cs" />
+    <Compile Include="ArangoGraphEdge.cs" />
+    <Compile Include="ArangoGraphVertex.cs" />
     <Compile Include="ArangoServerException.cs" />
     <Compile Include="Attributes\UserFunctionAttribute.cs" />
     <Compile Include="BaseResultAnalyzer.cs" />
@@ -98,6 +100,8 @@
     <Compile Include="Interface\IAarangoCollection.cs" />
     <Compile Include="Interface\IArangoDatabase.cs" />
     <Compile Include="Interface\IArangoGraph.cs" />
+    <Compile Include="Interface\IArangoGraphEdge.cs" />
+    <Compile Include="Interface\IArangoGraphVertex.cs" />
     <Compile Include="Interface\IAsyncEnumerator.cs" />
     <Compile Include="Interface\ICollectionPropertySetting.cs" />
     <Compile Include="Interface\ICommandResult.cs" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    public class UpdateVertexResult : BaseResult
+    public class CrudVertexResult : BaseResult
     {
         public DocumentIdentifierWithoutBaseResult Vertex { get; set; }
     }

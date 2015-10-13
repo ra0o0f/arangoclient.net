@@ -17,10 +17,30 @@ namespace ArangoDB.Client
         IArangoDatabase db;
         string graphName;
 
-        public ArangoGraph(IArangoDatabase db,string graphName)
+        public ArangoGraph(IArangoDatabase db, string graphName)
         {
             this.db = db;
             this.graphName = graphName;
+        }
+
+        public IArangoGraphVertex Vertex(string collection)
+        {
+            return new ArangoGraphVertex(db, graphName, collection);
+        }
+
+        public IArangoGraphVertex<T> Vertex<T>()
+        {
+            return new ArangoGraphVertex<T>(db, graphName);
+        }
+
+        public IArangoGraphEdge Edge(string collection)
+        {
+            return new ArangoGraphEdge(db, graphName, collection);
+        }
+
+        public IArangoGraphEdge<T> Edge<T>()
+        {
+            return new ArangoGraphEdge<T>(db, graphName);
         }
 
         /// <summary>
@@ -143,7 +163,7 @@ namespace ArangoDB.Client
         /// Get graph info
         /// </summary>
         /// <returns>GraphIdentifierResult</returns>
-        public GraphIdentifierResult Info( Action<BaseResult> baseResult = null)
+        public GraphIdentifierResult Info(Action<BaseResult> baseResult = null)
         {
             return InfoAsync(baseResult).ResultSynchronizer();
         }
@@ -169,7 +189,7 @@ namespace ArangoDB.Client
             return result.Result.Graph;
         }
 
-        
+
 
         /// <summary>
         /// Lists all vertex collections used in graph
@@ -206,24 +226,13 @@ namespace ArangoDB.Client
         /// <summary>
         /// Add an additional vertex collection to the graph
         /// </summary>
-        /// <param name="collection">The type of the collection</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
         public GraphIdentifierResult AddVertexCollection<T>(Action<BaseResult> baseResult = null)
         {
             return AddVertexCollectionAsync<T>(baseResult).ResultSynchronizer();
         }
-
-        /// <summary>
-        /// Add an additional vertex collection to the graph
-        /// </summary>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public GraphIdentifierResult AddVertexCollection(string collection, Action<BaseResult> baseResult = null)
-        {
-            return AddVertexCollectionAsync(collection, baseResult).ResultSynchronizer();
-        }
-
+        
         /// <summary>
         /// Add an additional vertex collection to the graph
         /// </summary>
@@ -231,39 +240,9 @@ namespace ArangoDB.Client
         /// <returns></returns>
         public async Task<GraphIdentifierResult> AddVertexCollectionAsync<T>(Action<BaseResult> baseResult = null)
         {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-
-            return await AddVertexCollectionAsync(collectionName, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().AddCollectionAsync(baseResult).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Add an additional vertex collection to the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> AddVertexCollectionAsync(string collection, Action<BaseResult> baseResult = null)
-        {
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Post,
-                Command = $"{graphName}/vertex"
-            };
-
-            var data = new AddVertexCollectionData
-            {
-                Collection = collection
-            };
-
-            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Graph;
-        }
-
+        
         /// <summary>
         /// Remove a vertex collection form the graph
         /// </summary>
@@ -283,52 +262,9 @@ namespace ArangoDB.Client
         /// <returns></returns>
         public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
         {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-
-            return await RemoveVertexCollectionAsync(collectionName, dropCollection, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().RemoveCollectionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Remove a vertex collection form the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public GraphIdentifierResult RemoveVertexCollection(string collection, bool dropCollection = false, Action<BaseResult> baseResult = null)
-        {
-            return RemoveVertexCollectionAsync(collection, dropCollection, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Remove a vertex collection form the graph
-        /// </summary>
-        /// <param name="collection">The name of the collection</param>
-        /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync(string collection, bool dropCollection = false, Action<BaseResult> baseResult = null)
-        {
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Delete,
-                Command = $"{graphName}/vertex/{collection}"
-            };
-
-            var data = new DropGraphCollectionData
-            {
-                DropCollection = dropCollection
-            };
-
-            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Graph;
-        }
-
+        
         /// <summary>
         /// Lists all edge definitions
         /// </summary>
@@ -360,202 +296,55 @@ namespace ArangoDB.Client
 
             return result.Result.Collections;
         }
-
+        
         /// <summary>
         /// Add a new edge definition to the graph
         /// </summary>
-        /// <param name="collection">The name of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public GraphIdentifierResult ExtendEdgeDefinitions(string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync<T>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
         {
-            return ExtendEdgeDefinitionsAsync(collection, from, to, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Add a new edge definition to the graph
-        /// </summary>
-        /// <param name="collection">The name of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
-        {
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Post,
-                Command = $"{graphName}/edge"
-            };
-
-            EdgeDefinitionData data = new EdgeDefinitionData
-            {
-                Collection = collection,
-                From = from,
-                To = to
-            };
-
-            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Graph;
+            return await Edge<T>().ExtendDefinitionsAsync(from, to, baseResult);
         }
 
         /// <summary>
         /// Add a new edge definition to the graph
         /// </summary>
-        /// <param name="collection">The types of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<GraphIdentifierResult> ExtendEdgeDefinitionsAsync(Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        public GraphIdentifierResult ExtendEdgeDefinitions<T>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
         {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName(collection);
-            var fromNames = from.Select(f => db.SharedSetting.Collection.ResolveCollectionName(f)).ToList();
-            var toNames = to.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList();
-
-            return await ExtendEdgeDefinitionsAsync(collectionName, fromNames, toNames, baseResult);
+            return ExtendEdgeDefinitionsAsync<T>(from, to, baseResult).ResultSynchronizer();
         }
-
+        
         /// <summary>
-        /// Add a new edge definition to the graph
+        /// Replace an existing edge definition
         /// </summary>
-        /// <param name="collection">The types of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public GraphIdentifierResult ExtendEdgeDefinitions(Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync<T,TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
         {
-            return ExtendEdgeDefinitionsAsync(collection, from, to, baseResult).ResultSynchronizer();
+            return await Edge<T>().EditDefinitionAsync<TCollection>(from, to, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Replace an existing edge definition
         /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The name of the edge collection to be used</param>
         /// <param name="from">One or many vertex collections that can contain source vertices</param>
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public GraphIdentifierResult EditEdgeDefinition(string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
+        public GraphIdentifierResult EditEdgeDefinition<T, TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
         {
-            return EditEdgeDefinitionAsync(definitionName, collection, from, to, baseResult).ResultSynchronizer();
+            return EditEdgeDefinitionAsync<T, TCollection>(from, to, baseResult).ResultSynchronizer();
         }
 
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The name of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync(string definitionName, string collection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null)
-        {
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Post,
-                Command = $"{graphName}/edge/{definitionName}"
-            };
-
-            EdgeDefinitionData data = new EdgeDefinitionData
-            {
-                Collection = collection,
-                From = from,
-                To = to
-            };
-
-            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Graph;
-        }
-
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync(Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
-        {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName(collection);
-            var definitionCollectionName = db.SharedSetting.Collection.ResolveCollectionName(definitionName);
-            var fromNames = from.Select(f => db.SharedSetting.Collection.ResolveCollectionName(f)).ToList();
-            var toNames = to.Select(t => db.SharedSetting.Collection.ResolveCollectionName(t)).ToList();
-
-            return await EditEdgeDefinitionAsync(definitionCollectionName, collectionName, fromNames, toNames, baseResult);
-        }
-
-        /// <summary>
-        /// Replace an existing edge definition
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="collection">The types of the edge collection to be used</param>
-        /// <param name="from">One or many vertex collections that can contain source vertices</param>
-        /// <param name="to">One or many edge collections that can contain target vertices</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public GraphIdentifierResult EditEdgeDefinition(Type definitionName, Type collection, IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
-        {
-            return EditEdgeDefinitionAsync(definitionName, collection, from, to, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Remove an edge definition form the graph
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public GraphIdentifierResult DeleteEdgeDefinition(string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null)
-        {
-            return DeleteEdgeDefinitionAsync(definitionName, dropCollection, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Remove an edge definition form the graph
-        /// </summary>
-        /// <param name="definitionName">The name of the edge collection used in the definition</param>
-        /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
-        /// <param name="baseResult"></param>
-        /// <returns></returns>
-        public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync(string definitionName, bool dropCollection = false, Action<BaseResult> baseResult = null)
-        {
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Delete,
-                Command = $"{graphName}/edge/{definitionName}"
-            };
-
-            DropGraphCollectionData data = new DropGraphCollectionData
-            {
-                DropCollection = dropCollection
-            };
-
-            var result = await command.RequestMergedResult<GraphResult>(data).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Graph;
-        }
 
         /// <summary>
         /// Remove an edge definition form the graph
@@ -576,62 +365,9 @@ namespace ArangoDB.Client
         /// <returns></returns>
         public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
         {
-            string definitionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-
-            return await DeleteEdgeDefinitionAsync(definitionName, dropCollection, baseResult).ConfigureAwait(false);
+            return await Edge<T>().DeleteDefinitionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Creates a new vertex
-        /// </summary>
-        /// <param name="document">The vertex document</param>
-        /// <param name="collection">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
-        /// <param name="baseResult"></param>
-        /// <returns>DocumentIdentifierResult</returns>
-        public IDocumentIdentifierResult InsertVertex(object document, string collection, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            return InsertVertexAsync(document, collection, waitForSync, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Creates a new vertex
-        /// </summary>
-        /// <param name="document">The vertex document</param>
-        /// <param name="collection">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
-        /// <param name="baseResult"></param>
-        /// <returns>DocumentIdentifierResult</returns>
-        public async Task<IDocumentIdentifierResult> InsertVertexAsync(object document, string collection, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            waitForSync = waitForSync ?? db.Setting.WaitForSync;
-
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Post,
-                Command = $"{graphName}/vertex/{collection}",
-                Query = new Dictionary<string, string>()
-            };
-
-            command.Query.Add("waitForSync", waitForSync.ToString());
-
-            var result = await command.RequestMergedResult<InsertVertexResult>(document).ConfigureAwait(false);
-
-            if (!result.BaseResult.Error)
-            {
-                if (db.Setting.DisableChangeTracking == false)
-                    db.ChangeTracker.TrackChanges(document, result.Result.Vertex);
-
-                db.SharedSetting.IdentifierModifier.Modify(document, result.Result.Vertex);
-            }
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Vertex;
-        }
-
+        
         /// <summary>
         /// Creates a new vertex
         /// </summary>
@@ -651,64 +387,11 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        public async Task<IDocumentIdentifierResult> InsertVertexAsync<T>( object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> InsertVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-
-            return await InsertVertexAsync(document, collectionName, waitForSync, baseResult);
+            return await Vertex<T>().InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Fetches an existing vertex
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="graphName">The name of the graph</param>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="baseResult"></param>
-        /// <returns>T</returns>
-        public T GetVertex<T>(string id, string collectionName, Action<BaseResult> baseResult = null)
-        {
-            return GetVertexAsync<T>(id, collectionName, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Fetches an existing vertex
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="id">The document handle or key of document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
-        /// <param name="baseResult"></param>
-        /// <returns>T</returns>
-        public async Task<T> GetVertexAsync<T>(string id, string collectionName, Action<BaseResult> baseResult = null)
-        {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collectionName}/{id}" : id;
-
-            var command = new HttpCommand(this.db)
-            {
-                Api = CommandApi.Graph,
-                Method = HttpMethod.Get,
-                Command = $"{graphName}/vertex/{documentHandle}",
-                EnableChangeTracking = !db.Setting.DisableChangeTracking
-            };
-
-            var defaultThrowForServerErrors = db.Setting.ThrowForServerErrors;
-            db.Setting.ThrowForServerErrors = false;
-
-            var result = await command.RequestGenericSingleResult<T, VertexInheritedCommandResult<T>>().ConfigureAwait(false);
-
-            db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
-
-            if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
-                (result.BaseResult.Error && result.BaseResult.ErrorNum != 1202))
-                new BaseResultAnalyzer(db).Throw(result.BaseResult);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result;
-        }
-
+        
         /// <summary>
         /// Fetches an existing vertex
         /// </summary>
@@ -730,25 +413,22 @@ namespace ArangoDB.Client
         /// <returns>T</returns>
         public async Task<T> GetVertexAsync<T>(string id, Action<BaseResult> baseResult = null)
         {
-            var collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-
-            return await GetVertexAsync<T>(id, collectionName, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().GetAsync(id, baseResult).ConfigureAwait(false);
         }
-
+        
         /// <summary>
         /// Partially updates the vertex with no change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the patch document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public IDocumentIdentifierResult UpdateVertexById(string id, object document, string collectionName
+        public IDocumentIdentifierResult UpdateVertexById<T>(string id, object document
             , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateVertexByIdAsync(id, document, collectionName, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateVertexByIdAsync<T>(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -756,36 +436,14 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the patch document</param>
-        /// <param name="collectionName">The name of the vertex collection the vertex belongs to</param>
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<IDocumentIdentifierResult> UpdateVertexByIdAsync(string id, object document, string collectionName
-            , bool? waitForSync = null, bool? keepNull=null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> UpdateVertexByIdAsync<T>(string id, object document
+            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
         {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collectionName}/{id}" : id;
-
-            keepNull = keepNull ?? db.Setting.Document.KeepNullAttributesOnUpdate;
-            waitForSync = waitForSync ?? db.Setting.WaitForSync;
-
-            var command = new HttpCommand(db)
-            {
-                Api = CommandApi.Graph,
-                Method = new HttpMethod("PATCH"),
-                Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}"
-            };
-
-            command.Query.Add("keepNull", keepNull.ToString());
-            command.Query.Add("waitForSync", waitForSync.ToString());
-
-            var result = await command.RequestMergedResult<UpdateVertexResult>(document).ConfigureAwait(false);
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result.Vertex;
+            return await Vertex<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -811,33 +469,55 @@ namespace ArangoDB.Client
         public async Task<IDocumentIdentifierResult> UpdateVertexAsync<T>(object document,
            bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
         {
-            if (db.Setting.DisableChangeTracking == true)
-                throw new InvalidOperationException("Change tracking is disabled, use UpdateById() instead");
-            
-            DocumentContainer container = null;
-            JObject jObject = null;
-            var changed = db.ChangeTracker.GetChanges(document, out container, out jObject);
+            return await Vertex<T>().UpdateAsync(document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Completely updates the vertex with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public IDocumentIdentifierResult ReplaceVertexById<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return ReplaceVertexByIdAsync<T>(id, document, waitForSync, baseResult).ResultSynchronizer();
+        }
 
-            string collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
-            
-            if (changed.Count != 0)
-            {
-                BaseResult bResult = null;
+        /// <summary>
+        /// Completely updates the vertex with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<IDocumentIdentifierResult> ReplaceVertexByIdAsync<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Vertex<T>().ReplaceByIdAsync(id, document, waitForSync, baseResult).ConfigureAwait(false);
+        }
 
-                var result = await UpdateVertexByIdAsync(container.Id, changed, collectionName, waitForSync, keepNull, (b) => bResult = b).ConfigureAwait(false);
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return ReplaceVertexAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+        }
 
-                if (!bResult.Error)
-                {
-                    container.Rev = result.Rev;
-                    container.Document = jObject;
-                    db.SharedSetting.IdentifierModifier.FindIdentifierMethodFor(document.GetType()).SetRevision(document, result.Rev);
-                }
-
-                return result;
-            }
-            else
-                return new DocumentIdentifierWithoutBaseResult() { Id = container.Id, Key = container.Key, Rev = container.Rev };
-
+        /// <summary>
+        /// Completely updates the document
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Vertex<T>().ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
     }
 }
