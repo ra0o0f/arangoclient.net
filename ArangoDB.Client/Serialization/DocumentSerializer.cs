@@ -97,6 +97,11 @@ namespace ArangoDB.Client.Serialization
             }
         }
 
+        public JObject FromObject(object document)
+        {
+            return JObject.FromObject(document, CreateJsonSerializer());
+        }
+
         public string SerializeWithoutReader(object document)
         {
             return JsonConvert.SerializeObject(document, SerializerSetting);

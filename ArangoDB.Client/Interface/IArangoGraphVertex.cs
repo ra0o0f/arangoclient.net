@@ -141,7 +141,7 @@ namespace ArangoDB.Client
             bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -149,7 +149,7 @@ namespace ArangoDB.Client
         IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -157,7 +157,7 @@ namespace ArangoDB.Client
         Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Deletes the document without change tracking
+        /// Deletes the vertex without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -325,7 +325,7 @@ namespace ArangoDB.Client
             bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -333,7 +333,7 @@ namespace ArangoDB.Client
         IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>

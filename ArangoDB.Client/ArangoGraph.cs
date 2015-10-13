@@ -499,7 +499,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -510,7 +510,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -565,6 +565,205 @@ namespace ArangoDB.Client
             bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Vertex<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Creates a new edge
+        /// </summary>
+        /// <param name="document">The edge document</param>
+        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DocumentIdentifierResult</returns>
+        public IDocumentIdentifierResult InsertEdge<T, TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return InsertEdgeAsync<T, TFrom, TTo>(from, to, document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates a new edge
+        /// </summary>
+        /// <param name="document">The edge document</param>
+        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DocumentIdentifierResult</returns>
+        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<T, TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().InsertAsync<TFrom, TTo>(from, to, document, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Fetches an existing edge
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="baseResult"></param>
+        /// <returns>T</returns>
+        public T GetEdge<T>(string id, Action<BaseResult> baseResult = null)
+        {
+            return GetEdgeAsync<T>(id, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Fetches an existing edge
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="baseResult"></param>
+        /// <returns>T</returns>
+        public async Task<T> GetEdgeAsync<T>(string id, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().GetAsync(id, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Partially updates the edge with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the patch document</param>
+        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
+        /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public IDocumentIdentifierResult UpdateEdgeById<T>(string id, object document
+            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        {
+            return UpdateEdgeByIdAsync<T>(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Partially updates the edge with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the patch document</param>
+        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
+        /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        public async Task<IDocumentIdentifierResult> UpdateEdgeByIdAsync<T>(string id, object document
+            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+        }
+
+        ///<summary>
+        ///Partially updates the edge
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public IDocumentIdentifierResult UpdateEdge<T>(object document,
+           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        {
+            return UpdateEdgeAsync<T>(document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+        }
+
+        ///<summary>
+        ///Partially updates the edge
+        ///</summary>
+        ///<param name="document">Representation of the patch document</param>
+        ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
+        ///<param name="waitForSync">Wait until document has been synced to disk</param>
+        ///<returns>Document identifiers</returns>
+        public async Task<IDocumentIdentifierResult> UpdateEdgeAsync<T>(object document,
+           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().UpdateAsync(document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Completely updates the edge with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public IDocumentIdentifierResult ReplaceEdgeById<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return ReplaceEdgeByIdAsync<T>(id, document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Completely updates the edge with no change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<IDocumentIdentifierResult> ReplaceEdgeByIdAsync<T>(string id, object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().ReplaceByIdAsync(id, document, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Completely updates the edge
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public IDocumentIdentifierResult ReplaceEdge<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return ReplaceEdgeAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Completely updates the edge
+        /// </summary>
+        /// <param name="document">Representation of the new document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<IDocumentIdentifierResult> ReplaceEdgeAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the edge without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveEdgeById<T>(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null)
+        {
+            return RemoveEdgeByIdAsync<T>(id, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveEdgeByIdAsync<T>(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the edge
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveEdge<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return RemoveEdgeAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveEdgeAsync<T>(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Edge<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
     }
 }

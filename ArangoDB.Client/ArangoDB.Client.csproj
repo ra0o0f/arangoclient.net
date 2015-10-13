@@ -68,6 +68,7 @@
     <Compile Include="Data\CreateDatabaseData.cs" />
     <Compile Include="Data\CreateGraphData.cs" />
     <Compile Include="Data\CreateGraphResult.cs" />
+    <Compile Include="Data\CrudEdgeResult.cs" />
     <Compile Include="Data\DocumentIdentifierResult.cs" />
     <Compile Include="Data\Cursor.cs" />
     <Compile Include="Data\CursorResult.cs" />
@@ -76,9 +77,11 @@
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
     <Compile Include="Data\DropGraphResult.cs" />
     <Compile Include="Data\EdgeDefinitionData.cs" />
+    <Compile Include="Data\EdgeInheritedCommandResult.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
-    <Compile Include="Data\UpdateVertexResult.cs" />
+    <Compile Include="Data\InsertEdgeResult.cs" />
+    <Compile Include="Data\CrudVertexResult.cs" />
     <Compile Include="Data\VertexInheritedCommandResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\GraphListResult.cs" />

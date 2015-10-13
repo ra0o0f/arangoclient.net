@@ -18,7 +18,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult InsertEdge(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult InsertEdge<TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge document in the collection
@@ -29,7 +29,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> InsertEdgeAsync(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> InsertEdgeAsync<TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Read in or outbound edges

@@ -126,9 +126,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult InsertEdge(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult InsertEdge<TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ResultSynchronizer();
+            return InsertEdgeAsync<TFrom, TTo>(from, to, edgeDocument, createCollection, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -140,9 +140,12 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> InsertEdgeAsync(string from, string to, object edgeDocument,
+        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<TFrom, TTo>(string from, string to, object edgeDocument,
             bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
+            from = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TFrom>()}/{from}" : from;
+            to = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
+
             createCollection = createCollection ?? db.Setting.CreateCollectionOnTheFly;
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 

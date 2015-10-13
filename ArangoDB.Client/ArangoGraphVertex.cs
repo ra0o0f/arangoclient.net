@@ -663,7 +663,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -674,7 +674,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -685,7 +685,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Deletes the document without change tracking
+        /// Deletes the vertex without change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
