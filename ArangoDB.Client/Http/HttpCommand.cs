@@ -149,7 +149,7 @@ namespace ArangoDB.Client.Http
         }
 
         // T can be any type that derived from BaseResult and results are not change tracked
-        // method could be used if we dont want to change track T
+        // method could be used if we dont want to change track T here
         public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();

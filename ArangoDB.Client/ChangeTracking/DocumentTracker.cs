@@ -42,7 +42,7 @@ namespace ArangoDB.Client.ChangeTracking
             return container;
         }
 
-        public DocumentContainer TrackChanges(object document, DocumentIdentifierResult identifiers)
+        public DocumentContainer TrackChanges(object document, IDocumentIdentifierResult identifiers)
         {
             var jObject = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
 
@@ -77,7 +77,7 @@ namespace ArangoDB.Client.ChangeTracking
             }
             catch(KeyNotFoundException e)
             {
-                throw new Exception("No tracked document found, change tracking is maybe disabled", e);
+                throw new Exception("No tracked document found", e);
             }
         }
 
@@ -124,11 +124,11 @@ namespace ArangoDB.Client.ChangeTracking
             return container;
         }
 
-        DocumentContainer CreateContainer(JObject jObject, DocumentIdentifierResult identifiers)
+        DocumentContainer CreateContainer(JObject jObject, IDocumentIdentifierResult identifiers)
         {
             DocumentContainer container = new DocumentContainer();
 
-            if (identifiers.Error)
+            if (string.IsNullOrEmpty(identifiers.Id))
                 return null;
 
             container.Id = identifiers.Id;

@@ -33,8 +33,6 @@ namespace ArangoDB.Client
 
         internal bool HttpInitialized { get; set; }
 
-        public IArangoGraph Graph { get { return new ArangoGraph(this); } }
-
         static ArangoDatabase()
         {
             ClientSetting = new ClientSetting();

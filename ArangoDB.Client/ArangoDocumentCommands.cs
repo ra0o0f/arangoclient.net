@@ -35,7 +35,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> InsertAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> InsertAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().InsertAsync(document, createCollection, waitForSync, baseResult).ConfigureAwait(false);
         }
@@ -47,7 +47,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Insert<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Insert<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().Insert(document, createCollection, waitForSync, baseResult);
         }
@@ -61,7 +61,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult InsertEdge<T>(string from, string to, object edgeDocument, bool? createCollection = null,
+        public IDocumentIdentifierResult InsertEdge<T>(string from, string to, object edgeDocument, bool? createCollection = null,
             bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return EdgeCollection<T>().InsertEdge(from, to, edgeDocument, createCollection, waitForSync, baseResult);
@@ -76,7 +76,7 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> InsertEdgeAsync<T>(string from, string to, object edgeDocument,
+        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<T>(string from, string to, object edgeDocument,
             bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await EdgeCollection<T>().InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ConfigureAwait(false);
@@ -112,7 +112,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult Replace<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Replace<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().Replace(document, policy, waitForSync, baseResult);
         }
@@ -126,7 +126,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceAsync<T>(object document, ReplacePolicy? policy = null,
+        public async Task<IDocumentIdentifierResult> ReplaceAsync<T>(object document, ReplacePolicy? policy = null,
             bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().ReplaceAsync(document, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -141,7 +141,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public DocumentIdentifierResult ReplaceById<T>(string id, object document, string rev = null,
+        public IDocumentIdentifierResult ReplaceById<T>(string id, object document, string rev = null,
             ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().ReplaceById(id, document, rev, policy, waitForSync, baseResult);
@@ -156,7 +156,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> ReplaceByIdAsync<T>(string id, object document, string rev = null,
+        public async Task<IDocumentIdentifierResult> ReplaceByIdAsync<T>(string id, object document, string rev = null,
             ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().ReplaceByIdAsync(id, document, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -173,7 +173,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult UpdateById<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null,
+        public IDocumentIdentifierResult UpdateById<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null,
             string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().UpdateById(id, document, keepNull, mergeObjects, rev, policy, waitForSync, baseResult);
@@ -190,7 +190,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateByIdAsync<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null,
+        public async Task<IDocumentIdentifierResult> UpdateByIdAsync<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null,
             string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().UpdateByIdAsync(id, document,keepNull,mergeObjects, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -205,7 +205,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public DocumentIdentifierResult Update<T>(object document, bool? keepNull = null, bool? mergeObjects = null,
+        public IDocumentIdentifierResult Update<T>(object document, bool? keepNull = null, bool? mergeObjects = null,
             ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().Update(document, keepNull, mergeObjects, policy, waitForSync,baseResult);
@@ -220,7 +220,7 @@ namespace ArangoDB.Client
         ///<param name="policy">To control the update behavior in case there is a revision mismatch</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public async Task<DocumentIdentifierResult> UpdateAsync<T>(object document, bool? keepNull = null, bool? mergeObjects = null,
+        public async Task<IDocumentIdentifierResult> UpdateAsync<T>(object document, bool? keepNull = null, bool? mergeObjects = null,
             ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync, baseResult).ConfigureAwait(false);
@@ -233,7 +233,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public DocumentIdentifierResult Remove<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Remove<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().Remove(document, policy, waitForSync, baseResult);
         }
@@ -245,7 +245,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<DocumentIdentifierResult> RemoveAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> RemoveAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().RemoveAsync(document, policy, waitForSync, baseResult).ConfigureAwait(false);
         }
@@ -258,7 +258,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public DocumentIdentifierResult RemoveById<T>(string id, string rev = null, ReplacePolicy? policy = null,
+        public IDocumentIdentifierResult RemoveById<T>(string id, string rev = null, ReplacePolicy? policy = null,
             bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return Collection<T>().RemoveById(id, rev, policy, waitForSync, baseResult);
@@ -272,7 +272,7 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<DocumentIdentifierResult> RemoveByIdAsync<T>(string id, string rev = null, ReplacePolicy? policy = null,
+        public async Task<IDocumentIdentifierResult> RemoveByIdAsync<T>(string id, string rev = null, ReplacePolicy? policy = null,
             bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().RemoveByIdAsync(id, rev, policy, waitForSync, baseResult).ConfigureAwait(false);

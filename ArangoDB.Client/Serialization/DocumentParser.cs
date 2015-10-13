@@ -106,7 +106,7 @@ namespace ArangoDB.Client.Serialization
 
                 PropertyName = reader.Value.ToString();
 
-                if (PropertyName == "result" || PropertyName == "edges" || PropertyName=="document")
+                if (PropertyName == "result" || PropertyName == "edges" || PropertyName== "document" || PropertyName == "vertex")
                 {
                     reader.Read();
 

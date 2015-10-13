@@ -47,7 +47,7 @@ namespace ArangoDB.Client.Property
             methods.TryRemove(type, out identifierMethod);
         }
 
-        public void Modify(object document,DocumentIdentifierResult identifiers)
+        public void Modify(object document,IDocumentIdentifierResult identifiers)
         {
             if (identifiers.Id != null && identifiers.Key != null && identifiers.Rev != null)
             {
@@ -58,7 +58,7 @@ namespace ArangoDB.Client.Property
             }
         }
 
-        public void Modify(object document, DocumentIdentifierResult identifiers,string from,string to)
+        public void Modify(object document, IDocumentIdentifierResult identifiers,string from,string to)
         {
             if (identifiers.Id != null && identifiers.Key != null && identifiers.Rev != null)
             {

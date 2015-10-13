@@ -76,10 +76,13 @@
     <Compile Include="Data\EdgeDefinitionData.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
+    <Compile Include="Data\UpdateVertexResult.cs" />
+    <Compile Include="Data\VertexInheritedCommandResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\GraphListResult.cs" />
     <Compile Include="Data\GraphVerticesResult.cs" />
     <Compile Include="Data\InheritedCommandResult.cs" />
+    <Compile Include="Data\InsertVertexResult.cs" />
     <Compile Include="Data\ParseIdentifierResult.cs" />
     <Compile Include="Data\QueryData.cs" />
     <Compile Include="Data\RemoveVertexData.cs" />
@@ -106,6 +109,7 @@
     <Compile Include="Interface\ICursorEnumerable.cs" />
     <Compile Include="Interface\ICursorEnumerator.cs" />
     <Compile Include="Interface\IDocumentCollection.cs" />
+    <Compile Include="Interface\IDocumentIdentifierResult.cs" />
     <Compile Include="Interface\IDocumentPropertySetting.cs" />
     <Compile Include="Interface\IEdgeCollection.cs" />
     <Compile Include="Linq\AqlExpressionTreeVisitor.cs" />

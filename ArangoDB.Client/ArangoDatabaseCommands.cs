@@ -307,5 +307,46 @@ namespace ArangoDB.Client
 
             return result.Result;
         }
+
+        /// <summary>
+        /// Graph methods container
+        /// </summary>
+        /// <param name="graphName">The name of the graph</param>
+        /// <returns></returns>
+        public IArangoGraph Graph(string graphName)
+        {
+            return new ArangoGraph(this, graphName);
+        }
+
+        /// <summary>
+        /// Lists all graphs
+        /// </summary>
+        /// <param name="baseResult"></param>
+        /// <returns>List<GraphIdentifierResult></returns>
+        public List<GraphIdentifierResult> ListGraphs(Action<BaseResult> baseResult = null)
+        {
+            return ListGraphsAsync(baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Lists all graphs
+        /// </summary>
+        /// <param name="baseResult"></param>
+        /// <returns>List<GraphIdentifierResult></returns>
+        public async Task<List<GraphIdentifierResult>> ListGraphsAsync(Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Get
+            };
+
+            var result = await command.RequestMergedResult<GraphListResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Graphs;
+        }
     }
 }
