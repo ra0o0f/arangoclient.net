@@ -21,7 +21,8 @@ namespace ArangoDB.Client.Data
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? Ttl { get; set; }
-        
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(QueryParameterConverter))]
         public IList<QueryParameter> BindVars { get; set; }
 
@@ -37,9 +38,10 @@ namespace ArangoDB.Client.Data
             foreach (var b in breakWords)
                 query = query.Replace(b, Environment.NewLine + b);
 
-            for (int i = 0; i < BindVars.Count; i++)
-                query = query.Replace($"@{BindVars[i].Name}",
-                    new Serialization.DocumentSerializer(db).SerializeWithoutReader(BindVars[i].Value));
+            if(BindVars!=null)
+                for (int i = 0; i < BindVars.Count; i++)
+                    query = query.Replace($"@{BindVars[i].Name}",
+                        new Serialization.DocumentSerializer(db).SerializeWithoutReader(BindVars[i].Value));
             
             return query;
         }

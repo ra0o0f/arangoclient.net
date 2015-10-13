@@ -302,5 +302,40 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool RemoveVertexById<T>(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveVertexByIdAsync<T>(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool RemoveVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveVertexAsync<T>(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
     }
 }

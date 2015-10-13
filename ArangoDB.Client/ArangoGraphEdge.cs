@@ -150,6 +150,44 @@ namespace ArangoDB.Client
 
             return result.Result.Graph;
         }
+
+        /// <summary>
+        /// Creates a new vertex
+        /// </summary>
+        /// <param name="document">The vertex document</param>
+        /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DocumentIdentifierResult</returns>
+        public async Task<IDocumentIdentifierResult> InsertAsync(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
+
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Graph,
+                Method = HttpMethod.Post,
+                Command = $"{graphName}/vertex/{collection}",
+                Query = new Dictionary<string, string>()
+            };
+
+            command.Query.Add("waitForSync", waitForSync.ToString());
+
+            var result = await command.RequestMergedResult<InsertVertexResult>(document).ConfigureAwait(false);
+
+            if (!result.BaseResult.Error)
+            {
+                if (db.Setting.DisableChangeTracking == false)
+                    db.ChangeTracker.TrackChanges(document, result.Result.Vertex);
+
+                db.SharedSetting.IdentifierModifier.Modify(document, result.Result.Vertex);
+            }
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Vertex;
+        }
+
     }
 
     public class ArangoGraphEdge<T> : IArangoGraphEdge<T>

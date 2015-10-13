@@ -155,6 +155,41 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool RemoveById(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveByIdAsync(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveAsync(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
     }
 
     public interface IArangoGraphVertex<T>
@@ -304,5 +339,40 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool RemoveById(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveByIdAsync(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        Task<bool> RemoveAsync(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null);
     }
 }

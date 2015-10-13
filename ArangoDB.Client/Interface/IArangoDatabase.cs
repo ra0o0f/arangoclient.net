@@ -26,7 +26,7 @@ namespace ArangoDB.Client
         IEdgeCollection<T> EdgeCollection<T>();
 
         ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,
-            int? batchSize = 0, TimeSpan? ttl = null, QueryOption options = null);
+            int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null);
 
         AqlQueryable<T> Query<T>();
 

@@ -153,8 +153,8 @@ namespace ArangoDB.Client
             return Query<AQL>();
         }
 
-        public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,
-            int? batchSize = 0, TimeSpan? ttl = null, QueryOption options = null)
+        public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null,
+           bool ? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
         {
             QueryData data = new QueryData();
 
@@ -168,8 +168,10 @@ namespace ArangoDB.Client
             else if (Setting.Cursor.Ttl.HasValue)
                 data.Ttl = Setting.Cursor.Ttl.Value.TotalSeconds;
 
-            if (bindVars != null)
+            if (bindVars != null && bindVars.Count != 0)
                 data.BindVars = bindVars;
+            else
+                data.BindVars = null;
 
             if (options != null)
                 data.Options = options;
@@ -194,8 +196,9 @@ namespace ArangoDB.Client
                 Log($"creating an AQL query:");
                 Log($"query: {data.Query}");
                 Log($"bindVars:");
-                foreach (var b in data.BindVars)
-                    Log($"name: {b.Name} value: {new DocumentSerializer(this).SerializeWithoutReader(b.Value)}");
+                if(data.BindVars!=null)
+                    foreach (var b in data.BindVars)
+                        Log($"name: {b.Name} value: {new DocumentSerializer(this).SerializeWithoutReader(b.Value)}");
                 Log("");
                 Log("parsed query with variables replaced:");
                 Log(data.QueryReplacedWithVariables(this));

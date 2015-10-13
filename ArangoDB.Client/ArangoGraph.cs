@@ -519,5 +519,52 @@ namespace ArangoDB.Client
         {
             return await Vertex<T>().ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveVertexById<T>(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null)
+        {
+            return RemoveVertexByIdAsync<T>(id, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveVertexByIdAsync<T>(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Vertex<T>().RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return RemoveVertexAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveVertexAsync<T>(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await Vertex<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+        }
     }
 }

@@ -354,7 +354,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -365,7 +365,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Completely updates the document
+        /// Completely updates the vertex
         /// </summary>
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
@@ -390,6 +390,87 @@ namespace ArangoDB.Client
                 container.Document = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
                 db.SharedSetting.IdentifierModifier.FindIdentifierMethodFor(document.GetType()).SetRevision(document, result.Rev);
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveById(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null)
+        {
+            return RemoveByIdAsync(id, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveByIdAsync(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
+
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
+
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Document,
+                Method = HttpMethod.Delete,
+                Query = new Dictionary<string, string>(),
+                Command = $"{graphName}/vertex/{documentHandle}"
+            };
+
+            command.Query.Add("waitForSync", waitForSync.ToString());
+
+            var result = await command.RequestMergedResult<DropGraphResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result.Removed;
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return RemoveAsync(document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveAsync(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            if (db.Setting.DisableChangeTracking == true)
+                throw new InvalidOperationException("Change tracking is disabled, use RemoveById() instead");
+
+            var container = db.ChangeTracker.FindDocumentInfo(document);
+
+            BaseResult bResult = null;
+
+            var result = await RemoveByIdAsync(container.Id, waitForSync, (b) => bResult = b).ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(bResult);
+
+            if (!bResult.Error)
+                db.ChangeTracker.StopTrackChanges(document);
 
             return result;
         }
@@ -601,6 +682,53 @@ namespace ArangoDB.Client
         public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             return await collectionMethods.ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool RemoveById(string id, bool? waitForSync = null
+            , Action<BaseResult> baseResult = null)
+        {
+            return RemoveByIdAsync(id, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveByIdAsync(string id,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await collectionMethods.RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+        }
+        
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return RemoveAsync(document, waitForSync, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Deletes the vertex
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        public async Task<bool> RemoveAsync(object document,
+            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        {
+            return await collectionMethods.RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
     }
 }
