@@ -41,13 +41,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArangoCollection.cs" />
+    <Compile Include="Collection\ArangoCollection.cs" />
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
-    <Compile Include="ArangoGraph.cs" />
-    <Compile Include="ArangoGraphEdge.cs" />
-    <Compile Include="ArangoGraphVertex.cs" />
+    <Compile Include="Collection\CollectionType.cs" />
+    <Compile Include="Collection\EdgeDirection.cs" />
+    <Compile Include="Collection\ReplacePolicy.cs" />
+    <Compile Include="Data\DropGraphData.cs" />
+    <Compile Include="Data\TraversalResult.cs" />
+    <Compile Include="Graph\ArangoGraph.cs" />
+    <Compile Include="Graph\ArangoGraphEdge.cs" />
+    <Compile Include="Graph\ArangoGraphVertex.cs" />
     <Compile Include="ArangoServerException.cs" />
     <Compile Include="Attributes\CollectionPropertyAttribute.cs" />
     <Compile Include="Attributes\DocumentPropertyAttribute.cs" />
@@ -94,6 +99,11 @@
     <Compile Include="Data\SimpleAllData.cs" />
     <Compile Include="Data\TransactionData.cs" />
     <Compile Include="Extentions\AQL.cs" />
+    <Compile Include="Graph\TraversalConfig.cs" />
+    <Compile Include="Graph\TraversalItemOrder.cs" />
+    <Compile Include="Graph\TraversalOrder.cs" />
+    <Compile Include="Graph\TraversalStrategy.cs" />
+    <Compile Include="Graph\TraversalUniqueness.cs" />
     <Compile Include="Http\AuthenticationException.cs" />
     <Compile Include="Interface\IAqlModifiable.cs" />
     <Compile Include="Extentions\QueryableExtensions.cs" />
@@ -158,6 +168,7 @@
     <Compile Include="Property\DocumentPropertySetting.cs" />
     <Compile Include="Serialization\Converters\DateTimeConverter.cs" />
     <Compile Include="Serialization\Converters\QueryParameterConverter.cs" />
+    <Compile Include="Serialization\Converters\EnumValueConverter.cs" />
     <Compile Include="Serialization\DocumentContractResolver.cs" />
     <Compile Include="Serialization\DocumentParser.cs" />
     <Compile Include="Serialization\DocumentSerializer.cs" />

@@ -15,9 +15,7 @@ namespace ArangoDB.Client
         private bool? _throwForServerErrors;
 
         private bool? _disableChangeTracking;
-
-        private Action<string> _log;
-
+        
         DatabaseSharedSetting sharedSetting;
 
         public DatabaseSetting(DatabaseSharedSetting sharedSetting)
@@ -26,6 +24,7 @@ namespace ArangoDB.Client
             this.Cursor = new DatabaseCursorSetting(sharedSetting);
             this.Document = new DatabaseDocumentSetting(sharedSetting);
             this.Linq = new DatabaseLinqSetting(sharedSetting);
+            this.Logger = new DatabaseLogSetting(sharedSetting);
         }
 
         public bool CreateCollectionOnTheFly
@@ -78,24 +77,105 @@ namespace ArangoDB.Client
             }
             set { _disableChangeTracking = value; }
         }
-
-        public Action<string> Log
-        {
-            get
-            {
-                if (_log!=null)
-                    return _log;
-
-                return sharedSetting.Log;
-            }
-            set { _log = value; }
-        }
-
+        
         public DatabaseCursorSetting Cursor;
 
         public DatabaseDocumentSetting Document;
 
         public DatabaseLinqSetting Linq;
+
+        public DatabaseLogSetting Logger;
+    }
+
+    public class DatabaseLogSetting
+    {
+        private Action<string> _log;
+        private bool? _logOnlyLightOperations;
+        private bool? _aql;
+        private bool? _httpRequest;
+        private bool? _httpResponse;
+        private bool? _httpHeaders;
+
+        DatabaseSharedSetting sharedSetting;
+
+        public DatabaseLogSetting(DatabaseSharedSetting sharedSetting)
+        {
+            this.sharedSetting = sharedSetting;
+        }
+
+        public Action<string> Log
+        {
+            get
+            {
+                if (_log != null)
+                    return _log;
+
+                return sharedSetting.Logger.Log;
+            }
+            set { _log = value; }
+        }
+
+
+
+        public bool LogOnlyLightOperations
+        {
+            get
+            {
+                if (_logOnlyLightOperations.HasValue)
+                    return _logOnlyLightOperations.Value;
+
+                return sharedSetting.Logger.LogOnlyLightOperations;
+            }
+            set { _logOnlyLightOperations = value; }
+        }
+
+        public bool Aql
+        {
+            get
+            {
+                if (_aql.HasValue)
+                    return _aql.Value;
+
+                return sharedSetting.Logger.Aql;
+            }
+            set { _aql = value; }
+        }
+
+        public bool HttpHeaders
+        {
+            get
+            {
+                if (_httpHeaders.HasValue)
+                    return _httpHeaders.Value;
+
+                return sharedSetting.Logger.HttpHeaders;
+            }
+            set { _httpHeaders = value; }
+        }
+
+        public bool HttpRequest
+        {
+            get
+            {
+                if (_httpRequest.HasValue)
+                    return _httpRequest.Value;
+
+                return sharedSetting.Logger.HttpRequest;
+            }
+            set { _httpRequest = value; }
+        }
+
+        public bool HttpResponse
+        {
+            get
+            {
+                if (_httpResponse.HasValue)
+                    return _httpResponse.Value;
+
+                return sharedSetting.Logger.HttpResponse;
+            }
+            set { _httpResponse = value; }
+        }
     }
 
     public class DatabaseLinqSetting

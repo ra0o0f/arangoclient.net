@@ -15,7 +15,8 @@ namespace ArangoDB.Client.Http
     {
         IArangoDatabase db;
 
-        private static Lazy<HttpClient> httpClientLazily = new Lazy<HttpClient>(() => {
+        private static Lazy<HttpClient> httpClientLazily = new Lazy<HttpClient>(() =>
+        {
             connectionHandler = new HttpConnectionHandler();
             var proxy = ArangoDatabase.ClientSetting.Proxy;
             connectionHandler.InnerHandler = new HttpClientHandler
@@ -29,6 +30,8 @@ namespace ArangoDB.Client.Http
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
             
+            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(".NETClient", Utility.Utils.GetAssemblyVersion()));
+
             return httpClient;
         });
 
@@ -60,27 +63,53 @@ namespace ArangoDB.Client.Http
 #endif
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method,Uri uri,object data,NetworkCredential credential)
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, NetworkCredential credential)
         {
-            var requestMessage = new HttpRequestMessage(method,uri);
+            var requestMessage = new HttpRequestMessage(method, uri);
 
             string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
             requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
 
-            if(db.LoggerAvailable)
+            if (db.LoggerAvailable)
             {
                 db.Log("==============================");
                 db.Log(DateTime.Now.ToString());
                 db.Log("sending http request:");
                 db.Log($"url: {uri.ToString()}");
                 db.Log($"method: {method.ToString()}");
-                db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
+                if(db.Setting.Logger.HttpHeaders)
+                {
+                    db.Log($"headers:");
+                    foreach (var h in requestMessage.Headers)
+                        db.Log($"{h.Key} : {string.Join(" ",h.Value)}");
+                    foreach(var h in httpClient.DefaultRequestHeaders)
+                        db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
+                }
+                if (db.Setting.Logger.LogOnlyLightOperations == false)
+                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
             }
 
-            if(data!=null)
-                requestMessage.Content = new JsonContent(db,data);
+            if (data != null)
+                requestMessage.Content = new JsonContent(db, data);
 
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (db.LoggerAvailable)
+            {
+                db.Log("==============================");
+                db.Log(DateTime.Now.ToString());
+                db.Log("received http response:");
+                db.Log($"url: {uri.ToString()}");
+                db.Log($"status-code: {responseMessage.StatusCode.ToString()}");
+                if (db.Setting.Logger.HttpHeaders)
+                {
+                    db.Log($"headers:");
+                    foreach (var h in responseMessage.Headers)
+                        db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
+                }
+                if (db.Setting.Logger.LogOnlyLightOperations == false)
+                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(await responseMessage.Content.ReadAsStringAsync())}");
+            }
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 throw new AuthenticationException($"The user '{credential.UserName}' is not authorized");

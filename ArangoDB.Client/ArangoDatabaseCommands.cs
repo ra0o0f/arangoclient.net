@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ArangoDB.Client.Utility;
+using ArangoDB.Client.Graph;
 
 namespace ArangoDB.Client
 {

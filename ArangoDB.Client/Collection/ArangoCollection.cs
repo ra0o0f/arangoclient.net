@@ -15,28 +15,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArangoDB.Client
+namespace ArangoDB.Client.Collection
 {
-
-    public enum CollectionType
-    {
-        Document = 2,
-        Edge = 3
-    }
-
-    public enum ReplacePolicy
-    {
-        Last = 0,
-        Error = 1
-    }
-
-    public enum EdgeDirection
-    {
-        Any = 0,
-        Inbound = 1,
-        Outbound = 2
-    }
-
     public class ArangoCollection : IDocumentCollection, IEdgeCollection
     {
         string collectionName;

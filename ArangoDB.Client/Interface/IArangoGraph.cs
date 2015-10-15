@@ -16,7 +16,12 @@ namespace ArangoDB.Client
         IArangoGraphEdge Edge(string collection);
 
         IArangoGraphEdge<T> Edge<T>();
-
+        
+        /// <summary>
+        /// Name of the graph
+        /// </summary>
+        string Name { get; }
+        
         /// <summary>
         /// Create graph
         /// </summary>

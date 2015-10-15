@@ -14,8 +14,6 @@ namespace ArangoDB.Client.Data
         [DocumentProperty(Identifier = IdentifierType.Revision)]
         public string Rev { get; set; }
 
-        public string Name { get; set; }
-
         public List<EdgeDefinitionData> EdgeDefinitions { get; set; }
 
         public List<string> OrphanCollections { get; set; }

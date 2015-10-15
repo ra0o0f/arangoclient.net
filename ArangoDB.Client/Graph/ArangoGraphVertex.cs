@@ -11,7 +11,7 @@ using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Serialization;
 
-namespace ArangoDB.Client
+namespace ArangoDB.Client.Graph
 {
     public class ArangoGraphVertex : IArangoGraphVertex
     {

@@ -90,7 +90,8 @@ namespace ArangoDB.Client.Serialization
                     Converters = new JsonConverter[]
                 {
                     new DateTimeConverter(),
-                    new QueryParameterConverter()
+                    new QueryParameterConverter(),
+                    new EnumValueConverter()
                 },
                     DateParseHandling = DateParseHandling.None
                 };

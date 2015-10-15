@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArangoDB.Client
+namespace ArangoDB.Client.Graph
 {
     public class ArangoGraph : IArangoGraph
     {
@@ -21,6 +21,11 @@ namespace ArangoDB.Client
         {
             this.db = db;
             this.graphName = graphName;
+        }
+
+        public string Name
+        {
+            get { return graphName; }
         }
 
         public IArangoGraphVertex Vertex(string collection)
@@ -82,7 +87,7 @@ namespace ArangoDB.Client
                 Method = HttpMethod.Post
             };
 
-            var data = new GraphCollectionData
+            var data = new CreateGraphData
             {
                 Name = graphName,
                 EdgeDefinitions = edgeDefinitions,
@@ -146,7 +151,7 @@ namespace ArangoDB.Client
                 Command = graphName
             };
 
-            var data = new GraphCollectionData
+            var data = new DropGraphData
             {
                 DropCollections = dropCollections
             };
@@ -765,5 +770,6 @@ namespace ArangoDB.Client
         {
             return await Edge<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
+        
     }
 }

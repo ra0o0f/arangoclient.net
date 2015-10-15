@@ -29,16 +29,24 @@ namespace ArangoDB.Client
             Credential = new NetworkCredential("root", "");
             SystemDatabaseCredential = new NetworkCredential("root", "");
             ThrowForServerErrors = true;
+            Logger = new DatabaseLogSharedSetting
+            {
+                LogOnlyLightOperations = true,
+                HttpRequest = true,
+                HttpResponse = true,
+                Aql = true,
+                HttpHeaders = false
+            };
         }
-        
+
         private bool _createCollectionOnTheFly;
 
         private string _url;
 
         public string Url
-        { 
-            get { return _url; } 
-            set 
+        {
+            get { return _url; }
+            set
             {
                 _url = new UriBuilder(value).Uri.ToString();
                 HttpConnection.ConfigureServicePoint(_url);
@@ -56,7 +64,7 @@ namespace ArangoDB.Client
         public bool ThrowForServerErrors { get; set; }
 
         public bool CreateCollectionOnTheFly
-        { 
+        {
             get
             {
                 return _createCollectionOnTheFly && !ClusterMode;
@@ -70,7 +78,7 @@ namespace ArangoDB.Client
 
         public bool DisableChangeTracking { get; set; }
 
-        public Action<string> Log { get; set; }
+        public DatabaseLogSharedSetting Logger{ get; set; }
 
         public DatabaseCursorSharedSetting Cursor { get; set; }
 
@@ -83,6 +91,21 @@ namespace ArangoDB.Client
         internal DocumentIdentifierModifier IdentifierModifier;
 
         internal AqlFunctionCache AqlFunctions { get; set; }
+    }
+
+    public class DatabaseLogSharedSetting
+    {
+        public Action<string> Log { get; set; }
+
+        public bool LogOnlyLightOperations { get; set; }
+
+        public bool Aql { get; set; }
+
+        public bool HttpRequest { get; set; }
+
+        public bool HttpResponse { get; set; }
+
+        public bool HttpHeaders { get; set; }
     }
 
     public class DatabaseLinqSharedSetting

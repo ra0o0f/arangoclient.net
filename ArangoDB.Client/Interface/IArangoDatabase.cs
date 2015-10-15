@@ -512,5 +512,28 @@ namespace ArangoDB.Client
 
         TResult ExecuteTransaction<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
         void ExecuteTransaction(TransactionData data, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Executes a server-side traversal
+        /// </summary>
+        /// <typeparam name="TVertex">Type of vertex</typeparam>
+        /// <typeparam name="TEdge">Type of edge</typeparam>
+        /// <param name="config">Configuration for the traversal</param>
+        /// <param name="startVertex">Id of the startVertex</param>
+        /// <param name="baseResult"></param>
+        /// <returns>TraversalResult<TVertex, TEdge></returns>
+        TraversalResult<TVertex, TEdge> Traverse<TVertex, TEdge>(TraversalConfig config, string startVertex = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Executes a server-side traversal
+        /// </summary>
+        /// <typeparam name="TVertex">Type of vertex</typeparam>
+        /// <typeparam name="TEdge">Type of edge</typeparam>
+        /// <param name="config">Configuration for the traversal</param>
+        /// <param name="startVertex">Id of the startVertex</param>
+        /// <param name="baseResult"></param>
+        /// <returns>TraversalResult<TVertex, TEdge></returns>
+        Task<TraversalResult<TVertex, TEdge>> TraverseAsync<TVertex, TEdge>(TraversalConfig config, string startVertex = null, Action<BaseResult> baseResult = null);
+
     }
 }
