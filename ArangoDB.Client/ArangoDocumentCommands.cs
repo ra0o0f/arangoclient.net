@@ -16,7 +16,7 @@ namespace ArangoDB.Client
         /// <returns></returns>
         public IDocumentCollection<T> Collection<T>()
         {
-            return new ArangoCollection<T>(this);
+            return new ArangoCollection<T>(this,CollectionType.Document);
         }
 
         /// <summary>
@@ -26,6 +26,24 @@ namespace ArangoDB.Client
         public IEdgeCollection<T> EdgeCollection<T>()
         {
             return new ArangoCollection<T>(this, CollectionType.Edge);
+        }
+
+        /// <summary>
+        /// Gets the collection for a specific type
+        /// </summary>
+        /// <returns></returns>
+        public IDocumentCollection Collection(string collection)
+        {
+            return new ArangoCollection(this, CollectionType.Document, collection);
+        }
+
+        /// <summary>
+        /// Gets the edge collection for a specific type
+        /// </summary>
+        /// <returns></returns>
+        public IEdgeCollection EdgeCollection(string collection)
+        {
+            return new ArangoCollection(this, CollectionType.Edge, collection);
         }
 
         /// <summary>
