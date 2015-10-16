@@ -31,11 +31,6 @@ namespace ArangoDB.Client.Linq
             this.ModelVisitor = modelVisitor;
         }
 
-        void VisitMethodCallExpressionFirstArgument()
-        {
-
-        }
-
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
             if (expression.Method.Name == "As")
@@ -63,16 +58,18 @@ namespace ArangoDB.Client.Linq
                 ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
                 argumentSeprator = " , ";
             }
-            
+
+            Type[] genericArguments = null;
             if(methodsWithFirstGenericArgument.Contains(methodName))
             {
-                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
+                genericArguments = expression.Method.GetGenericArguments();
+                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, genericArguments[0]);
                 ModelVisitor.QueryText.AppendFormat(" {0}{1}", collection, argumentSeprator);
             }
             
             if (methodsWithSecondGenericArgument.Contains(methodName))
             {
-                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[1]);
+                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, genericArguments[1]);
                 ModelVisitor.QueryText.AppendFormat(" {0}{1}", collection, argumentSeprator);
             }
             

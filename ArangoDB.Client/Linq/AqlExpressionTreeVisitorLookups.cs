@@ -19,7 +19,7 @@ namespace ArangoDB.Client.Linq
 
         static Dictionary<Type, Func<object, string>> enumToStrings = new Dictionary<Type, Func<object, string>>
         {
-            [typeof(EdgeDirection)] = (v) => Utils.EdgeDirectionToString((EdgeDirection)v)
+            //[typeof(EdgeDirection)] = (v) => Utils.EdgeDirectionToString((EdgeDirection)v)
         };
 
         static AqlExpressionTreeVisitor()

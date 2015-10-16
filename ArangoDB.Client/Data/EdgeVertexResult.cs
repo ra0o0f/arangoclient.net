@@ -6,21 +6,29 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class EdgeVertexResult<TVertex, TEdge>
     {
         public TEdge Edge { get; set; }
 
         public TVertex Vertex { get; set; }
     }
-
-    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
-    public class VertexResult<TVertex>
+    
+    public class AQLTraversalResult<TVertex, TEdge>
     {
         public TVertex Vertex { get; set; }
+
+        public TraversalVisitedPathResult<TVertex, TEdge> Path { get; set; }
+    }
+    
+    public class ShortestPathResult<TVertex, TEdge>
+    {
+        public IList<TVertex> Vertices { get; set; }
+
+        public IList<TEdge> Edges { get; set; }
+
+        public int Distance { get; set; }
     }
 
-    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class PathResult<TVertex, TEdge>
     {
         public IList<TVertex> Vertices { get; set; }
