@@ -31,6 +31,11 @@ namespace ArangoDB.Client.Linq
             this.ModelVisitor = modelVisitor;
         }
 
+        void VisitMethodCallExpressionFirstArgument()
+        {
+
+        }
+
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
             if (expression.Method.Name == "As")
@@ -38,94 +43,51 @@ namespace ArangoDB.Client.Linq
                 VisitExpression(expression.Arguments[0]);
                 return expression;
             }
-
+            
+            string methodName;
             var userFunction = ModelVisitor.Db.SharedSetting.AqlFunctions.FindFunctionAttribute(expression.Method);
             bool methodExists = userFunction != null;
-
-            string methodName;
             if (methodExists)
                 methodName = userFunction.Name;
             else
                 methodExists = aqlMethods.TryGetValue(expression.Method.Name, out methodName);
 
-            if (methodExists)
+            if (!methodExists)
+                throw new InvalidOperationException($"Method {expression.Method.Name} is not supported in AqlLinqProvider");
+            
+            string argumentSeprator = null;
+            bool noParenthesis = methodsWithNoParenthesis.TryGetValue(methodName,out argumentSeprator);
+
+            if (!noParenthesis)
             {
-                if (methodName != "in")
-                    ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
+                ModelVisitor.QueryText.AppendFormat(" {0}( ", methodName);
+                argumentSeprator = " , ";
+            }
+            
+            if(methodsWithFirstGenericArgument.Contains(methodName))
+            {
+                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
+                ModelVisitor.QueryText.AppendFormat(" {0}{1}", collection, argumentSeprator);
+            }
+            
+            if (methodsWithSecondGenericArgument.Contains(methodName))
+            {
+                var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[1]);
+                ModelVisitor.QueryText.AppendFormat(" {0}{1}", collection, argumentSeprator);
+            }
+            
+            for (int i = 0; i < expression.Arguments.Count; i++)
+            {
+                VisitExpression(expression.Arguments[i]);
 
-                if (methodName == "near" || methodName == "within" || methodName == "within_rectangle"
-                    || methodName == "edges" || methodName == "neighbors" || methodName == "traversal"
-                    || methodName == "traversal_tree" || methodName == "shortest_path" || methodName == "paths")
-                {
-                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[0]);
-                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
-                }
-
-                if (methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree"
-                    || methodName == "shortest_path" || methodName == "paths")
-                {
-                    var collection = LinqUtility.ResolveCollectionName(ModelVisitor.Db, expression.Method.GetGenericArguments()[1]);
-                    ModelVisitor.QueryText.AppendFormat(" {0} , ", collection);
-                }
-
-
-
-                for (int i = 0; i < expression.Arguments.Count; i++)
-                {
-                    bool dontVisitArgument = false;
-
-                    if (i == 0)
-                    {
-                        if (methodName == "paths")
-                        {
-                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
-                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
-                            dontVisitArgument = true;
-                        }
-                    }
-                    if (i == 1)
-                    {
-                        if (methodName == "edges" || methodName == "neighbors" || methodName == "traversal" || methodName == "traversal_tree")
-                        {
-                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
-                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
-                            dontVisitArgument = true;
-                        }
-                    }
-                    if (i == 2)
-                    {
-                        if (methodName == "shortest_path")
-                        {
-                            ModelVisitor.QueryText.AppendFormat(" '{0}' ",
-                                Utils.EdgeDirectionToString((EdgeDirection)(expression.Arguments[i] as ConstantExpression).Value));
-                            dontVisitArgument = true;
-                        }
-                    }
-
-                    if (!dontVisitArgument)
-                        VisitExpression(expression.Arguments[i]);
-
-                    if (methodName == "in" && i != expression.Arguments.Count - 1)
-                        ModelVisitor.QueryText.Append(" in ");
-                    else if (i != expression.Arguments.Count - 1)
-                        ModelVisitor.QueryText.Append(" , ");
-                }
-
-                if (methodName != "in")
-                    ModelVisitor.QueryText.Append(" ) ");
-
-                return expression;
+                if (i != expression.Arguments.Count - 1)
+                    ModelVisitor.QueryText.Append(argumentSeprator);
             }
 
-            if (expression.Method.Name == "get_Item")
-            {
-                VisitExpression(expression.Object);
-                ModelVisitor.QueryText.AppendFormat("[{0}] ", (expression.Arguments[0] as ConstantExpression).Value);
+            if (!noParenthesis)
+                ModelVisitor.QueryText.Append(" ) ");
 
-                return expression;
-            }
-
-            return base.VisitMethodCallExpression(expression); // throws
+            return expression;
         }
 
         // Called when a LINQ expression type is not handled above.
@@ -254,7 +216,7 @@ namespace ArangoDB.Client.Linq
             var parentModelVisitor = LinqUtility.FindParentModelVisitor(this.ModelVisitor);
             parentModelVisitor.ParameterNameCounter++;
             string parameterName = "P" + parentModelVisitor.ParameterNameCounter;
-
+            
             parentModelVisitor.QueryData.BindVars.Add(new QueryParameter() { Name = parameterName, Value = expression.Value });
 
             ModelVisitor.QueryText.AppendFormat(" @{0} ", parameterName);

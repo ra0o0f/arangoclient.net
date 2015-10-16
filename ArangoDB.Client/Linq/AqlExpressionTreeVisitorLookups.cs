@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,8 +13,33 @@ namespace ArangoDB.Client.Linq
         static Dictionary<ExpressionType, string> expressionTypes;
         static Dictionary<string, string> aqlMethods;
 
+        static HashSet<string> methodsWithFirstGenericArgument;
+        static HashSet<string> methodsWithSecondGenericArgument;
+        static Dictionary<string, string> methodsWithNoParenthesis;
+
+        static Dictionary<Type, Func<object, string>> enumToStrings = new Dictionary<Type, Func<object, string>>
+        {
+            [typeof(EdgeDirection)] = (v) => Utils.EdgeDirectionToString((EdgeDirection)v)
+        };
+
         static AqlExpressionTreeVisitor()
         {
+            methodsWithFirstGenericArgument = new HashSet<string>
+            {
+                "near","within","within_rectangle","edges","neighbors","traversal","traversal_tree"
+                ,"shortest_path","paths"
+            };
+
+            methodsWithSecondGenericArgument = new HashSet<string>
+            {
+                "neighbors","traversal","traversal_tree","shortest_path","paths"
+            };
+
+            methodsWithNoParenthesis = new Dictionary<string, string>
+            {
+                ["in"] = "in"
+            };
+
             expressionTypes = new Dictionary<ExpressionType, string>()
             {
                 {ExpressionType.Equal, " == "},
