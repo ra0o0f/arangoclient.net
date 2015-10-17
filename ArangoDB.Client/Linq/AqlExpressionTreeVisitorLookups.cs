@@ -174,7 +174,27 @@ namespace ArangoDB.Client.Linq
                 {"Traversal","traversal"},
                 {"TraversalTree","traversal_tree"},
                 {"ShortestPath","shortest_path"},
-                {"Paths","paths"}
+                {"Paths","paths"},
+
+                /*graph*/
+                { "GraphEdges","graph_edges" },
+                { "GraphVertices","graph_vertices" },
+                { "GraphNeighbors","graph_neighbors" },
+                { "GraphCommonNeighbors","graph_common_neighbors" },
+                { "GraphCommonProperties","graph_common_properties" },
+                { "GraphPaths","graph_paths" },
+                { "GraphShortestPath","graph_shortest_path" },
+                { "GraphTraversal","graph_traversal" },
+                { "GraphTraversalTree","graph_traversal_tree" },
+                { "GraphDistanceTo","graph_distance_to" },
+                { "GraphAbsoluteEccentricity","graph_absolute_eccentricity" },
+                { "GraphEccentricity","graph_eccentricity" },
+                { "GraphAbsoluteCloseness","graph_absolute_closeness" },
+                { "GraphCloseness","graph_closeness" },
+                { "GraphAbsoluteBetweenness","graph_absolute_betweenness" },
+                { "GraphBetweenness","graph_betweenness" },
+                { "GraphRadius","graph_radius" },
+                { "GraphDiameter","graph_diameter" }
             };
         }
     }

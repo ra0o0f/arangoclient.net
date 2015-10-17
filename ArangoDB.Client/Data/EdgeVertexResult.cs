@@ -22,21 +22,39 @@ namespace ArangoDB.Client.Data
     
     public class ShortestPathResult<TVertex, TEdge>
     {
-        public IList<TVertex> Vertices { get; set; }
+        public List<TVertex> Vertices { get; set; }
 
-        public IList<TEdge> Edges { get; set; }
+        public List<TEdge> Edges { get; set; }
 
         public int Distance { get; set; }
     }
 
     public class PathResult<TVertex, TEdge>
     {
-        public IList<TVertex> Vertices { get; set; }
+        public List<TVertex> Vertices { get; set; }
 
-        public IList<TEdge> Edges { get; set; }
+        public List<TEdge> Edges { get; set; }
 
         public TVertex Source { get; set; }
 
         public TVertex Destination { get; set; }
+    }
+
+    public class GraphCommonNeighborsResult<TVertex>
+    {
+        public string Left { get; set; }
+
+        public string Right { get; set; }
+
+        public List<TVertex> Neighbors { get; set; }
+    }
+
+    public class GraphDistanceToResult
+    {
+        public string StartVertex { get; set; }
+
+        public string Vertex { get; set; }
+
+        public int Distance { get; set; }
     }
 }

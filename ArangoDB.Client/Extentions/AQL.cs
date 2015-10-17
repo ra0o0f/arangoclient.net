@@ -36,7 +36,7 @@ namespace ArangoDB.Client
         public static string Lower(string value) { throw e; }
         public static string Upper(string value) { throw e; }
         public static string Substitute(string value, string search, string replace) { throw e; }
-        public static string Substitute(string value,string search,string replace,int limit) { throw e; }
+        public static string Substitute(string value, string search, string replace, int limit) { throw e; }
         public static string Substring(string value, int offset) { throw e; }
         public static string Substring(string value, int offset, int length) { throw e; }
         public static string Left(string value, int length) { throw e; }
@@ -50,7 +50,7 @@ namespace ArangoDB.Client
         public static string RTrim(string value, string chars) { throw e; }
         public static string[] Split(string value) { throw e; }
         public static string[] Split(string value, string separator) { throw e; }
-        public static string[] Split(string value,string separator, int limit) { throw e; }
+        public static string[] Split(string value, string separator, int limit) { throw e; }
         public static string Reverse(string value) { throw e; }
         public static bool Contains(string text, string search) { throw e; }
         public static int Contains(string text, string search, bool returnIndex) { throw e; }
@@ -60,7 +60,7 @@ namespace ArangoDB.Client
         public static int FindLast(string text, string search, int start, int end) { throw e; }
         public static bool Like(string text, string search) { throw e; }
         public static bool Like(string text, string search, bool caseInsensitive) { throw e; }
-        
+
         /*numeric*/
         public static long Floor(double value) { throw e; }
         public static long Ceil(double value) { throw e; }
@@ -79,8 +79,8 @@ namespace ArangoDB.Client
         public static long DateTimestamp(int year, int month, int day, int hour, int minute) { throw e; }
         public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second) { throw e; }
         public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
-        
-        public static string DateIso8601(string date) { throw e; } 
+
+        public static string DateIso8601(string date) { throw e; }
         public static string DateIso8601(long date) { throw e; }
         public static string DateIso8601(DateTime date) { throw e; }
         public static string DateIso8601(DateTimeOffset date) { throw e; }
@@ -124,7 +124,7 @@ namespace ArangoDB.Client
         public static long DateNow() { throw e; }
 
         /*array*/
-        public static bool In<T>(T member,IEnumerable<T> array) { throw e; }
+        public static bool In<T>(T member, IEnumerable<T> array) { throw e; }
         public static int Length(object array) { throw e; }
         public static IList<T> Flatten<T>(object array) { throw e; }
         public static IList<T> Flatten<T>(object array, int depth) { throw e; }
@@ -219,21 +219,21 @@ namespace ArangoDB.Client
         public static IList<TEdgeCollection> Edges<TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
         public static IList<TEdgeCollection> Edges<TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample) { throw e; }
         public static IList<TEdgeCollection> Edges<TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample, object options) { throw e; }
-        public static IList<EdgeVertexResult<TVertexResult, TEdgeCollection>> Edges<TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object edgeExample,object options) { throw e; }
+        public static IList<EdgeVertexResult<TVertexResult, TEdgeCollection>> Edges<TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object edgeExample, object options) { throw e; }
 
         public static IList<string> Neighbors<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
         public static IList<string> Neighbors<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample) { throw e; }
         public static IList<string> Neighbors<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction, object edgeExample, object options) { throw e; }
         public static IList<TVertexResult> Neighbors<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object edgeExample, object options) { throw e; }
-        
+
         public static IList<AQLTraversalResult<TVertexCollection, TEdgeCollection>> Traversal<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction) { throw e; }
         public static IList<AQLTraversalResult<TVertexCollection, TEdgeCollection>> Traversal<TVertexCollection, TEdgeCollection>(string startVertex, EdgeDirection direction, object options) { throw e; }
         public static IList<AQLTraversalResult<TVertexResult, TEdgeCollection>> Traversal<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction) { throw e; }
         public static IList<AQLTraversalResult<TVertexResult, TEdgeCollection>> Traversal<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, object options) { throw e; }
-        
+
         public static IList<TVertexResult> TraversalTree<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, string connectName) { throw e; }
         public static IList<TVertexResult> TraversalTree<TVertexCollection, TEdgeCollection, TVertexResult>(string startVertex, EdgeDirection direction, string connectName, object options) { throw e; }
-        
+
         public static ShortestPathResult<string, string> ShortestPath<TVertexCollection, TEdgeCollection>(string startVertex, string endVertex, EdgeDirection direction) { throw e; }
         public static ShortestPathResult<TVertexResult, TEdgeResult> ShortestPath<TVertexCollection, TEdgeCollection, TVertexResult, TEdgeResult>(string startVertex, string endVertex, EdgeDirection direction, object options) { throw e; }
 
@@ -241,5 +241,60 @@ namespace ArangoDB.Client
         public static IList<PathResult<TVertexCollection, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection>(EdgeDirection direction, object options) { throw e; }
         public static IList<PathResult<TVertexResult, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection, TVertexResult>(EdgeDirection direction) { throw e; }
         public static IList<PathResult<TVertexResult, TEdgeCollection>> Paths<TVertexCollection, TEdgeCollection, TVertexResult>(EdgeDirection direction, object options) { throw e; }
+
+        /*graph*/
+        public static IList<string> GraphEdges(string graphName, object vertexExample) { throw e; }
+        public static IList<TEdgeResult> GraphEdges<TEdgeResult>(string graphName, object vertexExample, object options) { throw e; }
+
+        public static IList<TVertexResult> GraphVertices<TVertexResult>(string graphName, object vertexExample) { throw e; }
+        public static IList<TVertexResult> GraphVertices<TVertexResult>(string graphName, object vertexExample, object options) { throw e; }
+
+        public static IList<string> GraphNeighbors(string graphName, object vertexExample) { throw e; }
+        public static IList<TVertexResult> GraphNeighbors<TVertexResult>(string graphName, object vertexExample, object options) { throw e; }
+
+        public static IList<GraphCommonNeighborsResult<string>> GraphCommonNeighbors(string graphName, object vertex1Example, object vertex2Example) { throw e; }
+        public static IList<GraphCommonNeighborsResult<TVertexResult>> GraphCommonNeighbors<TVertexResult>(string graphName, object vertex1Example, object vertex2Example, object optionsVertex1, object optionsVertex2) { throw e; }
+
+        public static IList<Dictionary<string, IList<TShareResult>>> GraphCommonProperties<TShareResult>(string graphName, object vertex1Example, object vertex2Example) { throw e; }
+        public static IList<Dictionary<string, IList<TShareResult>>> GraphCommonProperties<TShareResult>(string graphName, object vertex1Example, object vertex2Example, object options) { throw e; }
+
+        public static IList<PathResult<TVertexResult, TEdgeResult>> GraphPaths<TVertexResult, TEdgeResult>(string graphName) { throw e; }
+        public static IList<PathResult<TVertexResult, TEdgeResult>> GraphPaths<TVertexResult, TEdgeResult>(string graphName, object options) { throw e; }
+
+        public static IList<ShortestPathResult<string, string>> GraphShortestPath(string graphName, object startVertexExample, object endVertexExample) { throw e; }
+        public static IList<ShortestPathResult<TVertexResult, TEdgeResult>> GraphShortestPath<TVertexResult, TEdgeResult>(string graphName, object startVertexExample, object endVertexExample, object options) { throw e; }
+
+        public static IList<IList<AQLTraversalResult<TVertexResult, object>>> GraphTraversal<TVertexResult>(string graphName, object startVertexExample, EdgeDirection direction) { throw e; }
+        public static IList<IList<AQLTraversalResult<TVertexResult, TEdgeResult>>> GraphTraversal<TVertexResult, TEdgeResult>(string graphName, object startVertexExample, EdgeDirection direction, object options) { throw e; }
+
+        public static IList<TVertexResult> GraphTraversalTree<TVertexResult>(string graphName, object startVertexExample, EdgeDirection direction, string connectName) { throw e; }
+        public static IList<TVertexResult> GraphTraversalTree<TVertexResult>(string graphName, object startVertexExample, EdgeDirection direction, string connectName, object options) { throw e; }
+
+        public static IList<GraphDistanceToResult> GraphDistanceTo(string graphName, object startVertexExample, object endVertexExample) { throw e; }
+        public static IList<GraphDistanceToResult> GraphDistanceTo(string graphName, object startVertexExample, object endVertexExample, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphAbsoluteEccentricity(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, decimal> GraphAbsoluteEccentricity(string graphName, object vertexExample, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphEccentricity(string graphName) { throw e; }
+        public static Dictionary<string, decimal> GraphEccentricity(string graphName, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphAbsoluteCloseness(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, decimal> GraphAbsoluteCloseness(string graphName, object vertexExample, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphCloseness(string graphName) { throw e; }
+        public static Dictionary<string, decimal> GraphCloseness(string graphName, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphAbsoluteBetweenness(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, decimal> GraphAbsoluteBetweenness(string graphName, object vertexExample, object options) { throw e; }
+
+        public static Dictionary<string, decimal> GraphBetweenness(string graphName) { throw e; }
+        public static Dictionary<string, decimal> GraphBetweenness(string graphName, object options) { throw e; }
+
+        public static decimal GraphRadius(string graphName) { throw e; }
+        public static decimal GraphRadius(string graphName, object options) { throw e; }
+
+        public static decimal GraphDiameter(string graphName) { throw e; }
+        public static decimal GraphDiameter(string graphName, object options) { throw e; }
     }
 }
