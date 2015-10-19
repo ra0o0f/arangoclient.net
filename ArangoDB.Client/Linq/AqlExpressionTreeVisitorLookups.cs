@@ -116,6 +116,15 @@ namespace ArangoDB.Client.Linq
                 {"DateSecond","date_second"},
                 {"DateMilliSecond","date_millisecond"},
                 {"DateNow","date_now"},
+                {"DateIsoWeek","date_isoweek"},
+                {"DateLeapYear","date_leapyear"},
+                {"DateQuarter","date_quarter"},
+                {"DateDaysInMonth","date_days_in_month"},
+                {"DateAdd","date_add"},
+                {"DateSubtract","date_subtract"},
+                {"DateDiff","date_diff"},
+                {"DateCompare","date_compare"},
+                {"DateFormat","date_format"},
 
                 /*array*/
                 {"In","in"},

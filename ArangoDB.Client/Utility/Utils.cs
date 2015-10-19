@@ -107,8 +107,9 @@ namespace ArangoDB.Client.Utility
         public static string GetAssemblyVersion()
         {
 #if !PORTABLE
-            var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            return version.Major + "." + version.Minor;
+            //var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+            //return version.Major + "." + version.Minor;
+            return "";
 #else
             // from http://stackoverflow.com/a/16525426/1271333
             var assembly = typeof(ArangoDatabase).GetTypeInfo().Assembly;

@@ -62,26 +62,26 @@ namespace ArangoDB.Client
         public static bool Like(string text, string search, bool caseInsensitive) { throw e; }
 
         /*numeric*/
-        public static long Floor(double value) { throw e; }
-        public static long Ceil(double value) { throw e; }
-        public static long Round(double value) { throw e; }
+        public static double Floor(double value) { throw e; }
+        public static double Ceil(double value) { throw e; }
+        public static double Round(double value) { throw e; }
         public static double Abs(double value) { throw e; }
         public static double Sqrt(double value) { throw e; }
         public static double Rand(double value) { throw e; }
 
         /*date*/
-        public static long DateTimestamp(string date) { throw e; }
-        public static long DateTimestamp(long date) { throw e; }
-        public static long DateTimestamp(DateTime date) { throw e; }
-        public static long DateTimestamp(DateTimeOffset date) { throw e; }
-        public static long DateTimestamp(int year, int month, int day) { throw e; }
-        public static long DateTimestamp(int year, int month, int day, int hour) { throw e; }
-        public static long DateTimestamp(int year, int month, int day, int hour, int minute) { throw e; }
-        public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second) { throw e; }
-        public static long DateTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
+        public static double DateTimestamp(string date) { throw e; }
+        public static double DateTimestamp(double date) { throw e; }
+        public static double DateTimestamp(DateTime date) { throw e; }
+        public static double DateTimestamp(DateTimeOffset date) { throw e; }
+        public static double DateTimestamp(int year, int month, int day) { throw e; }
+        public static double DateTimestamp(int year, int month, int day, int hour) { throw e; }
+        public static double DateTimestamp(int year, int month, int day, int hour, int minute) { throw e; }
+        public static double DateTimestamp(int year, int month, int day, int hour, int minute, int second) { throw e; }
+        public static double DateTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
 
         public static string DateIso8601(string date) { throw e; }
-        public static string DateIso8601(long date) { throw e; }
+        public static string DateIso8601(double date) { throw e; }
         public static string DateIso8601(DateTime date) { throw e; }
         public static string DateIso8601(DateTimeOffset date) { throw e; }
         public static string DateIso8601(int year, int month, int day) { throw e; }
@@ -89,39 +89,109 @@ namespace ArangoDB.Client
         public static string DateIso8601(int year, int month, int day, int hour, int minute) { throw e; }
         public static string DateIso8601(int year, int month, int day, int hour, int minute, int second) { throw e; }
         public static string DateIso8601(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw e; }
+
         public static int DateDayOfWeek(string date) { throw e; }
-        public static int DateDayOfWeek(long date) { throw e; }
+        public static int DateDayOfWeek(double date) { throw e; }
         public static int DateDayOfWeek(DateTime date) { throw e; }
         public static int DateDayOfWeek(DateTimeOffset date) { throw e; }
+
         public static int DateYear(string date) { throw e; }
-        public static int DateYear(long date) { throw e; }
+        public static int DateYear(double date) { throw e; }
         public static int DateYear(DateTime date) { throw e; }
         public static int DateYear(DateTimeOffset date) { throw e; }
+
         public static int DateMonth(string date) { throw e; }
-        public static int DateMonth(long date) { throw e; }
+        public static int DateMonth(double date) { throw e; }
         public static int DateMonth(DateTime date) { throw e; }
         public static int DateMonth(DateTimeOffset date) { throw e; }
+
         public static int DateDay(string date) { throw e; }
-        public static int DateDay(long date) { throw e; }
+        public static int DateDay(double date) { throw e; }
         public static int DateDay(DateTime date) { throw e; }
         public static int DateDay(DateTimeOffset date) { throw e; }
+
         public static int DateHour(string date) { throw e; }
-        public static int DateHour(long date) { throw e; }
+        public static int DateHour(double date) { throw e; }
         public static int DateHour(DateTime date) { throw e; }
         public static int DateHour(DateTimeOffset date) { throw e; }
+
         public static int DateMinute(string date) { throw e; }
-        public static int DateMinute(long date) { throw e; }
+        public static int DateMinute(double date) { throw e; }
         public static int DateMinute(DateTime date) { throw e; }
         public static int DateMinute(DateTimeOffset date) { throw e; }
+
         public static int DateSecond(string date) { throw e; }
-        public static int DateSecond(long date) { throw e; }
+        public static int DateSecond(double date) { throw e; }
         public static int DateSecond(DateTime date) { throw e; }
         public static int DateSecond(DateTimeOffset date) { throw e; }
+
         public static int DateMilliSecond(string date) { throw e; }
-        public static int DateMilliSecond(long date) { throw e; }
+        public static int DateMilliSecond(double date) { throw e; }
         public static int DateMilliSecond(DateTime date) { throw e; }
         public static int DateMilliSecond(DateTimeOffset date) { throw e; }
-        public static long DateNow() { throw e; }
+
+        public static int DateIsoWeek(string date) { throw e; }
+        public static int DateIsoWeek(double date) { throw e; }
+        public static int DateIsoWeek(DateTime date) { throw e; }
+        public static int DateIsoWeek(DateTimeOffset date) { throw e; }
+
+        public static bool DateLeapYear(string date) { throw e; }
+        public static bool DateLeapYear(double date) { throw e; }
+        public static bool DateLeapYear(DateTime date) { throw e; }
+        public static bool DateLeapYear(DateTimeOffset date) { throw e; }
+
+        public static int DateQuarter(string date) { throw e; }
+        public static int DateQuarter(double date) { throw e; }
+        public static int DateQuarter(DateTime date) { throw e; }
+        public static int DateQuarter(DateTimeOffset date) { throw e; }
+
+        public static int DateDaysInMonth(string date) { throw e; }
+        public static int DateDaysInMonth(double date) { throw e; }
+        public static int DateDaysInMonth(DateTime date) { throw e; }
+        public static int DateDaysInMonth(DateTimeOffset date) { throw e; }
+
+        public static string DateAdd(string date,string duration) { throw e; }
+        public static string DateAdd(double date, string duration) { throw e; }
+        public static string DateAdd(DateTime date, string duration) { throw e; }
+        public static string DateAdd(DateTimeOffset date, string duration) { throw e; }
+        public static string DateAdd(string date,int amount, string unit) { throw e; }
+        public static string DateAdd(double date,int amount, string unit) { throw e; }
+        public static string DateAdd(DateTime date, int amount, string unit) { throw e; }
+        public static string DateAdd(DateTimeOffset date, int amount, string unit) { throw e; }
+
+        public static string DateSubtract(string date, string duration) { throw e; }
+        public static string DateSubtract(double date, string duration) { throw e; }
+        public static string DateSubtract(DateTime date, string duration) { throw e; }
+        public static string DateSubtract(DateTimeOffset date, string duration) { throw e; }
+        public static string DateSubtract(string date, int amount, string unit) { throw e; }
+        public static string DateSubtract(double date, int amount, string unit) { throw e; }
+        public static string DateSubtract(DateTime date, int amount, string unit) { throw e; }
+        public static string DateSubtract(DateTimeOffset date, int amount, string unit) { throw e; }
+
+        public static double DateDiff(string date1,string date2,string unit) { throw e; }
+        public static double DateDiff(double date1, double date2, string unit) { throw e; }
+        public static double DateDiff(DateTime date1, DateTime date2, string unit) { throw e; }
+        public static double DateDiff(DateTimeOffset date1, DateTimeOffset date2, string unit) { throw e; }
+        public static double DateDiff(string date1, string date2, string unit, bool asFloat) { throw e; }
+        public static double DateDiff(double date1, double date2, string unit, bool asFloat) { throw e; }
+        public static double DateDiff(DateTime date1, DateTime date2, string unit, bool asFloat) { throw e; }
+        public static double DateDiff(DateTimeOffset date1, DateTimeOffset date2, string unit, bool asFloat) { throw e; }
+
+        public static bool DateCompare(string date1, string date2, string unitRangeStart, string unitRangeEnd) { throw e; }
+        public static bool DateCompare(double date1, double date2, string unitRangeStart, string unitRangeEnd) { throw e; }
+        public static bool DateCompare(DateTime date1, DateTime date2, string unitRangeStart, string unitRangeEnd) { throw e; }
+        public static bool DateCompare(DateTimeOffset date1, DateTimeOffset date2, string unitRangeStart, string unitRangeEnd) { throw e; }
+        public static bool DateCompare(string date1, string date2, string unitRangeStart) { throw e; }
+        public static bool DateCompare(double date1, double date2, string unitRangeStart) { throw e; }
+        public static bool DateCompare(DateTime date1, DateTime date2, string unitRangeStart) { throw e; }
+        public static bool DateCompare(DateTimeOffset date1, DateTimeOffset date2, string unitRangeStart) { throw e; }
+
+        public static string DateFormat(string date,string format) { throw e; }
+        public static string DateFormat(double date, string format) { throw e; }
+        public static string DateFormat(DateTime date, string format) { throw e; }
+        public static string DateFormat(DateTimeOffset date, string format) { throw e; }
+
+        public static double DateNow() { throw e; }
 
         /*array*/
         public static bool In<T>(T member, IEnumerable<T> array) { throw e; }
@@ -273,28 +343,28 @@ namespace ArangoDB.Client
         public static IList<GraphDistanceToResult> GraphDistanceTo(string graphName, object startVertexExample, object endVertexExample) { throw e; }
         public static IList<GraphDistanceToResult> GraphDistanceTo(string graphName, object startVertexExample, object endVertexExample, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphAbsoluteEccentricity(string graphName, object vertexExample) { throw e; }
-        public static Dictionary<string, decimal> GraphAbsoluteEccentricity(string graphName, object vertexExample, object options) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteEccentricity(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteEccentricity(string graphName, object vertexExample, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphEccentricity(string graphName) { throw e; }
-        public static Dictionary<string, decimal> GraphEccentricity(string graphName, object options) { throw e; }
+        public static Dictionary<string, double> GraphEccentricity(string graphName) { throw e; }
+        public static Dictionary<string, double> GraphEccentricity(string graphName, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphAbsoluteCloseness(string graphName, object vertexExample) { throw e; }
-        public static Dictionary<string, decimal> GraphAbsoluteCloseness(string graphName, object vertexExample, object options) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteCloseness(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteCloseness(string graphName, object vertexExample, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphCloseness(string graphName) { throw e; }
-        public static Dictionary<string, decimal> GraphCloseness(string graphName, object options) { throw e; }
+        public static Dictionary<string, double> GraphCloseness(string graphName) { throw e; }
+        public static Dictionary<string, double> GraphCloseness(string graphName, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphAbsoluteBetweenness(string graphName, object vertexExample) { throw e; }
-        public static Dictionary<string, decimal> GraphAbsoluteBetweenness(string graphName, object vertexExample, object options) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteBetweenness(string graphName, object vertexExample) { throw e; }
+        public static Dictionary<string, double> GraphAbsoluteBetweenness(string graphName, object vertexExample, object options) { throw e; }
 
-        public static Dictionary<string, decimal> GraphBetweenness(string graphName) { throw e; }
-        public static Dictionary<string, decimal> GraphBetweenness(string graphName, object options) { throw e; }
+        public static Dictionary<string, double> GraphBetweenness(string graphName) { throw e; }
+        public static Dictionary<string, double> GraphBetweenness(string graphName, object options) { throw e; }
 
-        public static decimal GraphRadius(string graphName) { throw e; }
-        public static decimal GraphRadius(string graphName, object options) { throw e; }
+        public static double GraphRadius(string graphName) { throw e; }
+        public static double GraphRadius(string graphName, object options) { throw e; }
 
-        public static decimal GraphDiameter(string graphName) { throw e; }
-        public static decimal GraphDiameter(string graphName, object options) { throw e; }
+        public static double GraphDiameter(string graphName) { throw e; }
+        public static double GraphDiameter(string graphName, object options) { throw e; }
     }
 }

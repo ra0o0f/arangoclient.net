@@ -57,7 +57,7 @@ namespace ArangoDB.Client
 
         public static AqlQueryable<T> AsAqlQueryable<T>(this IQueryable<T> source)
         {
-            var queryable = (source) as ArangoDB.Client.Linq.AqlQueryable<T>;
+            var queryable = (source) as AqlQueryable<T>;
 
             if (queryable == null)
                 throw new InvalidCastException("Queryable source is not type of AqlQueryable");
