@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Serialization.Converters;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using ArangoDB.Client.Data;
-using ArangoDB.Client.Serialization.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +14,10 @@ namespace ArangoDB.Client.Serialization
 {
     public class DocumentSerializer
     {
-        IArangoDatabase db;
+        private IArangoDatabase db;
+
+        public static Func<IArangoDatabase, JsonSerializer> CustomJsonSerializer;
+
         public DocumentSerializer(IArangoDatabase db)
         {
             this.db = db;
@@ -58,13 +61,13 @@ namespace ArangoDB.Client.Serialization
             }
         }
 
-        public T DeserializeSingleResult<T>(Stream stream,out JObject jObject)
+        public T DeserializeSingleResult<T>(Stream stream, out JObject jObject)
         {
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-                return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject,true);
+                return new DocumentParser(db).ParseSingleResult<T>(jsonReader, out jObject, true);
             }
         }
 
@@ -76,9 +79,14 @@ namespace ArangoDB.Client.Serialization
 
         public JsonSerializer CreateJsonSerializer()
         {
-            var jsonSerializer = JsonSerializer.Create(SerializerSetting);
-            
-            return jsonSerializer;
+            if (CustomJsonSerializer == null)
+            {
+                var jsonSerializer = JsonSerializer.Create(SerializerSetting);
+
+                return jsonSerializer;
+            }
+
+            return CustomJsonSerializer(db);
         }
 
         public JsonSerializerSettings SerializerSetting
