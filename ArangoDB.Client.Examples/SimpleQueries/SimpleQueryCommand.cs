@@ -12,6 +12,9 @@ namespace ArangoDB.Client.Examples.SimpleQueries
     {
         List<Person> InsertSomePerson()
         {
+            // first remove all persons
+            db.Query<Person>().Remove().Execute();
+
             List<Person> persons = new List<Person>()
             {
                 new Person { Name = "raoof",Age = 28 },

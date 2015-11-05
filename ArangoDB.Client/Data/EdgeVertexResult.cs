@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]   
     public class EdgeVertexResult<TVertex, TEdge>
     {
         public TEdge Edge { get; set; }
@@ -14,14 +14,15 @@ namespace ArangoDB.Client.Data
         public TVertex Vertex { get; set; }
     }
 
-    //[CollectionProperty(Naming = NamingConvention.ToCamelCase)]
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class AQLTraversalResult<TVertex, TEdge>
     {
         public TVertex Vertex { get; set; }
 
         public TraversalVisitedPathResult<TVertex, TEdge> Path { get; set; }
     }
-    
+
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class ShortestPathResult<TVertex, TEdge>
     {
         public List<TVertex> Vertices { get; set; }
@@ -31,6 +32,7 @@ namespace ArangoDB.Client.Data
         public int Distance { get; set; }
     }
 
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class PathResult<TVertex, TEdge>
     {
         public List<TVertex> Vertices { get; set; }
@@ -42,6 +44,7 @@ namespace ArangoDB.Client.Data
         public TVertex Destination { get; set; }
     }
 
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class GraphCommonNeighborsResult<TVertex>
     {
         public string Left { get; set; }
@@ -51,6 +54,7 @@ namespace ArangoDB.Client.Data
         public List<TVertex> Neighbors { get; set; }
     }
 
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class GraphDistanceToResult
     {
         public string StartVertex { get; set; }

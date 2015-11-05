@@ -23,6 +23,7 @@ namespace ArangoDB.Client.Data
         public List<TraversalVisitedPathResult<TVertex, TEdge>> Paths { get; set; }
     }
 
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class TraversalVisitedPathResult<TVertex, TEdge>
     {
         public List<TVertex> Vertices { get; set; }
