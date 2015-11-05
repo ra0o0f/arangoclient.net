@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
+    
     public class EdgeVertexResult<TVertex, TEdge>
     {
         public TEdge Edge { get; set; }
 
         public TVertex Vertex { get; set; }
     }
-    
+
+    //[CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class AQLTraversalResult<TVertex, TEdge>
     {
         public TVertex Vertex { get; set; }
