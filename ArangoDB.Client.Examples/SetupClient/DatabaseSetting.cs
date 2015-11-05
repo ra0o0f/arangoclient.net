@@ -18,11 +18,10 @@ namespace ArangoDB.Client.Examples.SetupClient
             {
                 Assert.Equal(db.SharedSetting.Database, "ExampleDB");
 
-                Assert.Equal(db.SharedSetting.Url, "http://localhost:8529");
+                Assert.Equal(db.SharedSetting.Url, "http://localhost:8529/");
             }
         }
-
-        [Fact]
+        
         public void SharedSetting()
         {
             // you can setup a database-setting with DatabaseSharedSetting object and use it
@@ -76,8 +75,6 @@ namespace ArangoDB.Client.Examples.SetupClient
             // add default rule for cursor all operations
             // default: empty list
             sharedSetting.Cursor.Rules.Add("rule-name");
-
-
         }
     }
 }
