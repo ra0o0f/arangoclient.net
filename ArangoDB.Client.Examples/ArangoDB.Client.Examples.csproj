@@ -65,6 +65,7 @@
     <Compile Include="SetupClient\ClientSetting.cs" />
     <Compile Include="SetupClient\DatabaseSetting.cs" />
     <Compile Include="DatabaseSetup.cs" />
+    <Compile Include="SimpleQueries\SimpleQueryCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.csproj">

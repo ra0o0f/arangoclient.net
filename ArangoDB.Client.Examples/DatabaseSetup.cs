@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Examples
 {
-    public abstract class DatabaseSetup : IDisposable
+    public abstract class TestDatabaseSetup : IDisposable
     {
         protected IArangoDatabase db;
 
@@ -33,7 +33,7 @@ namespace ArangoDB.Client.Examples
             return sharedSetting;
         });
         
-        public DatabaseSetup()
+        public TestDatabaseSetup()
         {
             var sharedSetting = SharedSetting.Value;
 

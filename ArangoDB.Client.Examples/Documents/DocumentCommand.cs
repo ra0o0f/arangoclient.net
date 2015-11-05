@@ -8,7 +8,7 @@ using Xunit;
 
 namespace ArangoDB.Client.Examples.Documents
 {
-    public class DocumentCommand : DatabaseSetup
+    public class DocumentCommand : TestDatabaseSetup
     {
         Person InsertAPerson()
         {
@@ -61,7 +61,51 @@ namespace ArangoDB.Client.Examples.Documents
 
             db.Remove<Person>(person);
 
-            Assert.Equal(db.Document<Person>(person.Key), null);
+            Assert.Null(db.Document<Person>(person.Key));
+        }
+        
+        [Fact]
+        public void Replace()
+        {
+            var person = InsertAPerson();
+
+            person.Age = 20;
+
+            db.Replace<Person>(person);
+
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+        }
+
+        [Fact]
+        public void UpdateById()
+        {
+            var person = InsertAPerson();
+
+            db.UpdateById<Person>(person.Key, new { Age = 20 });
+
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(db.Document<Person>(person.Key).Name, person.Name);
+        }
+
+        [Fact]
+        public void ReplaceById()
+        {
+            var person = InsertAPerson();
+
+            db.ReplaceById<Person>(person.Key, new { Age = 20 });
+
+            Assert.Null(db.Document<Person>(person.Key).Name);
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+        }
+
+        [Fact]
+        public void RemoveById()
+        {
+            var person = InsertAPerson();
+
+            db.RemoveById<Person>(person.Key);
+
+            Assert.Null(db.Document<Person>(person.Key));
         }
     }
 }
