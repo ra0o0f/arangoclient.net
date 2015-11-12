@@ -649,7 +649,7 @@ namespace ArangoDB.Client.Graph
         public async Task<IDocumentIdentifierResult> InsertAsync<TFrom,TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             from = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TFrom>()}/{from}" : from;
-            to = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
+            to = to.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
 
             return await collectionMethods.InsertAsync(from, to, document, waitForSync, baseResult).ConfigureAwait(false);
         }
