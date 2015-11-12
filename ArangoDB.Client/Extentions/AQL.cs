@@ -67,7 +67,7 @@ namespace ArangoDB.Client
         public static double Round(double value) { throw e; }
         public static double Abs(double value) { throw e; }
         public static double Sqrt(double value) { throw e; }
-        public static double Rand(double value) { throw e; }
+        public static double Rand() { throw e; }
 
         /*date*/
         public static double DateTimestamp(string date) { throw e; }

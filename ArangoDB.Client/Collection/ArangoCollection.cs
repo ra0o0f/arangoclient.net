@@ -1004,7 +1004,7 @@ namespace ArangoDB.Client.Collection
             bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
             from = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TFrom>()}/{from}" : from;
-            to = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
+            to = to.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
 
             return await collectionMethods.InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ConfigureAwait(false);
         }
