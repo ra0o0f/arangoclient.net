@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Test.Model
 {
+    public enum ProductStatus
+    {
+        Available = 0,
+        SoldOut = 1
+    }
+    
     public class Product
     {
         public Product()

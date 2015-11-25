@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.Http;
+﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
 using ArangoDB.Client.Property;
 using ArangoDB.Client.Utility;
@@ -22,6 +23,7 @@ namespace ArangoDB.Client
             Cursor = new DatabaseCursorSharedSetting();
             Linq = new DatabaseLinqSharedSetting();
             Document = new DatabaseDocumentSharedSetting();
+            Serialization = new DatabaseSerializationSharedSetting();
             Collection = new DatabaseCollectionSetting(this);
             IdentifierModifier = new DocumentIdentifierModifier(this);
             CreateCollectionOnTheFly = true;
@@ -88,9 +90,24 @@ namespace ArangoDB.Client
 
         public DatabaseCollectionSetting Collection { get; set; }
 
+        public DatabaseSerializationSharedSetting Serialization { get; set; }
+
         internal DocumentIdentifierModifier IdentifierModifier;
 
         internal AqlFunctionCache AqlFunctions { get; set; }
+    }
+
+    public class DatabaseSerializationSharedSetting
+    {
+        public IList<JsonConverter> Converters { get; set; }
+
+        public bool SerializeEnumAsInteger { get; set; }
+
+        public DatabaseSerializationSharedSetting()
+        {
+            SerializeEnumAsInteger = true;
+            Converters = new List<JsonConverter>();
+        }
     }
 
     public class DatabaseLogSharedSetting

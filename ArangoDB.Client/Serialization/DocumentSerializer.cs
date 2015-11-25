@@ -1,4 +1,5 @@
 ﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
 using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization.Converters;
@@ -84,15 +85,20 @@ namespace ArangoDB.Client.Serialization
         {
             get
             {
-                return new JsonSerializerSettings
-                {
-                    ContractResolver = new DocumentContractResolver(db),
-                    Converters = new JsonConverter[]
+                var convertes = new List<JsonConverter>
                 {
                     new DateTimeConverter(),
                     new QueryParameterConverter(),
                     new EnumValueConverter()
-                },
+                }.Concat(db.Setting.Serialization.Converters).ToList();
+
+                if (db.Setting.Serialization.SerializeEnumAsInteger == false)
+                    convertes.Add(new StringEnumConverter());
+
+                return new JsonSerializerSettings
+                {
+                    ContractResolver = new DocumentContractResolver(db),
+                    Converters = convertes,
                     DateParseHandling = DateParseHandling.None
                 };
             }

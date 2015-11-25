@@ -69,6 +69,7 @@
     <Compile Include="Model\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\SimpleDocumentParser.cs" />
+    <Compile Include="Setting\SerializationSetting.cs" />
     <Compile Include="Utility\ObjectUtility.cs" />
     <Compile Include="Utility\StringUtility.cs" />
   </ItemGroup>

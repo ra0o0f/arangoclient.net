@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -75,6 +76,12 @@ namespace ArangoDB.Client.Examples.SetupClient
             // add default rule for cursor all operations
             // default: empty list
             sharedSetting.Cursor.Rules.Add("rule-name");
+
+            // enums can convert to strings
+            sharedSetting.Serialization.SerializeEnumAsInteger = false;
+
+            // add custom converters for serialization
+            sharedSetting.Serialization.Converters.Add(new StringEnumConverter());
         }
     }
 }

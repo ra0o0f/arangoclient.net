@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ArangoDB.Client
         private bool? _throwForServerErrors;
 
         private bool? _disableChangeTracking;
-        
+
         DatabaseSharedSetting sharedSetting;
 
         public DatabaseSetting(DatabaseSharedSetting sharedSetting)
@@ -25,6 +26,7 @@ namespace ArangoDB.Client
             this.Document = new DatabaseDocumentSetting(sharedSetting);
             this.Linq = new DatabaseLinqSetting(sharedSetting);
             this.Logger = new DatabaseLogSetting(sharedSetting);
+            this.Serialization = new DatabaseSerializationSetting(sharedSetting);
         }
 
         public bool CreateCollectionOnTheFly
@@ -42,7 +44,7 @@ namespace ArangoDB.Client
             set { _createCollectionOnTheFly = value; }
         }
 
-        public bool WaitForSync 
+        public bool WaitForSync
         {
             get
             {
@@ -77,7 +79,7 @@ namespace ArangoDB.Client
             }
             set { _disableChangeTracking = value; }
         }
-        
+
         public DatabaseCursorSetting Cursor;
 
         public DatabaseDocumentSetting Document;
@@ -85,6 +87,8 @@ namespace ArangoDB.Client
         public DatabaseLinqSetting Linq;
 
         public DatabaseLogSetting Logger;
+
+        public DatabaseSerializationSetting Serialization;
     }
 
     public class DatabaseLogSetting
@@ -175,6 +179,45 @@ namespace ArangoDB.Client
                 return sharedSetting.Logger.HttpResponse;
             }
             set { _httpResponse = value; }
+        }
+    }
+
+    public class DatabaseSerializationSetting
+    {
+        DatabaseSharedSetting sharedSetting;
+
+        private IList<JsonConverter> _converters;
+
+        public bool? _serializeEnumAsInteger;
+
+        public DatabaseSerializationSetting(DatabaseSharedSetting sharedSetting)
+        {
+            this.sharedSetting = sharedSetting;
+        }
+
+        public IList<JsonConverter> Converters
+        {
+            get
+            {
+                if (_converters != null)
+                    return _converters;
+
+                return sharedSetting.Serialization.Converters;
+            }
+            set
+            { _converters = value; }
+        }
+
+        public bool SerializeEnumAsInteger
+        {
+            get
+            {
+                if (_serializeEnumAsInteger.HasValue)
+                    return _serializeEnumAsInteger.Value;
+
+                return sharedSetting.Serialization.SerializeEnumAsInteger;
+            }
+            set { _serializeEnumAsInteger = value; }
         }
     }
 

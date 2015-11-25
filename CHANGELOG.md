@@ -3,6 +3,8 @@
 ### Feautres
 
 - Add support for aql upsert command
+- Support for Adding custom `JsonConverter`
+- Enum serialization to `string` or underlying `integer`
 
 ### Bug fixes
 
