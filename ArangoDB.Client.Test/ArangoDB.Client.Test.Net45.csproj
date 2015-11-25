@@ -61,7 +61,9 @@
     <Compile Include="Linq\CustomQuery.cs" />
     <Compile Include="Linq\SimpleQuery.cs" />
     <Compile Include="Mock\ArangoDatabaseMock.cs" />
+    <Compile Include="Model\Car.cs" />
     <Compile Include="Model\Friend.cs" />
+    <Compile Include="Model\Host.cs" />
     <Compile Include="Model\JsonSample.cs" />
     <Compile Include="Model\Person.cs" />
     <Compile Include="Model\Product.cs" />

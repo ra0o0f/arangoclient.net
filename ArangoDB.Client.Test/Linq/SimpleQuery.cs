@@ -312,17 +312,17 @@ return ( for `x` in `C1` return `x`.`p`.`Fullname` )".RemoveSpaces());
             db.Setting.Linq.TranslateGroupByIntoName = identifier => identifier;
 
             var query = (from p in db.Query<Person>()
-                        group p by p.Age into byAge
-                        select new
-                            {
-                                byAgebyHeight =
-                                (
-                                    from b in byAge
-                                    group b by b.Height into byAgebyHeight
-                                    select byAgebyHeight.Select(x => new { x.Fullname,byAgebyHeight.Key })
-                                ),
-                                age = byAge.Key
-                            });
+                         group p by p.Age into byAge
+                         select new
+                         {
+                             byAgebyHeight =
+                                 (
+                                     from b in byAge
+                                     group b by b.Height into byAgebyHeight
+                                     select byAgebyHeight.Select(x => new { x.Fullname, byAgebyHeight.Key })
+                                 ),
+                             age = byAge.Key
+                         });
 
             Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), @"for `p` in `Person` collect `CV1` = `p`.`Age` into `byAge` 
 return { `byAgebyHeight` : 
@@ -339,9 +339,9 @@ return { `byAgebyHeight` :
             var db = DatabaseGenerator.Get();
 
             var query = db.Query<Person>().GroupBy(x => x.Age)
-                .Select(byAge => new { len = AQL.Length(byAge), byAge.Key , Ages = byAge.Select(x => x.Age) });
+                .Select(byAge => new { len = AQL.Length(byAge), byAge.Key, Ages = byAge.Select(x => x.Age) });
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), 
+            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(),
                 @"for `x` in `Person` collect `CV1` = `x`.`Age` into `C1` return { `len` : length( `C1` ) , `Key` : `CV1` , `Ages` : ( for `x` in `C1` return `x`.`x`.`Age` )  }".RemoveSpaces());
         }
 
@@ -356,9 +356,9 @@ return { `byAgebyHeight` :
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `p` in `Person` update 
 `p` with @P1 in `Person`".RemoveSpaces());
-            
+
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value),
-                JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } } ));
+                JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } }));
         }
 
         [Fact]
@@ -387,7 +387,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `f` in `Flight` update 
-`f` with @P1 in `Flight` let crudResult = new return crudResult".RemoveSpaces());
+`f` with @P1 in `Flight` let crudResult = NEW return crudResult".RemoveSpaces());
 
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value),
                 JsonConvert.SerializeObject(new { Airline = "lufthansa" }));
@@ -403,7 +403,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` filter ( `x`.`Code` < @P1 ) update 
-`x` with @P2 in `Flight` let crudResult = old return crudResult".RemoveSpaces());
+`x` with @P2 in `Flight` let crudResult = OLD return crudResult".RemoveSpaces());
 
             Assert.Equal(queryData.BindVars[0].Value, 100);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
@@ -420,8 +420,8 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `f` in `Flight` update 
-`f` with @P1 in `Person` let crudResult = old return crudResult".RemoveSpaces());
-            
+`f` with @P1 in `Person` let crudResult = OLD return crudResult".RemoveSpaces());
+
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value),
                 JsonConvert.SerializeObject(new { Airline = "lufthansa" }));
         }
@@ -459,7 +459,7 @@ return { `byAgebyHeight` :
 
             var queryData = query.GetQueryData();
 
-            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove `x` in `Flight` let crudResult = old return crudResult".RemoveSpaces());
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove `x` in `Flight` let crudResult = OLD return crudResult".RemoveSpaces());
         }
 
         [Fact]
@@ -472,7 +472,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` remove 
-`x` in `Person` let crudResult = old return crudResult".RemoveSpaces());
+`x` in `Person` let crudResult = OLD return crudResult".RemoveSpaces());
         }
 
         [Fact]
@@ -510,7 +510,7 @@ return { `byAgebyHeight` :
 
             var queryData = query.GetQueryData();
 
-            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` insert `x` in `Flight` let crudResult = new return crudResult".RemoveSpaces());
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` insert `x` in `Flight` let crudResult = NEW return crudResult".RemoveSpaces());
         }
 
         [Fact]
@@ -523,7 +523,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` insert 
-`x` in `Person` let crudResult = new return crudResult".RemoveSpaces());
+`x` in `Person` let crudResult = NEW return crudResult".RemoveSpaces());
         }
 
         [Fact]
@@ -568,8 +568,8 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `f` in `Flight` replace 
-`f` with @P1 in `Flight` let crudResult = new return crudResult".RemoveSpaces());
-            
+`f` with @P1 in `Flight` let crudResult = NEW return crudResult".RemoveSpaces());
+
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value),
                 JsonConvert.SerializeObject(new { Airline = "lufthansa" }));
         }
@@ -584,7 +584,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `x` in `Flight` filter ( `x`.`Code` < @P1 ) replace 
-`x` with @P2 in `Flight` let crudResult = old return crudResult".RemoveSpaces());
+`x` with @P2 in `Flight` let crudResult = OLD return crudResult".RemoveSpaces());
 
             Assert.Equal(queryData.BindVars[0].Value, 100);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
@@ -601,8 +601,8 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"for `f` in `Flight` replace 
-`f` with @P1 in `Person` let crudResult = old return crudResult".RemoveSpaces());
-            
+`f` with @P1 in `Person` let crudResult = OLD return crudResult".RemoveSpaces());
+
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value),
                 JsonConvert.SerializeObject(new { Airline = "lufthansa" }));
         }
@@ -676,6 +676,78 @@ return { `p` : `p` , `f` : `f` }".RemoveSpaces());
 for `f` in `Flight`
 filter ( `p`.`Age` == `f`.`Code` )
 return { `p` : `p` , `f` : `f` }".RemoveSpaces());
+        }
+
+        [Fact]
+        public void Upsert()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .Upsert<Category>(_ => new { ip = "192.168.173.13" },
+                                  _ => new { ip = "192.168.173.13", name = "flittard" },
+                                 (_, o) => new { })
+                                 .In<Category>();
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"
+upsert @P1
+insert @P2
+update @P3
+in `Category`
+".RemoveSpaces());
+
+            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value), JsonConvert.SerializeObject(new { ip = "192.168.173.13" }));
+            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value), JsonConvert.SerializeObject(new { ip = "192.168.173.13", name = "flittard" }));
+            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[2].Value), JsonConvert.SerializeObject(new {  }));
+        }
+
+        [Fact]
+        public void UpsertWithOld()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .Upsert<Category>(_ => new { ip = "192.168.173.13" },
+                                  _ => new { ip = "192.168.173.13", name = "flittard" },
+                                 (_, o) => new { name = o.Title })
+                                 .In<Person>();
+
+            var queryData = query.GetQueryData();
+            
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"
+upsert @P1
+insert @P2
+update { `name` : `OLD` .`Title` }
+in `Person`
+".RemoveSpaces());
+
+            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value), JsonConvert.SerializeObject(new { ip = "192.168.173.13" }));
+            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value), JsonConvert.SerializeObject(new { ip = "192.168.173.13", name = "flittard" }));
+        }
+
+        [Fact]
+        public void UpsertWithFor()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query<Host>()
+                .Upsert(h => new Host { Key = h.Key },
+                h => new Host { },
+                (h, old) => new Host { Tags = AQL.Append(h.Tags,old.Tags) });
+
+            var queryData = query.GetQueryData();
+
+            Assert.Equal(queryData.Query.RemoveSpaces(), @"
+for `h` in `hosts`
+upsert { `_key` : `h`.`_key` }
+insert @P1
+update { `tags` : append( `h`.`tags` , `OLD` .`tags` ) }
+in `hosts`
+".RemoveSpaces());
+
+            ObjectUtility.AssertSerialize(queryData.BindVars[0].Value, new { },db);
         }
     }
 }

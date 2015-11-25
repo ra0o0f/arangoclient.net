@@ -24,7 +24,7 @@ namespace ArangoDB.Client.Examples
                     _db.CreateDatabase(sharedSetting.Database);
 
                 var collections = _db.ListCollections().Select(c=>c.Name).ToArray();
-                var collectionsToCreate = new string[]{ "Person" };
+                var collectionsToCreate = new string[]{ "Person","hosts" };
 
                 foreach (var c in collectionsToCreate.Except(collections))
                     _db.CreateCollection(c);

@@ -341,7 +341,8 @@ namespace ArangoDB.Client.Linq
 
         protected override MemberBinding VisitMemberAssignment(MemberAssignment node)
         {
-            var namedExpression = NamedExpression.WrapIntoNamedExpression(node.Member.Name, node.Expression);
+            var namedExpression = NamedExpression.WrapIntoNamedExpression(ModelVisitor.Db, node.Member, node.Expression);
+            
             Expression e = VisitExpression(namedExpression);
             if (e != node.Expression)
             {
@@ -361,7 +362,7 @@ namespace ArangoDB.Client.Linq
 
             if (!TreatNewWithoutBracket)
                 ModelVisitor.QueryText.Append(" { ");
-            var e = (NewExpression)NamedExpression.CreateNewExpressionWithNamedArguments(expression);
+            var e = (NewExpression)NamedExpression.CreateNewExpressionWithNamedArguments(ModelVisitor.Db,expression);
             for (int i = 0; i < e.Arguments.Count; i++)
             {
                 VisitExpression(e.Arguments[i]);

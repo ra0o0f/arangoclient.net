@@ -34,7 +34,7 @@ namespace ArangoDB.Client
 
         AqlQueryable<T> Query<T>();
 
-        IQueryable<AQL> Query();
+        AqlQueryable<AQL> Query();
 
         void Log(string message);
 

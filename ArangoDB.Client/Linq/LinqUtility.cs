@@ -21,14 +21,24 @@ namespace ArangoDB.Client.Linq
             return AddBacktickToName(collectionName);
         }
 
+        public static string ResolveMemberNameRaw(IArangoDatabase db, MemberInfo memberInfo)
+        {
+            return ResolvePropertyNameRaw(db.SharedSetting.Collection.ResolvePropertyName(memberInfo.DeclaringType, memberInfo.Name));
+        }
+
         public static string ResolveMemberName(IArangoDatabase db,MemberInfo memberInfo)
         {
-            return ResolvePropertyName(db.SharedSetting.Collection.ResolvePropertyName(memberInfo.DeclaringType, memberInfo.Name));
+            return AddBacktickToName(ResolveMemberNameRaw(db,memberInfo));
+        }
+
+        public static string ResolvePropertyNameRaw(string name)
+        {
+            return name.Replace("<", "").Replace(">", "");
         }
 
         public static string ResolvePropertyName(string name)
         {
-            return AddBacktickToName(name.Replace("<", "").Replace(">", ""));
+            return AddBacktickToName(ResolvePropertyNameRaw(name));
         }
 
         public static string AddBacktickToName(string name)
@@ -52,6 +62,7 @@ namespace ArangoDB.Client.Linq
             customNodeTypeRegistry.Register(UpdateAndReturnExpressionNode.SupportedMethods, typeof(UpdateAndReturnExpressionNode));
             customNodeTypeRegistry.Register(RemoveAndReturnExpressionNode.SupportedMethods, typeof(RemoveAndReturnExpressionNode));
             customNodeTypeRegistry.Register(InsertAndReturnExpressionNode.SupportedMethods, typeof(InsertAndReturnExpressionNode));
+            customNodeTypeRegistry.Register(UpsertAndReturnExpressionNode.SupportedMethods, typeof(UpsertAndReturnExpressionNode));
             customNodeTypeRegistry.Register(InModifyExpressionNode.SupportedMethods, typeof(InModifyExpressionNode));
             customNodeTypeRegistry.Register(ReturnResultModifyExpressionNode.SupportedMethods, typeof(ReturnResultModifyExpressionNode));
             customNodeTypeRegistry.Register(QueryableExtensions.OrderBySupportedMethods, typeof(ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel.OrderByExpressionNode));

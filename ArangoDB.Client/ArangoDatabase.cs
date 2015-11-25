@@ -148,7 +148,7 @@ namespace ArangoDB.Client
             return new AqlQueryable<T>(queryParser, executer, this);
         }
 
-        public IQueryable<AQL> Query()
+        public AqlQueryable<AQL> Query()
         {
             return Query<AQL>();
         }

@@ -143,6 +143,7 @@ namespace ArangoDB.Client
                 case "insert":
                 case "update":
                 case "replace":
+                case "upsert":
                     return true;
                 case "remove":
                     return false;
@@ -260,6 +261,36 @@ namespace ArangoDB.Client
                     Expression.Quote(withSelector),
                     Expression.Quote(keySelector),
                     Expression.Constant(command)
+                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+        }
+
+        public static IAqlModifiable<AQL> Upsert<TSource>(this IQueryable source, Expression<Func<AQL, object>> searchExpression,
+            Expression<Func<AQL, object>> insertExpression, Expression<Func<AQL, TSource, object>> updateExpression)
+        {
+            return InternalUpsert<AQL, TSource>(source.OfType<AQL>(), searchExpression, insertExpression, updateExpression, typeof(TSource));
+        }
+
+        public static IAqlModifiable<TSource> Upsert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> searchExpression,
+            Expression<Func<TSource, object>> insertExpression, Expression<Func<TSource, TSource, object>> updateExpression)
+        {
+            return InternalUpsert(source, searchExpression, insertExpression, updateExpression, typeof(TSource));
+        }
+
+        internal static IAqlModifiable<TSource> InternalUpsert<TSource, TOld>(this IQueryable<TSource> source, Expression<Func<TSource, object>> searchExpression,
+            Expression<Func<TSource, object>> insertExpression, Expression<Func<TSource, TOld, object>> updateExpression,Type updateType)
+        {
+            source.AsAqlQueryable().StateValues["CrudFunction"] = "upsert";
+
+            var newUpdateExp = PredicateRewriter.Rewrite(updateExpression, "OLD");
+
+            return source.Provider.CreateQuery<TSource>(
+                Expression.Call(
+                    FindCachedMethod("InternalUpsert", typeof(TSource), typeof(TOld)),
+                    source.Expression,
+                    Expression.Quote(searchExpression),
+                    Expression.Quote(insertExpression),
+                    Expression.Quote(newUpdateExp),
+                    Expression.Constant(updateType)
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
         }
 

@@ -31,16 +31,16 @@ namespace ArangoDB.Client.Linq
 
 
 
-        public static Expression CreateNewExpressionWithNamedArguments(NewExpression expression)
+        public static Expression CreateNewExpressionWithNamedArguments(IArangoDatabase db, NewExpression expression)
         {
             CheckNotNull("expression", expression);
 
-            return CreateNewExpressionWithNamedArguments(expression, expression.Arguments);
+            return CreateNewExpressionWithNamedArguments(db,expression, expression.Arguments);
         }
 
-        public static Expression CreateNewExpressionWithNamedArguments(NewExpression expression, IEnumerable<Expression> processedArguments)
+        public static Expression CreateNewExpressionWithNamedArguments(IArangoDatabase db, NewExpression expression, IEnumerable<Expression> processedArguments)
         {
-            var newArguments = processedArguments.Select((e, i) => WrapIntoNamedExpression(GetMemberName(expression.Members, i), e)).ToArray();
+            var newArguments = processedArguments.Select((e, i) => WrapIntoNamedExpression(db,expression.Members[i], e)).ToArray();
             
             if (!newArguments.SequenceEqual(expression.Arguments))
             {
@@ -64,8 +64,10 @@ namespace ArangoDB.Client.Linq
 
             return new NamedExpression(memberName, innerExpression);
         }
-        public static Expression WrapIntoNamedExpression(string memberName, Expression argumentExpression)
+        public static Expression WrapIntoNamedExpression(IArangoDatabase db,MemberInfo memberInfo, Expression argumentExpression)
         {
+            var memberName = LinqUtility.ResolveMemberNameRaw(db, memberInfo);
+
             var expressionAsNamedExpression = argumentExpression as NamedExpression;
             if (expressionAsNamedExpression != null && expressionAsNamedExpression.Name == memberName)
                 return expressionAsNamedExpression;

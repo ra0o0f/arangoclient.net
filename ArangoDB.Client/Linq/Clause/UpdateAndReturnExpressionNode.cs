@@ -45,7 +45,7 @@ namespace ArangoDB.Client.Linq.Clause
         }
 
         public LambdaExpression WithSelector { get; private set; }
-        public LambdaExpression KeySelector { get; private set; }
+        public LambdaExpression KeySelector { get; private set; }   
 
         public ConstantExpression Command { get; private set; }
 

@@ -66,7 +66,7 @@ namespace ArangoDB.Client.Linq
                 queryModel.MainFromClause.ItemName = DefaultAssociatedIdentifier;
 
             this.QueryModel = queryModel;
-            
+
             var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
             var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
                 ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
@@ -88,7 +88,7 @@ namespace ArangoDB.Client.Linq
                 if (CrudState.ReturnResult)
                     QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudState.ReturnResultKind);
             }
-            else if(!DontReturn)
+            else if (!DontReturn)
                 queryModel.SelectClause.Accept(this, queryModel);
 
             if (aggregateFunction != null)
@@ -114,7 +114,7 @@ namespace ArangoDB.Client.Linq
                 this.DontReturn = true;
                 GetAqlExpression(subQuery, queryModel, handleJoin: true);
             }
-            else if(fromClause.FromExpression.Type.Name == "AqlQueryable`1")
+            else if (fromClause.FromExpression.Type.Name == "AqlQueryable`1")
             {
                 string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
                 QueryText.AppendFormat(" for {0} in {1} ", LinqUtility.ResolvePropertyName(fromClause.ItemName), fromName);
@@ -204,7 +204,7 @@ namespace ArangoDB.Client.Linq
             CrudState.ModelVisitorHaveCrudOperation = true;
             CrudState.Collection = LinqUtility.ResolveCollectionName(Db, updateAndReturnClause.CollectionType);
             CrudState.ReturnResult = updateAndReturnClause.ReturnResult;
-            CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "new" : "old";
+            CrudState.ReturnResultKind = updateAndReturnClause.ReturnNewResult ? "NEW" : "OLD";
         }
 
         public void VisitInsertAndReturnClause(InsertAndReturnClause insertAndReturnClause, QueryModel queryModel)
@@ -223,7 +223,24 @@ namespace ArangoDB.Client.Linq
             CrudState.ModelVisitorHaveCrudOperation = true;
             CrudState.Collection = LinqUtility.ResolveCollectionName(Db, insertAndReturnClause.CollectionType);
             CrudState.ReturnResult = insertAndReturnClause.ReturnResult;
-            CrudState.ReturnResultKind = "new";
+            CrudState.ReturnResultKind = "NEW";
+        }
+
+        public void VisitUpsertAndReturnClause(UpsertAndReturnClause upsertAndReturnClause, QueryModel queryModel)
+        {
+            QueryText.Append(" upsert ");
+            GetAqlExpression(upsertAndReturnClause.SearchSelector, queryModel);
+
+            QueryText.Append(" insert ");
+            GetAqlExpression(upsertAndReturnClause.InsertSelector, queryModel);
+
+            QueryText.Append(" update ");
+            GetAqlExpression(upsertAndReturnClause.UpdateSelector, queryModel);
+
+            CrudState.ModelVisitorHaveCrudOperation = true;
+            CrudState.Collection = LinqUtility.ResolveCollectionName(Db, upsertAndReturnClause.CollectionType);
+            CrudState.ReturnResult = upsertAndReturnClause.ReturnResult;
+            CrudState.ReturnResultKind = "NEW";
         }
 
         public void VisitRemoveAndReturnClause(RemoveAndReturnClause removeAndReturnClause, QueryModel queryModel)
@@ -242,7 +259,7 @@ namespace ArangoDB.Client.Linq
             CrudState.ModelVisitorHaveCrudOperation = true;
             CrudState.Collection = LinqUtility.ResolveCollectionName(Db, removeAndReturnClause.CollectionType);
             CrudState.ReturnResult = removeAndReturnClause.ReturnResult;
-            CrudState.ReturnResultKind = "old";
+            CrudState.ReturnResultKind = "OLD";
         }
 
         public void VisitFilterClause(FilterClause filterClause, QueryModel queryModel, int index)
@@ -278,15 +295,15 @@ namespace ArangoDB.Client.Linq
             groupByClause.IntoName = "C" + parentMVisitor.GroupByNameCounter;
             groupByClause.FuncIntoName = Db.Setting.Linq.TranslateGroupByIntoName;
             groupByClause.FromParameterName = queryModel.MainFromClause.ItemName;
-            
+
             QueryText.Append(" collect ");
 
-            if(groupByClause.Selector.NodeType != ExpressionType.New)
+            if (groupByClause.Selector.NodeType != ExpressionType.New)
             {
                 groupByClause.CollectVariableName = "CV" + parentMVisitor.GroupByNameCounter;
                 QueryText.AppendFormat(" {0} = ", LinqUtility.ResolvePropertyName(groupByClause.CollectVariableName));
             }
-            
+
             GetAqlExpression(groupByClause.Selector, queryModel, true);
 
             QueryText.AppendFormat(" into {0} ", LinqUtility.ResolvePropertyName(groupByClause.TranslateIntoName()));

@@ -153,11 +153,14 @@
     <Compile Include="Linq\Clause\TakeExpressionNode.cs" />
     <Compile Include="Linq\Clause\UpdateAndReturnClause.cs" />
     <Compile Include="Linq\Clause\UpdateAndReturnExpressionNode.cs" />
+    <Compile Include="Linq\Clause\UpsertAndReturnClause.cs" />
+    <Compile Include="Linq\Clause\UpsertAndReturnExpressionNode.cs" />
     <Compile Include="Linq\DefaultExtentionAttribute.cs" />
     <Compile Include="Linq\Grouping.cs" />
     <Compile Include="Linq\GroupQuerySource.cs" />
     <Compile Include="Linq\LinqUtility.cs" />
     <Compile Include="Linq\NamedExpression.cs" />
+    <Compile Include="Linq\PredicateRewriter.cs" />
     <Compile Include="Linq\VisitorCrudState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\CollectionPropertyAttribute.cs" />
