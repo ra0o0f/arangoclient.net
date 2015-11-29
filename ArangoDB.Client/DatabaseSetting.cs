@@ -188,7 +188,7 @@ namespace ArangoDB.Client
 
         private IList<JsonConverter> _converters;
 
-        public bool? _serializeEnumAsInteger;
+        bool? _serializeEnumAsInteger;
 
         public DatabaseSerializationSetting(DatabaseSharedSetting sharedSetting)
         {

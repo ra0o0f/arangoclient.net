@@ -347,5 +347,37 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var expectedJson = JObject.Parse("{'Category':{'Seller':{'TotalSells':11000}}}");
             Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
         }
+
+        [Fact]
+        public void OldObjectDontHaveNewObjectToken()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var oldObject = JObject.Parse("{'Name':'raoof'}");
+            var newObject = JObject.Parse("{'Name':'raoof','Family':'hojat'}");
+
+            JObject changedObject = new JObject();
+
+            new DocumentTracker(db).CreateChangedDocument(oldObject, newObject, ref changedObject);
+
+            var expectedJson = JObject.Parse("{'Family':'hojat'}");
+            Assert.Equal(JObject.DeepEquals(expectedJson, changedObject), true);
+        }
+
+        [Fact]
+        public void NewObjectDontHaveOldObjectToken()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var oldObject = JObject.Parse("{'Name':'raoof','Family':'hojat'}");
+            var newObject = JObject.Parse("{'Name':'raoof'}");
+
+            JObject changedObject = new JObject();
+
+            new DocumentTracker(db).CreateChangedDocument(oldObject, newObject, ref changedObject);
+
+            var expectedJson = JObject.Parse("{}");
+            Assert.Equal(JObject.DeepEquals(expectedJson, changedObject), true);
+        }
     }
 }

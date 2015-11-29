@@ -9,3 +9,4 @@
 ### Bug fixes
 
 - Fix resolving members name in LINQ queries when use `CamelCase` naming convention
+- Fix change tracker `CreateChangedDocument` when old object is null or not defined

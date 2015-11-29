@@ -142,26 +142,29 @@ namespace ArangoDB.Client.ChangeTracking
 
         public void CreateChangedDocument(JObject oldObject, JObject newObject, ref JObject changedObject, bool handleInnerObjects = false)
         {
+            if (oldObject == null || oldObject.Type == JTokenType.Null)
+            {
+                changedObject = newObject;
+                return;
+            }
+
             foreach (var n in newObject)
             {
                 if (!handleInnerObjects && (n.Key == "_id" || n.Key == "_key" || n.Key == "_rev" || n.Key == "_from" || n.Key == "_to"))
-                    continue;
+                    continue;                    
 
                 JToken newValue = n.Value;
                 JToken oldValue = oldObject[n.Key];
-
+                
                 if (newValue.Type == JTokenType.Object)
                 {
                     JObject subChangeObject = new JObject();
-
-                    if (oldValue.Type == JTokenType.Null)
-                        oldValue = new JObject();
 
                     CreateChangedDocument(oldValue as JObject, newValue as JObject, ref subChangeObject, handleInnerObjects: true);
                     if (subChangeObject.Count != 0)
                         changedObject.Add(n.Key, subChangeObject);
                 }
-                else if (newValue == null || !JObject.DeepEquals(oldValue, newValue))
+                else if (!JObject.DeepEquals(oldValue, newValue))
                 {
                     changedObject.Add(n.Key, newValue);
                 }
