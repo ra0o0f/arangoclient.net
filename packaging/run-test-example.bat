@@ -1,0 +1,2 @@
+"..\src\packages\xunit.runner.console.2.1.0\tools\xunit.console.exe" "..\src\ArangoDB.Client.Examples\bin\Debug\Net45\ArangoDB.Client.Examples.dll"
+"..\src\packages\xunit.runner.console.2.1.0\tools\xunit.console.exe" "..\src\ArangoDB.Client.Examples\bin\Debug\Portable\ArangoDB.Client.Examples.dll"
