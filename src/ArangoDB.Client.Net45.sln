@@ -1,19 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client", "ArangoDB.Client\ArangoDB.Client.csproj", "{BF30BB46-FFCA-4725-AF2F-806326770244}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Common", "ArangoDB.Client.Common\ArangoDB.Client.Common.csproj", "{041982ED-AA4E-4212-A9DC-822D6DFF5414}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Test", "ArangoDB.Client.Test\ArangoDB.Client.Test.csproj", "{BBD66B39-78B8-477E-8ABC-C73CC3C17106}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Net45", "ArangoDB.Client\ArangoDB.Client.Net45.csproj", "{216D8159-A346-491A-973E-AEE95575F111}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Common.Net45", "ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj", "{120709DF-5BEF-43A0-8125-7EFBAAE9A8AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Test.Net45", "ArangoDB.Client.Test\ArangoDB.Client.Test.Net45.csproj", "{05ABCCD9-2EFF-4276-9328-CBA5DDD2A326}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Examples.Net45", "ArangoDB.Client.Examples\ArangoDB.Client.Examples.Net45.csproj", "{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BF30BB46-FFCA-4725-AF2F-806326770244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF30BB46-FFCA-4725-AF2F-806326770244}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF30BB46-FFCA-4725-AF2F-806326770244}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF30BB46-FFCA-4725-AF2F-806326770244}.Release|Any CPU.Build.0 = Release|Any CPU
-		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{041982ED-AA4E-4212-A9DC-822D6DFF5414}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BBD66B39-78B8-477E-8ABC-C73CC3C17106}.Release|Any CPU.Build.0 = Release|Any CPU
 		{216D8159-A346-491A-973E-AEE95575F111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{216D8159-A346-491A-973E-AEE95575F111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{216D8159-A346-491A-973E-AEE95575F111}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +29,10 @@ Global
 		{05ABCCD9-2EFF-4276-9328-CBA5DDD2A326}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05ABCCD9-2EFF-4276-9328-CBA5DDD2A326}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05ABCCD9-2EFF-4276-9328-CBA5DDD2A326}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

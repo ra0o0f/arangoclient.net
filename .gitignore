@@ -26,6 +26,8 @@ NugetPackaging/
 .vs/
 packages/
 
+ArangoDB.Client_ForTest.sln
+
 *_i.c
 *_p.c
 *.ilk
