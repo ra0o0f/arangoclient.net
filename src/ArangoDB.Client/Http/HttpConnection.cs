@@ -1,8 +1,5 @@
 ﻿using ArangoDB.Client.Serialization;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,17 +16,24 @@ namespace ArangoDB.Client.Http
         {
             connectionHandler = new HttpConnectionHandler();
             var proxy = ArangoDatabase.ClientSetting.Proxy;
-            connectionHandler.InnerHandler = new HttpClientHandler
+            if (proxy != null)
             {
-                UseProxy = proxy != null,
-                Proxy = proxy
-            };
+                connectionHandler.InnerHandler = new HttpClientHandler
+                {
+                    UseProxy = true,
+                    Proxy = proxy
+                };
+            }
+            else
+            {
+                connectionHandler.InnerHandler = new HttpClientHandler();
+            }
 
             ArangoDatabase.ClientSetting.IsHttpClientInitialied = true;
 
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
-            
+
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(".NETClient", Utility.Utils.GetAssemblyVersion()));
 
             return httpClient;
@@ -77,12 +81,12 @@ namespace ArangoDB.Client.Http
                 db.Log("sending http request:");
                 db.Log($"url: {uri.ToString()}");
                 db.Log($"method: {method.ToString()}");
-                if(db.Setting.Logger.HttpHeaders)
+                if (db.Setting.Logger.HttpHeaders)
                 {
                     db.Log($"headers:");
                     foreach (var h in requestMessage.Headers)
-                        db.Log($"{h.Key} : {string.Join(" ",h.Value)}");
-                    foreach(var h in httpClient.DefaultRequestHeaders)
+                        db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
+                    foreach (var h in httpClient.DefaultRequestHeaders)
                         db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
                 }
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
