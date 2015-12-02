@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Utility
 {
@@ -65,7 +61,7 @@ namespace ArangoDB.Client.Utility
 
         public static string TraversalStrategyToString(TraversalStrategy strategy)
         {
-            switch(strategy)
+            switch (strategy)
             {
                 case TraversalStrategy.BreadthFirst:
                     return "breadthfirst";
@@ -104,19 +100,35 @@ namespace ArangoDB.Client.Utility
             }
         }
 
+        private static bool IsRunningOnMono
+        {
+            get
+            {
+                return Type.GetType("Mono.Runtime") != null;
+            }
+        }
+
+        private static string AssemblyVersion;
+
         public static string GetAssemblyVersion()
         {
+            if(!string.IsNullOrEmpty(AssemblyVersion))
+            {
+                return AssemblyVersion;
+            }
+
 #if !PORTABLE
             //var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            //return version.Major + "." + version.Minor;
-            return "";
+            var version = Assembly.GetAssembly(typeof(ArangoDatabase)).GetName().Version;
+            AssemblyVersion = version.Major + "." + version.Minor;
 #else
             // from http://stackoverflow.com/a/16525426/1271333
             var assembly = typeof(ArangoDatabase).GetTypeInfo().Assembly;
             // In some PCL profiles the above line is: var assembly = typeof(MyType).Assembly;
             var assemblyName = new AssemblyName(assembly.FullName);
-            return assemblyName.Version.Major + "." + assemblyName.Version.Minor;
+            AssemblyVersion = assemblyName.Version.Major + "." + assemblyName.Version.Minor;
 #endif
+            return AssemblyVersion;
         }
     }
 }
