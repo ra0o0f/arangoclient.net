@@ -100,14 +100,6 @@ namespace ArangoDB.Client.Utility
             }
         }
 
-        private static bool IsRunningOnMono
-        {
-            get
-            {
-                return Type.GetType("Mono.Runtime") != null;
-            }
-        }
-
         private static string AssemblyVersion;
 
         public static string GetAssemblyVersion()
@@ -118,7 +110,6 @@ namespace ArangoDB.Client.Utility
             }
 
 #if !PORTABLE
-            //var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
             var version = Assembly.GetAssembly(typeof(ArangoDatabase)).GetName().Version;
             AssemblyVersion = version.Major + "." + version.Minor;
 #else

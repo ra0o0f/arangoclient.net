@@ -112,7 +112,7 @@ namespace ArangoDB.Client.Http
                         db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
                 }
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
-                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(await responseMessage.Content.ReadAsStringAsync())}");
+                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false))}");
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)

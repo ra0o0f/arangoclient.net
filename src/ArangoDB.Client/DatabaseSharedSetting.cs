@@ -106,8 +106,11 @@ namespace ArangoDB.Client
         public DatabaseSerializationSharedSetting()
         {
             SerializeEnumAsInteger = true;
+            MetadataPropertyHandling = ArangoDB.Client.Common.Newtonsoft.Json.MetadataPropertyHandling.Default;
             Converters = new List<JsonConverter>();
         }
+
+        public MetadataPropertyHandling MetadataPropertyHandling { get; set; }
     }
 
     public class DatabaseLogSharedSetting
