@@ -383,6 +383,22 @@ namespace ArangoDB.Client
         Task CreateDatabaseAsync(string name, List<DatabaseUser> users = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        DropCollectionResult DropCollection(string name, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        Task<DropCollectionResult> DropCollectionAsync(string name, Action<BaseResult> baseResult = null);
+
+        /// <summary>
         /// Creates a collection
         /// </summary>
         /// <param name="name">Name of the collection</param>

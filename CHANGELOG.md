@@ -5,7 +5,8 @@
 - Add support for aql upsert command
 - Support for Adding custom `JsonConverter`
 - Enum serialization to `string` or underlying `integer`
-- Add Json.net `MetadataPropertyHandling` into `DatabaseSetting` 
+- Add Json.net `MetadataPropertyHandling` into `DatabaseSetting`
+- Add DropCollection method
 
 ### Bug fixes
 

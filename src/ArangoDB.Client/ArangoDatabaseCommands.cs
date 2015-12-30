@@ -209,6 +209,40 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        public DropCollectionResult DropCollection(string name, Action<BaseResult> baseResult = null)
+        {
+            return DropCollectionAsync(name, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        public async Task<DropCollectionResult> DropCollectionAsync(string name, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Collection,
+                Method = HttpMethod.Delete,
+                Command = name
+            };
+
+            var result = await command.RequestMergedResult<DropCollectionResult>().ConfigureAwait(false);
+
+            if (baseResult != null)
+                baseResult(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
         /// List of collections
         /// </summary>
         /// <param name="excludeSystem">Exclude system collections</param>

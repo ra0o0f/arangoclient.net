@@ -48,6 +48,7 @@
     <Compile Include="Collection\CollectionType.cs" />
     <Compile Include="Collection\EdgeDirection.cs" />
     <Compile Include="Collection\ReplacePolicy.cs" />
+    <Compile Include="Data\DropCollectionResult.cs" />
     <Compile Include="Data\DropGraphData.cs" />
     <Compile Include="Data\TraversalResult.cs" />
     <Compile Include="Graph\ArangoGraph.cs" />

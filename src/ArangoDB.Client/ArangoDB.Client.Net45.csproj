@@ -73,6 +73,7 @@
     <Compile Include="Data\DatabaseInformationResult.cs" />
     <Compile Include="Data\DistinctCommandResult.cs" />
     <Compile Include="Data\DocumentInheritedCommandResult.cs" />
+    <Compile Include="Data\DropCollectionResult.cs" />
     <Compile Include="Data\DropGraphData.cs" />
     <Compile Include="Data\DropGraphResult.cs" />
     <Compile Include="Data\EdgeDefinitionData.cs" />
