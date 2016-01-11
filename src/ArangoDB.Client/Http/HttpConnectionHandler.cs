@@ -10,27 +10,14 @@ namespace ArangoDB.Client.Http
 {
     public class HttpConnectionHandler : DelegatingHandler
     {
-        //Action<HttpRequestMessage> beforeRequest = (HttpRequestMessage request) => { };
-        //Action<HttpResponseMessage> afterRespone = (HttpResponseMessage request) => { };
-
-        public HttpConnectionHandler(
-            //Action<HttpRequestMessage> BeforeRequest = null, Action<HttpResponseMessage> AfterRequest=null
-            )
+        public HttpConnectionHandler()
         {
-            //if (BeforeRequest != null)
-            //    beforeRequest = BeforeRequest;
 
-            //if (AfterRequest != null)
-            //    afterRespone = AfterRequest;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            //beforeRequest(request);
-
-            var responseMessage = await base.SendAsync(request,cancellationToken).ConfigureAwait(false);
-
-            //afterRespone(responseMessage);
+            HttpResponseMessage responseMessage = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             return responseMessage;
         }

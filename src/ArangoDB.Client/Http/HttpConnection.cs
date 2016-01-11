@@ -29,16 +29,19 @@ namespace ArangoDB.Client.Http
                 connectionHandler.InnerHandler = new HttpClientHandler();
             }
 
-            ArangoDatabase.ClientSetting.IsHttpClientInitialied = true;
-
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
-
+            
+            if (ArangoDatabase.ClientSetting.HttpRequestTimeout.HasValue)
+                httpClient.Timeout = ArangoDatabase.ClientSetting.HttpRequestTimeout.Value;
+            
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(".NETClient", Utility.Utils.GetAssemblyVersion()));
+            
+            ArangoDatabase.ClientSetting.HttpClientInitialized = true;
 
             return httpClient;
         });
-
+        
         private static HttpClient httpClient
         { get { return httpClientLazily.Value; } }
 
@@ -92,7 +95,7 @@ namespace ArangoDB.Client.Http
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
                     db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
             }
-
+            
             if (data != null)
                 requestMessage.Content = new JsonContent(db, data);
 

@@ -106,7 +106,7 @@ namespace ArangoDB.Client.Property
             });
         }
 
-        internal string ResolveCollectionName(Type type)
+        public string ResolveCollectionName(Type type)
         {
             ICollectionPropertySetting collectionProperty = null;
             ChangeCollectionPropertyForType(type, x => collectionProperty = x);

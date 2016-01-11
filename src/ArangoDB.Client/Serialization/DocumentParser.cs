@@ -40,7 +40,7 @@ namespace ArangoDB.Client.Serialization
         {
             var readerState = new ReaderState();
             baseResult = new BaseResult();
-            List<T> result = new List<T>();
+            var result = new List<T>();
 
             jsonTextReader.Read();
 

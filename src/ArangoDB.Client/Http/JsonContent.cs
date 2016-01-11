@@ -32,7 +32,8 @@ namespace ArangoDB.Client.Http
             if (jObject != null)
             {
                 var streamWriter = new StreamWriter(stream);
-                await streamWriter.WriteAsync(jObject.ToString(Formatting.None)).ConfigureAwait(false);
+                var jsonWriter = new JsonTextWriter(streamWriter);
+                jObject.WriteTo(jsonWriter);
                 await streamWriter.FlushAsync().ConfigureAwait(false);
             }
             else
