@@ -100,6 +100,23 @@ namespace ArangoDB.Client.Utility
             }
         }
 
+        public static string ImportDuplicatePolicyToString(ImportDuplicatePolicy policy)
+        {
+            switch(policy)
+            {
+                case ImportDuplicatePolicy.Error:
+                    return "error";
+                case ImportDuplicatePolicy.Ignore:
+                    return "ignore";
+                case ImportDuplicatePolicy.Replace:
+                    return "replace";
+                case ImportDuplicatePolicy.Update:
+                    return "update";
+                default:
+                    throw new InvalidOperationException($"ImportDuplicatePolicy {policy} binding not found, this is a client bug");
+            }
+        }
+
         private static string AssemblyVersion;
 
         public static string GetAssemblyVersion()

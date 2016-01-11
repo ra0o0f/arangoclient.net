@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Serialization;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -70,7 +71,7 @@ namespace ArangoDB.Client.Http
 #endif
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, NetworkCredential credential)
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, Func<StreamWriter,Task> onStreamReady, NetworkCredential credential)
         {
             var requestMessage = new HttpRequestMessage(method, uri);
 
@@ -96,9 +97,11 @@ namespace ArangoDB.Client.Http
                     db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
             }
             
-            if (data != null)
+            if (onStreamReady == null && data != null)
                 requestMessage.Content = new JsonContent(db, data);
-
+            if(onStreamReady != null)
+                requestMessage.Content = new GenericStreamContent(db, onStreamReady);
+            
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (db.LoggerAvailable)

@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Advanced\AdvancedOperation.cs" />
+    <Compile Include="Advanced\ImportDuplicatePolicy.cs" />
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
@@ -59,6 +61,7 @@
     <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\AddVertexCollectionData.cs" />
     <Compile Include="Data\BaseResult.cs" />
+    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\CollectionsInheritedCommandResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
@@ -103,6 +106,8 @@
     <Compile Include="Graph\TraversalStrategy.cs" />
     <Compile Include="Graph\TraversalUniqueness.cs" />
     <Compile Include="Http\AuthenticationException.cs" />
+    <Compile Include="Http\GenericStreamContent.cs" />
+    <Compile Include="Interface\IAdvancedCommand.cs" />
     <Compile Include="Interface\IAqlModifiable.cs" />
     <Compile Include="Extentions\QueryableExtensions.cs" />
     <Compile Include="Http\HttpCommand.cs" />

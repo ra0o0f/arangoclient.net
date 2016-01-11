@@ -7,6 +7,8 @@
 - Enum serialization to `string` or underlying `integer`
 - Add Json.net `MetadataPropertyHandling` into `DatabaseSetting`
 - Add DropCollection method
+- Add http timeout setting
+- Add bulk import
 
 ### Bug fixes
 

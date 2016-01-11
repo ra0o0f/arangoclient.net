@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.ChangeTracking;
+﻿using ArangoDB.Client.Advanced;
+using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
@@ -13,6 +14,8 @@ namespace ArangoDB.Client
 {
     public interface IArangoDatabase : IDisposable
     {
+        IAdvancedOperation Advanced { get; set; }
+
         IHttpConnection Connection { get; set; }
 
         DocumentTracker ChangeTracker { get; set; }

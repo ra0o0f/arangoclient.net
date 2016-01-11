@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.ChangeTracking;
+﻿using ArangoDB.Client.Advanced;
+using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
@@ -29,9 +30,9 @@ namespace ArangoDB.Client
 
         public DatabaseSetting Setting { get; set; }
 
-        public static ClientSetting ClientSetting { get; private set; }
+        public IAdvancedOperation Advanced { get; set; }
 
-        internal bool HttpInitialized { get; set; }
+        public static ClientSetting ClientSetting { get; private set; }
 
         static ArangoDatabase()
         {
@@ -44,6 +45,7 @@ namespace ArangoDB.Client
             Setting = new DatabaseSetting(SharedSetting);
             Connection = new HttpConnection(this);
             ChangeTracker = new DocumentTracker(this);
+            Advanced = new AdvancedOperation(this);
         }
 
         public ArangoDatabase(string url, string database)

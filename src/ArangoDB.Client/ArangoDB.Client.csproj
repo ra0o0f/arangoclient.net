@@ -41,6 +41,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Advanced\AdvancedOperation.cs" />
+    <Compile Include="Advanced\ImportDuplicatePolicy.cs" />
     <Compile Include="Collection\ArangoCollection.cs" />
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
@@ -48,6 +50,7 @@
     <Compile Include="Collection\CollectionType.cs" />
     <Compile Include="Collection\EdgeDirection.cs" />
     <Compile Include="Collection\ReplacePolicy.cs" />
+    <Compile Include="Data\BulkImportResult.cs" />
     <Compile Include="Data\DropCollectionResult.cs" />
     <Compile Include="Data\DropGraphData.cs" />
     <Compile Include="Data\TraversalResult.cs" />
@@ -106,6 +109,8 @@
     <Compile Include="Graph\TraversalStrategy.cs" />
     <Compile Include="Graph\TraversalUniqueness.cs" />
     <Compile Include="Http\AuthenticationException.cs" />
+    <Compile Include="Http\GenericStreamContent.cs" />
+    <Compile Include="Interface\IAdvancedCommand.cs" />
     <Compile Include="Interface\IAqlModifiable.cs" />
     <Compile Include="Extentions\QueryableExtensions.cs" />
     <Compile Include="Http\HttpCommand.cs" />
