@@ -117,6 +117,25 @@ namespace ArangoDB.Client.Utility
             }
         }
 
+        public static string IndexTypeToString(IndexType indexType)
+        {
+            switch (indexType)
+            {
+                case IndexType.CapConstraint:
+                    return "cap";
+                case IndexType.Hash:
+                    return "hash";
+                case IndexType.Skiplist:
+                    return "skiplist";
+                case IndexType.Geo:
+                    return "geo";
+                case IndexType.Fulltext:
+                    return "fulltext";
+                default:
+                    throw new InvalidOperationException($"IndexTypeToString {indexType} binding not found, this is a client bug");
+            }
+        }
+
         private static string AssemblyVersion;
 
         public static string GetAssemblyVersion()

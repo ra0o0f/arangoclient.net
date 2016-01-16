@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Advanced\AdvancedOperation.cs" />
     <Compile Include="Advanced\ImportDuplicatePolicy.cs" />
+    <Compile Include="Advanced\IndexType.cs" />
     <Compile Include="ArangoDatabase.cs" />
     <Compile Include="ArangoDatabaseCommands.cs" />
     <Compile Include="ArangoDocumentCommands.cs" />
@@ -83,6 +84,8 @@
     <Compile Include="Data\EdgeInheritedCommandResult.cs" />
     <Compile Include="Data\EdgesInheritedCommandResult.cs" />
     <Compile Include="Data\EdgeVertexResult.cs" />
+    <Compile Include="Data\EnsureIndexData.cs" />
+    <Compile Include="Data\EnsureIndexResult.cs" />
     <Compile Include="Data\GraphIdentifierResult.cs" />
     <Compile Include="Data\GraphListResult.cs" />
     <Compile Include="Data\GraphVerticesResult.cs" />

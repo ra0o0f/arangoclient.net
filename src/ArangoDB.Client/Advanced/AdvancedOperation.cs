@@ -25,6 +25,68 @@ namespace ArangoDB.Client.Advanced
         }
 
         /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <typeparam name="TCollection">Collection Type</typeparam>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        public EnsureIndexResult EnsureIndex<TCollection>(EnsureIndexData data, Action<BaseResult> baseResult = null)
+        {
+            return EnsureIndexAsync<TCollection>(data, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <typeparam name="TCollection">Collection Type</typeparam>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        public async Task<EnsureIndexResult> EnsureIndexAsync<TCollection>(EnsureIndexData data, Action<BaseResult> baseResult = null)
+        {
+            string collection = db.SharedSetting.Collection.ResolveCollectionName<TCollection>();
+            return await EnsureIndexAsync(collection, data, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <param name="collection">The collection name</param>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        public EnsureIndexResult EnsureIndex(string collection, EnsureIndexData data, Action<BaseResult> baseResult = null)
+        {
+            return EnsureIndexAsync(collection, data, baseResult).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <param name="collection">The collection name</param>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        public async Task<EnsureIndexResult> EnsureIndexAsync(string collection, EnsureIndexData data, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this.db)
+            {
+                Api = CommandApi.Index,
+                Method = HttpMethod.Post,
+                Query = new Dictionary<string, string>()
+            };
+
+            command.Query.Add("collection", collection);
+
+            var result = await command.RequestMergedResult<EnsureIndexResult>(data).ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
         /// Imports documents
         /// </summary>
         /// <typeparam name="TCollection">Collection Type</typeparam>

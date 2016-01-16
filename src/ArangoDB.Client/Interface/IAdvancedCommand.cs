@@ -11,6 +11,42 @@ namespace ArangoDB.Client
     public interface IAdvancedOperation
     {
         /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <typeparam name="TCollection">Collection Type</typeparam>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        EnsureIndexResult EnsureIndex<TCollection>(EnsureIndexData data, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <typeparam name="TCollection">Collection Type</typeparam>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        Task<EnsureIndexResult> EnsureIndexAsync<TCollection>(EnsureIndexData data, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <param name="collection">The collection name</param>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        EnsureIndexResult EnsureIndex(string collection, EnsureIndexData data, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Creates an index
+        /// </summary>
+        /// <param name="collection">The collection name</param>
+        /// <param name="data">Index details</param>
+        /// <param name="baseResult"></param>
+        /// <returns>EnsureIndexResult</returns>
+        Task<EnsureIndexResult> EnsureIndexAsync(string collection, EnsureIndexData data, Action<BaseResult> baseResult = null);
+        
+        /// <summary>
         /// Imports documents
         /// </summary>
         /// <typeparam name="TCollection">Collection Type</typeparam>

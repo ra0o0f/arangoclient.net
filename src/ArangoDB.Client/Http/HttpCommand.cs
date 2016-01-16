@@ -26,7 +26,8 @@ namespace ArangoDB.Client.Http
         Graph=7,
         Transaction = 8,
         Traversal = 9,
-        Import=10
+        Import=10,
+        Index=11
     }
 
     public class HttpCommand
@@ -49,7 +50,8 @@ namespace ArangoDB.Client.Http
                 {CommandApi.Graph,"gharial"},
                 {CommandApi.Transaction,"transaction"},
                 {CommandApi.Traversal,"traversal"},
-                {CommandApi.Import,"import" }
+                {CommandApi.Import,"import" },
+                {CommandApi.Index,"index" }
             };
         }
 
