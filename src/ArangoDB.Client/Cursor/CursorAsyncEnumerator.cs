@@ -4,11 +4,8 @@ using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Serialization;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Cursor
@@ -29,11 +26,11 @@ namespace ArangoDB.Client.Cursor
 
         ReaderState readerState;
 
-        public CursorAsyncEnumerator(IArangoDatabase db, HttpCommand command, object data=null)
+        public CursorAsyncEnumerator(IArangoDatabase db, HttpCommand command, object data = null)
         {
             this.db = db;
             this.initiateCommand = command;
-            this.CursorResult = new CursorResult { HasMore=true };
+            this.CursorResult = new CursorResult { HasMore = true };
             this.data = data;
             readerState = new ReaderState();
         }
@@ -77,17 +74,17 @@ namespace ArangoDB.Client.Cursor
                 CursorResult.SetFromJsonTextReader(readerState.PropertyName, readerState.Token, readerState.Value);
             }
 
-            if (jsonTextReader.TokenType== JsonToken.EndObject)
+            if (jsonTextReader.TokenType == JsonToken.EndObject)
             {
                 new BaseResultAnalyzer(db).ThrowIfNeeded(CursorResult);
 
-                if (db.Setting.ThrowForServerErrors == false)
+                if (db.Setting.ThrowForServerErrors == false && CursorResult.Error)
                     return false;
             }
 
             if (readerState.ReadNextArrayValue(jsonTextReader))
             {
-                var documentSerializer =new DocumentSerializer(db);
+                var documentSerializer = new DocumentSerializer(db);
                 if (db.Setting.DisableChangeTracking == true || jsonTextReader.TokenType != JsonToken.StartObject)
                 {
                     Current = documentSerializer.Deserialize<T>(jsonTextReader);
@@ -153,7 +150,7 @@ namespace ArangoDB.Client.Cursor
 
             public bool ReadNextProperty(JsonTextReader reader)
             {
-                if(resultArrayStarted)
+                if (resultArrayStarted)
                     return false;
 
                 reader.Read();
@@ -162,12 +159,12 @@ namespace ArangoDB.Client.Cursor
                 if (reader.TokenType == JsonToken.EndObject)
                     return false;
 
-                if(reader.TokenType!=JsonToken.PropertyName)
+                if (reader.TokenType != JsonToken.PropertyName)
                     throw new InvalidOperationException("Expected JsonToken.PropertyName");
 
                 PropertyName = reader.Value.ToString();
 
-                if(PropertyName == "result")
+                if (PropertyName == "result")
                 {
                     reader.Read();
                     if (reader.TokenType != JsonToken.StartArray)
@@ -176,7 +173,7 @@ namespace ArangoDB.Client.Cursor
                     resultArrayStarted = true;
                     return false;
                 }
-                    
+
                 return true;
             }
 
@@ -185,7 +182,7 @@ namespace ArangoDB.Client.Cursor
                 reader.Read();
                 Token = reader.TokenType;
 
-                if(reader.TokenType==JsonToken.StartObject)
+                if (reader.TokenType == JsonToken.StartObject)
                 {
                     Value = JObject.Load(reader);
                 }
@@ -196,7 +193,7 @@ namespace ArangoDB.Client.Cursor
             public bool ReadNextArrayValue(JsonTextReader reader)
             {
                 reader.Read();
-                if(reader.TokenType == JsonToken.EndArray)
+                if (reader.TokenType == JsonToken.EndArray)
                 {
                     resultArrayStarted = false;
                     return false;
