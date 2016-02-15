@@ -53,6 +53,7 @@ namespace ArangoDB.Client.Linq
             aggregateResultOperatorFunctions = new Dictionary<Type, string>
             {
                 {typeof(CountResultOperator),"length"},
+                {typeof(LongCountResultOperator),"length"},
                 {typeof(SumResultOperator),"sum"},
                 {typeof(MinResultOperator),"min"},
                 {typeof(MaxResultOperator),"max"},

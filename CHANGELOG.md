@@ -9,6 +9,7 @@
 - Add DropCollection method
 - Add http timeout setting
 - Add bulk import
+- Add support for LongCount LINQ method
 
 ### Bug fixes
 
@@ -17,3 +18,4 @@
 - Fix setting proxy for mono support (thanks to @jjchiw)
 - Fix resolving client version for mono support (thanks to @jjchiw)
 - Fix deserializing objects that use Json.net `TypeNameHandling`
+- Fix identifier names concurrent add
