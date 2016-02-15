@@ -12,8 +12,8 @@ namespace ArangoDB.Client.Property
 {
     public class DocumentPropertySetting : IDocumentPropertySetting
     {
-        static ConcurrentDictionary<Type, Dictionary<string, IDocumentPropertySetting>> cachedAttributeProperties =
-            new ConcurrentDictionary<Type, Dictionary<string, IDocumentPropertySetting>>();
+        static ConcurrentDictionary<Type, ConcurrentDictionary<string, IDocumentPropertySetting>> cachedAttributeProperties =
+            new ConcurrentDictionary<Type, ConcurrentDictionary<string, IDocumentPropertySetting>>();
 
         public string PropertyName { get; set; }
 
@@ -25,15 +25,15 @@ namespace ArangoDB.Client.Property
 
         internal static IDocumentPropertySetting FindDocumentAttributeForType(Type type,string memberName)
         {
-            Dictionary<string, IDocumentPropertySetting> typeSetting = null;
+            ConcurrentDictionary<string, IDocumentPropertySetting> typeSetting = null;
             if (!cachedAttributeProperties.TryGetValue(type, out typeSetting))
             {
                 var typeMemberInfos = CommonUtility.GetFieldsAndProperties_PublicInstance(type);
 
-                typeSetting = new Dictionary<string, IDocumentPropertySetting>();
+                typeSetting = new ConcurrentDictionary<string, IDocumentPropertySetting>();
 
                 foreach (var m in typeMemberInfos)
-                    typeSetting.Add(m.Name, CommonUtility.GetAttribute<DocumentPropertyAttribute>(m, false));
+                    typeSetting.TryAdd(m.Name, CommonUtility.GetAttribute<DocumentPropertyAttribute>(m, false));
 
                 cachedAttributeProperties.TryAdd(type, typeSetting);
             }

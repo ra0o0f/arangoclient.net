@@ -17,7 +17,7 @@ namespace ArangoDB.Client.Property
 
         ConcurrentDictionary<IdentifierType, Func<Type, string>> defaultIdentifierFuncs = new ConcurrentDictionary<IdentifierType, Func<Type, string>>();
         //ConcurrentDictionary<Type, Dictionary<IdentifierType, Func<Type, string>>> defaultIdentifierFuncs = new ConcurrentDictionary<Type, Dictionary<IdentifierType, Func<Type, string>>>();
-        ConcurrentDictionary<Type, Dictionary<IdentifierType, string>> defaultIdentifierNamesForType = new ConcurrentDictionary<Type, Dictionary<IdentifierType, string>>();
+        ConcurrentDictionary<Type, ConcurrentDictionary<IdentifierType, string>> defaultIdentifierNamesForType = new ConcurrentDictionary<Type, ConcurrentDictionary<IdentifierType, string>>();
 
         DatabaseSharedSetting setting;
 
@@ -38,7 +38,7 @@ namespace ArangoDB.Client.Property
 
         internal bool FindIdentifierDefaultNameForType(Type type, IdentifierType identifier , string memberName)
         {
-            Dictionary<IdentifierType, string> identifierNames = null;
+            ConcurrentDictionary<IdentifierType, string> identifierNames = null;
             if (defaultIdentifierNamesForType.TryGetValue(type, out identifierNames))
             {
                 string resolvedName = null;
@@ -47,7 +47,7 @@ namespace ArangoDB.Client.Property
             }
             else
             {
-                identifierNames = new Dictionary<IdentifierType, string>();
+                identifierNames = new ConcurrentDictionary<IdentifierType, string>();
                 defaultIdentifierNamesForType.TryAdd(type, identifierNames);
             }
 
