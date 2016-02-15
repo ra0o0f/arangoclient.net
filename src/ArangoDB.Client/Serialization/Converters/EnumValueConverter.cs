@@ -16,7 +16,8 @@ namespace ArangoDB.Client.Serialization.Converters
             [typeof(TraversalStrategy?)] = (v) => { return Utils.TraversalStrategyToString((TraversalStrategy)v); },
             [typeof(TraversalOrder?)] = (v) => { return Utils.TraversalOrderToString((TraversalOrder)v); },
             [typeof(TraversalItemOrder?)] = (v) => { return Utils.TraversalItemOrderToString((TraversalItemOrder)v); },
-            [typeof(EdgeDirection?)] = (v) => { return Utils.EdgeDirectionToString((EdgeDirection)v); }
+            [typeof(EdgeDirection?)] = (v) => { return Utils.EdgeDirectionToString((EdgeDirection)v); },
+            [typeof(IndexType?)] = (v) => { return Utils.IndexTypeToString((IndexType)v); }
         };
 
         public override bool CanConvert(Type objectType)
@@ -25,7 +26,8 @@ namespace ArangoDB.Client.Serialization.Converters
                 || objectType == typeof(TraversalStrategy) || objectType == typeof(TraversalStrategy?)
                 || objectType == typeof(TraversalOrder) || objectType == typeof(TraversalOrder?)
                 || objectType == typeof(TraversalItemOrder) || objectType == typeof(TraversalItemOrder?)
-                || objectType == typeof(EdgeDirection) || objectType == typeof(EdgeDirection?))
+                || objectType == typeof(EdgeDirection) || objectType == typeof(EdgeDirection?)
+                || objectType == typeof(IndexType) || objectType == typeof(IndexType?))
                 return true;
 
             return false;
@@ -54,13 +56,16 @@ namespace ArangoDB.Client.Serialization.Converters
             else if ((value as EdgeDirection?).HasValue)
                 writer.WriteValue(enumToStrings[typeof(EdgeDirection?)](value));
 
+            else if ((value as IndexType?).HasValue)
+                writer.WriteValue(enumToStrings[typeof(IndexType?)](value));
+
             else
-                throw new InvalidOperationException($"cant find binding to serialize type {value.GetType()}, this is client bug");
+                throw new InvalidOperationException($"Cant find binding to serialize type {value.GetType()}, this is client bug");
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            throw new NotImplementedException("just need serialization");
+            throw new NotImplementedException("Just need serialization");
         }
     }
 }

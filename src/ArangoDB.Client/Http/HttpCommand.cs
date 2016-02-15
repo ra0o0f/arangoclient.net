@@ -25,7 +25,9 @@ namespace ArangoDB.Client.Http
         Collection=6,
         Graph=7,
         Transaction = 8,
-        Traversal = 9
+        Traversal = 9,
+        Import=10,
+        Index=11
     }
 
     public class HttpCommand
@@ -47,7 +49,9 @@ namespace ArangoDB.Client.Http
                 {CommandApi.Collection,"collection"},
                 {CommandApi.Graph,"gharial"},
                 {CommandApi.Transaction,"transaction"},
-                {CommandApi.Traversal,"traversal"}
+                {CommandApi.Traversal,"traversal"},
+                {CommandApi.Import,"import" },
+                {CommandApi.Index,"index" }
             };
         }
 
@@ -175,10 +179,15 @@ namespace ArangoDB.Client.Http
 
         // T can be any type
         // method should be used when base result is provided on server errors
-        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null)
+        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null, Func<StreamWriter, Task> onStreamReady = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
-            var response = await SendCommandAsync(data).ConfigureAwait(false);
+
+            HttpResponseMessage response = null;
+            if (onStreamReady == null)
+                response = await SendCommandAsync(data).ConfigureAwait(false);
+            else
+                response = await SendStreamCommandAsync(onStreamReady).ConfigureAwait(false);
 
             var serializer = new DocumentSerializer(db);
 
@@ -207,7 +216,13 @@ namespace ArangoDB.Client.Http
         public async Task<HttpResponseMessage> SendCommandAsync(object data = null)
         {
             NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, credential).ConfigureAwait(false);
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential).ConfigureAwait(false);
+        }
+
+        public async Task<HttpResponseMessage> SendStreamCommandAsync(Func<StreamWriter,Task> onStreamReady)
+        {
+            NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential).ConfigureAwait(false);
         }
 
         public ICursor<T> CreateCursor<T>(object data=null)

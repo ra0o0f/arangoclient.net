@@ -188,11 +188,26 @@ namespace ArangoDB.Client
 
         private IList<JsonConverter> _converters;
 
-        bool? _serializeEnumAsInteger;
+        private bool? _serializeEnumAsInteger;
+
+        private MetadataPropertyHandling? _metadataPropertyHandling;
 
         public DatabaseSerializationSetting(DatabaseSharedSetting sharedSetting)
         {
             this.sharedSetting = sharedSetting;
+        }
+
+        public MetadataPropertyHandling MetadataPropertyHandling
+        {
+            get
+            {
+                if (_metadataPropertyHandling.HasValue)
+                    return _metadataPropertyHandling.Value;
+
+                return sharedSetting.Serialization.MetadataPropertyHandling;
+            }
+            set
+            { _metadataPropertyHandling = value; }
         }
 
         public IList<JsonConverter> Converters

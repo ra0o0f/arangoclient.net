@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Serialization;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -29,16 +30,19 @@ namespace ArangoDB.Client.Http
                 connectionHandler.InnerHandler = new HttpClientHandler();
             }
 
-            ArangoDatabase.ClientSetting.IsHttpClientInitialied = true;
-
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
-
+            
+            if (ArangoDatabase.ClientSetting.HttpRequestTimeout.HasValue)
+                httpClient.Timeout = ArangoDatabase.ClientSetting.HttpRequestTimeout.Value;
+            
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(".NETClient", Utility.Utils.GetAssemblyVersion()));
+            
+            ArangoDatabase.ClientSetting.HttpClientInitialized = true;
 
             return httpClient;
         });
-
+        
         private static HttpClient httpClient
         { get { return httpClientLazily.Value; } }
 
@@ -67,7 +71,7 @@ namespace ArangoDB.Client.Http
 #endif
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, NetworkCredential credential)
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, Func<StreamWriter,Task> onStreamReady, NetworkCredential credential)
         {
             var requestMessage = new HttpRequestMessage(method, uri);
 
@@ -92,10 +96,12 @@ namespace ArangoDB.Client.Http
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
                     db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
             }
-
-            if (data != null)
+            
+            if (onStreamReady == null && data != null)
                 requestMessage.Content = new JsonContent(db, data);
-
+            if(onStreamReady != null)
+                requestMessage.Content = new GenericStreamContent(db, onStreamReady);
+            
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (db.LoggerAvailable)
@@ -112,7 +118,7 @@ namespace ArangoDB.Client.Http
                         db.Log($"{h.Key} : {string.Join(" ", h.Value)}");
                 }
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
-                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(await responseMessage.Content.ReadAsStringAsync())}");
+                    db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false))}");
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)

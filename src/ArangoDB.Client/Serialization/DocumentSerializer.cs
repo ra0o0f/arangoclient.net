@@ -99,7 +99,8 @@ namespace ArangoDB.Client.Serialization
                 {
                     ContractResolver = new DocumentContractResolver(db),
                     Converters = convertes,
-                    DateParseHandling = DateParseHandling.None
+                    DateParseHandling = DateParseHandling.None,
+                    MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling
                 };
             }
         }
@@ -112,6 +113,11 @@ namespace ArangoDB.Client.Serialization
         public string SerializeWithoutReader(object document)
         {
             return JsonConvert.SerializeObject(document, SerializerSetting);
+        }
+
+        public T DeserializeWithoutReader<T>(string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json, SerializerSetting);
         }
     }
 }

@@ -100,11 +100,39 @@ namespace ArangoDB.Client.Utility
             }
         }
 
-        private static bool IsRunningOnMono
+        public static string ImportDuplicatePolicyToString(ImportDuplicatePolicy policy)
         {
-            get
+            switch(policy)
             {
-                return Type.GetType("Mono.Runtime") != null;
+                case ImportDuplicatePolicy.Error:
+                    return "error";
+                case ImportDuplicatePolicy.Ignore:
+                    return "ignore";
+                case ImportDuplicatePolicy.Replace:
+                    return "replace";
+                case ImportDuplicatePolicy.Update:
+                    return "update";
+                default:
+                    throw new InvalidOperationException($"ImportDuplicatePolicy {policy} binding not found, this is a client bug");
+            }
+        }
+
+        public static string IndexTypeToString(IndexType indexType)
+        {
+            switch (indexType)
+            {
+                case IndexType.CapConstraint:
+                    return "cap";
+                case IndexType.Hash:
+                    return "hash";
+                case IndexType.Skiplist:
+                    return "skiplist";
+                case IndexType.Geo:
+                    return "geo";
+                case IndexType.Fulltext:
+                    return "fulltext";
+                default:
+                    throw new InvalidOperationException($"IndexTypeToString {indexType} binding not found, this is a client bug");
             }
         }
 
@@ -118,7 +146,6 @@ namespace ArangoDB.Client.Utility
             }
 
 #if !PORTABLE
-            //var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
             var version = Assembly.GetAssembly(typeof(ArangoDatabase)).GetName().Version;
             AssemblyVersion = version.Major + "." + version.Minor;
 #else

@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.ChangeTracking;
+﻿using ArangoDB.Client.Advanced;
+using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
@@ -13,6 +14,8 @@ namespace ArangoDB.Client
 {
     public interface IArangoDatabase : IDisposable
     {
+        IAdvancedOperation Advanced { get; set; }
+
         IHttpConnection Connection { get; set; }
 
         DocumentTracker ChangeTracker { get; set; }
@@ -381,6 +384,22 @@ namespace ArangoDB.Client
         /// <param name="users">list of database user</param>
         /// <returns></returns>
         Task CreateDatabaseAsync(string name, List<DatabaseUser> users = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        DropCollectionResult DropCollection(string name, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Drops the collection identified by collection-name
+        /// </summary>
+        /// <param name="name">Name of the collection</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropCollectionResult</returns>
+        Task<DropCollectionResult> DropCollectionAsync(string name, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a collection
