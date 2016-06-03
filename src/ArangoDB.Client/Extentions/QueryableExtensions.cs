@@ -70,6 +70,35 @@ namespace ArangoDB.Client
             return source.AsAqlQueryable<T>().GetQueryData();
         }
 
+        public static Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source)
+        {
+            return ExecuteSingleAsync(source, false, null);
+        }
+
+        public static Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            return ExecuteSingleAsync(source, false, predicate);
+        }
+
+        public static Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source)
+        {
+            return ExecuteSingleAsync(source, true, null);
+        }
+
+        public static Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            return ExecuteSingleAsync(source, true, predicate);
+        }
+
+        private static Task<T> ExecuteSingleAsync<T>(this IQueryable<T> source, bool returnDefaultWhenEmpty, Expression<Func<T, bool>> predicate)
+        {
+            if (predicate != null)
+                source = source.Where(predicate);
+            source = source.Take(1);
+            var cursor = source.AsCursor() as Cursor<T>;
+            return cursor.ExecuteSingle(returnDefaultWhenEmpty);
+        }
+
         public static Task<List<T>> ToListAsync<T>(this IQueryable<T> source)
         {
             return source.AsAqlQueryable<T>().ToListAsync();

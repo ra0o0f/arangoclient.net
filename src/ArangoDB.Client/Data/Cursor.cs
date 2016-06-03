@@ -40,7 +40,7 @@ namespace ArangoDB.Client.Data
         public async Task<List<T>> ToListAsync()
         {
             List<T> list = new List<T>();
-            using(asyncEnumerator)
+            using (asyncEnumerator)
             {
                 while (await asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
                 {
@@ -58,6 +58,20 @@ namespace ArangoDB.Client.Data
                 {
                     action(asyncEnumerator.Current);
                 }
+            }
+        }
+
+        internal async Task<T> ExecuteSingle(bool returnDefaultWhenEmpty)
+        {
+            using (asyncEnumerator)
+            {
+                var hasNext = await asyncEnumerator.MoveNextAsync().ConfigureAwait(false);
+                if (hasNext)
+                    return asyncEnumerator.Current;
+                else if (returnDefaultWhenEmpty)
+                    return default(T);
+                else
+                    throw new InvalidOperationException("Sequence contains no elements");
             }
         }
 
