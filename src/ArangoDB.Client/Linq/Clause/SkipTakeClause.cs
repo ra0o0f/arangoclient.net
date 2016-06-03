@@ -131,7 +131,8 @@ namespace ArangoDB.Client.Linq.Clause
         public void TransformExpressions(Func<Expression, Expression> transformation)
         {
             Utils.CheckNotNull("transformation", transformation);
-            SkipCount = transformation(SkipCount);
+            if(SkipCount!=null)
+                SkipCount = transformation(SkipCount);
             TakeCount = transformation(TakeCount);
         }
 
