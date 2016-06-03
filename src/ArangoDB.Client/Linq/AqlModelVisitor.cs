@@ -72,7 +72,7 @@ namespace ArangoDB.Client.Linq
             var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
                 ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
 
-            if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
+            if (resultOperator is FirstResultOperator)
                 queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
 
             if (aggregateFunction != null)
