@@ -61,13 +61,20 @@ namespace ArangoDB.Client.Data
             }
         }
 
-        internal async Task<T> ExecuteSingle(bool returnDefaultWhenEmpty)
+        internal async Task<T> ExecuteScalar(bool returnDefaultWhenEmpty = false, bool throwIfNotSingle = false)
         {
             using (asyncEnumerator)
             {
                 var hasNext = await asyncEnumerator.MoveNextAsync().ConfigureAwait(false);
                 if (hasNext)
+                {
+                    if (throwIfNotSingle && (await asyncEnumerator.MoveNextAsync().ConfigureAwait(false)))
+                    {
+                        throw new InvalidOperationException("Sequence contains more than one element");
+                    }
+
                     return asyncEnumerator.Current;
+                }
                 else if (returnDefaultWhenEmpty)
                     return default(T);
                 else

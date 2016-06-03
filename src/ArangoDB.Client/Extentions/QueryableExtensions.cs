@@ -72,31 +72,58 @@ namespace ArangoDB.Client
 
         public static Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source)
         {
-            return ExecuteSingleAsync(source, false, null);
+            return FirstOrDefaultAsync(source, false, null);
         }
 
         public static Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
-            return ExecuteSingleAsync(source, false, predicate);
+            return FirstOrDefaultAsync(source, false, predicate);
         }
 
         public static Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source)
         {
-            return ExecuteSingleAsync(source, true, null);
+            return FirstOrDefaultAsync(source, true, null);
         }
 
         public static Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
-            return ExecuteSingleAsync(source, true, predicate);
+            return FirstOrDefaultAsync(source, true, predicate);
         }
 
-        private static Task<T> ExecuteSingleAsync<T>(this IQueryable<T> source, bool returnDefaultWhenEmpty, Expression<Func<T, bool>> predicate)
+        private static Task<T> FirstOrDefaultAsync<T>(this IQueryable<T> source, bool returnDefaultWhenEmpty, Expression<Func<T, bool>> predicate)
         {
             if (predicate != null)
                 source = source.Where(predicate);
-            source = source.Take(1);
+            var cursor = source.Take(1).AsCursor() as Cursor<T>;
+            return cursor.ExecuteScalar(returnDefaultWhenEmpty: returnDefaultWhenEmpty);
+        }
+
+        public static Task<TSource> SingleAsync<TSource>(this IQueryable<TSource> source)
+        {
+            return SingleOrDefaultAsync(source, false, null);
+        }
+
+        public static Task<TSource> SingleAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            return SingleOrDefaultAsync(source, false, predicate);
+        }
+
+        public static Task<TSource> SingleOrDefaultAsync<TSource>(this IQueryable<TSource> source)
+        {
+            return SingleOrDefaultAsync(source, true, null);
+        }
+
+        public static Task<TSource> SingleOrDefaultAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            return SingleOrDefaultAsync(source, true, predicate);
+        }
+
+        private static Task<T> SingleOrDefaultAsync<T>(this IQueryable<T> source, bool returnDefaultWhenEmpty, Expression<Func<T, bool>> predicate)
+        {
+            if (predicate != null)
+                source = source.Where(predicate);
             var cursor = source.AsCursor() as Cursor<T>;
-            return cursor.ExecuteSingle(returnDefaultWhenEmpty);
+            return cursor.ExecuteScalar(returnDefaultWhenEmpty: returnDefaultWhenEmpty, throwIfNotSingle: true);
         }
 
         public static Task<List<T>> ToListAsync<T>(this IQueryable<T> source)
@@ -106,7 +133,7 @@ namespace ArangoDB.Client
 
         public static void ForEach<T>(this IQueryable<T> source, Action<T> action)
         {
-            source.AsAqlQueryable<T>().ForEach(x=>action(x));
+            source.AsAqlQueryable<T>().ForEach(x => action(x));
         }
 
         public static async Task ForEachAsync<T>(this IQueryable<T> source, Action<T> action)
@@ -159,7 +186,7 @@ namespace ArangoDB.Client
             return ToList(source, IsNewResult(source));
         }
 
-        public static List<T> ToList<T>(this IAqlModifiable<T> source,bool returnNewResult)
+        public static List<T> ToList<T>(this IAqlModifiable<T> source, bool returnNewResult)
         {
             var newSource = ReturnResult<T>(source, returnNewResult);
             return newSource.AsAqlQueryable<T>().ToList();
@@ -190,7 +217,7 @@ namespace ArangoDB.Client
 
         private static ConcurrentDictionary<string, MethodInfo> _cachedMethodInfos = new ConcurrentDictionary<string, MethodInfo>();
 
-        private static MethodInfo FindCachedMethod(string name,params Type[] arguments)
+        private static MethodInfo FindCachedMethod(string name, params Type[] arguments)
         {
             string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
             return _cachedMethodInfos.GetOrAdd(key,
@@ -208,8 +235,8 @@ namespace ArangoDB.Client
             string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
             return _cachedMethodInfos.GetOrAdd(key,
                 typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => 
-                    x.GetCustomAttribute<DefaultExtentionAttribute>() != null 
+                .Where(x =>
+                    x.GetCustomAttribute<DefaultExtentionAttribute>() != null
                     && x.GetCustomAttribute<DefaultExtentionAttribute>().Name == defaultMethod
                     && x.Name == name)
                 .First().MakeGenericMethod(arguments));
@@ -237,7 +264,7 @@ namespace ArangoDB.Client
         }
 
         [DefaultExtention]
-        public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source,int offset, int count)
+        public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source, int offset, int count)
         {
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
@@ -276,7 +303,7 @@ namespace ArangoDB.Client
         }
 
         internal static IAqlModifiable<TSource> UpdateReplace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
-            , Expression<Func<TSource, object>> keySelector,string command)
+            , Expression<Func<TSource, object>> keySelector, string command)
         {
             if (keySelector == null)
                 keySelector = x => null;
@@ -285,7 +312,7 @@ namespace ArangoDB.Client
 
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("UpdateReplace",typeof(TSource)),
+                    FindCachedMethod("UpdateReplace", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(withSelector),
                     Expression.Quote(keySelector),
@@ -306,7 +333,7 @@ namespace ArangoDB.Client
         }
 
         internal static IAqlModifiable<TSource> InternalUpsert<TSource, TOld>(this IQueryable<TSource> source, Expression<Func<TSource, object>> searchExpression,
-            Expression<Func<TSource, object>> insertExpression, Expression<Func<TSource, TOld, object>> updateExpression,Type updateType)
+            Expression<Func<TSource, object>> insertExpression, Expression<Func<TSource, TOld, object>> updateExpression, Type updateType)
         {
             source.AsAqlQueryable().StateValues["CrudFunction"] = "upsert";
 
@@ -330,7 +357,7 @@ namespace ArangoDB.Client
 
         public static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector)
         {
-            return Insert(source, selector,typeof(TSource));
+            return Insert(source, selector, typeof(TSource));
         }
 
         [DefaultExtention]
@@ -363,14 +390,14 @@ namespace ArangoDB.Client
 
         [DefaultExtention]
         internal static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source,
-            Expression<Func<TSource, object>> keySelector,Type type)
+            Expression<Func<TSource, object>> keySelector, Type type)
         {
             if (keySelector == null)
                 keySelector = x => null;
 
             source.AsAqlQueryable().StateValues["CrudFunction"] = "remove";
 
-            return  source.Provider.CreateQuery<TSource>(
+            return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     FindCachedDefaultMethod("Remove", typeof(TSource)),
                     source.Expression,
@@ -388,7 +415,7 @@ namespace ArangoDB.Client
                     )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
         }
 
-        internal static IAqlModifiable<TResult> ReturnResult<TResult>(this IAqlModifiable<TResult> source,bool returnNewResult)
+        internal static IAqlModifiable<TResult> ReturnResult<TResult>(this IAqlModifiable<TResult> source, bool returnNewResult)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
