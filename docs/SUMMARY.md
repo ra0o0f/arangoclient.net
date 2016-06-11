@@ -1,4 +1,4 @@
 # Summary
 
 * [Introduction](README.md)
-* [ArangoDatabase](arangodatabase.md)
+* [ArangoDatabase](ArangoDatabase.md)

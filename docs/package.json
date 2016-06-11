@@ -1,0 +1,18 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "Welcome to the ArangoDB .NET client driver documentation.",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf _book && gitbook build",
+    "http-server": "http-server _book -p 9898 -s",
+    "start": "npm run build && npm run http-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.9.0",
+    "rimraf": "^2.5.2"
+  }
+}
