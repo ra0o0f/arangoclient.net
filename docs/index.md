@@ -1,6 +1,6 @@
-##ArangoDatabase
+## ArangoDatabase
 
-####What is ArangoDatabase?
+#### What is ArangoDatabase?
 Creating a document, executing a query and all other operation against ArangoDB are accessible through `ArangoDatabase` object. it performs all operations by communicating through ArangoDB Http API.
 
 
@@ -8,18 +8,26 @@ Creating a document, executing a query and all other operation against ArangoDB 
 using (IArangoDatabase db = new ArangoDatabase("http://localhost:8529", "SampleDB"))
 {
 	var info = db.CurrentDatabaseInformation();
-	
+
 	// output: "C:\ArangoDB 2.3.4\var\lib\arangodb\databases\database-179610003747"     
 	Console.WriteLine(info.Path);
 }
 ```
 
-####Creating a new ArangoDatabase object
-Creating `ArangoDatabase` object is a cheap operation and it does not perform any expensive action against database, so it can be create anytime database operation is needed.
+##### Notes on creating new instance of `ArangoDatabase`
 
-One way to create `ArangoDatabase` object is to pass `database` and `url` arguments like above example. Another way is by passing a `DatabaseSharedSetting` object, in this way
-you can also set other properties:
-    
+* `ArangoDatabase` instance lifetime should be kept short. this is because it's responsible for change tracking where it is able to update documents partially base on changes you make on a document, So storing it for the application lifetime would be a bad idea (for example you can store it for a asp.net request life cycle)
+
+*  `ArangoDatabase` instance members are not guaranteed to be thread safe, So in a multi-threaded application you must use a separate instance of `ArangoDatabase`
+
+* Creating new `ArangoDatabase` does not perform any request against the database, So create as many as you need. You can also pass a `DatabaseSharedSetting` object on creating new instance to share settings in all of them.
+
+##### Methods for creating new instance of `ArangoDatabase`
+
+
+One way to create `ArangoDatabase` object is to pass `database` and `url` arguments like above example. Another way is by passing a `DatabaseSharedSetting` object, This way
+you have the ability to set other properties:
+
 ```csharp
 var sharedSetting = new DatabaseSharedSetting
 {
@@ -34,11 +42,11 @@ using (IArangoDatabase db = new ArangoDatabase(sharedSetting))
 }
 ```
 
-`DatabaseSharedSetting` object are the way to change client default behavior, you
-can define it once(store it for the application life time) and pass it to all places `ArangoDatabase` is used. 
+`DatabaseSharedSetting` objects are the way to change client default behavior, you
+can define it once(it is thread-safe and you can store it for the application life time) and pass it to all places `ArangoDatabase` object is created.
 [Database settings in detail](./DatabaseSetting.md)
 
-`ArangoDatabase` also provide two static methods for storing and using `DatabaseSharedSetting` for application life time to create new `ArangoDatabase`.
+There is also another way that `ArangoDatabase` can store `DatabaseSharedSetting` for you..
 
 ```csharp
 // this will create a new SharedSetting
@@ -50,7 +58,7 @@ ArangoDatabase.ChangeSetting(s =>
 	s.CreateCollectionOnTheFly = false;
 });
 
-// above setting can be used to create new ArangoDatabase
+// above setting can be used to create new instance of ArangoDatabase
 using(var db = ArangoDatabase.CreateWithSetting())
 {
 }
@@ -71,15 +79,3 @@ using(IArangoDatabase db = ArangoDatabase.CreateWithSetting("SampleDBSetting"))
 {
 }
 ```
-
-<div class="document-caution">
-Note that `ArangoDatabase` is also responsible for `Change Tracking` that 
-tracks documents to perform easy updates of documents. so do not keep
-`ArangoDatabase` object for a long time. 
-</div>
-
-
-
-
-
-
