@@ -8,6 +8,8 @@
 
 # Build results
 
+docs/_book
+
 [Dd]ebug/
 [Rr]elease/
 x64/
