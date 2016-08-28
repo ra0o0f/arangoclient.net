@@ -193,7 +193,7 @@ namespace ArangoDB.Client.Graph
 
             var result = await command.RequestMergedResult<InsertEdgeResult>(jObject).ConfigureAwait(false);
 
-            if (!result.BaseResult.Error)
+            if (result.BaseResult.HasError() == false)
             {
                 if (!db.Setting.DisableChangeTracking)
                 {
@@ -254,7 +254,7 @@ namespace ArangoDB.Client.Graph
             db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
 
             if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
-                (result.BaseResult.Error && result.BaseResult.ErrorNum != 1202))
+                (result.BaseResult.HasError() && result.BaseResult.ErrorNum != 1202))
                 new BaseResultAnalyzer(db).Throw(result.BaseResult);
 
             if (baseResult != null)
@@ -350,7 +350,7 @@ namespace ArangoDB.Client.Graph
 
                 var result = await UpdateByIdAsync(container.Id, changed, waitForSync, keepNull, (b) => bResult = b).ConfigureAwait(false);
 
-                if (!bResult.Error)
+                if (bResult.HasError() == false)
                 {
                     container.Rev = result.Rev;
                     container.Document = jObject;
@@ -403,7 +403,7 @@ namespace ArangoDB.Client.Graph
 
             var result = await command.RequestMergedResult<CrudEdgeResult>(document).ConfigureAwait(false);
 
-            if (!result.BaseResult.Error)
+            if (result.BaseResult.HasError() == false)
                 db.SharedSetting.IdentifierModifier.Modify(document, result.Result.Edge);
 
             if (baseResult != null)
@@ -443,7 +443,7 @@ namespace ArangoDB.Client.Graph
             if (baseResult != null)
                 baseResult(bResult);
 
-            if (!bResult.Error)
+            if (bResult.HasError() == false)
             {
                 container.Rev = result.Rev;
                 container.Document = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
@@ -528,7 +528,7 @@ namespace ArangoDB.Client.Graph
             if (baseResult != null)
                 baseResult(bResult);
 
-            if (!bResult.Error)
+            if (bResult.HasError() == false)
                 db.ChangeTracker.StopTrackChanges(document);
 
             return result;

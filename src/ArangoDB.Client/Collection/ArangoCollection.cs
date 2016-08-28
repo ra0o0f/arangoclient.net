@@ -73,7 +73,7 @@ namespace ArangoDB.Client.Collection
 
             var result = await command.RequestMergedResult<DocumentIdentifierBaseResult>(document).ConfigureAwait(false);
 
-            if (!result.BaseResult.Error)
+            if (result.BaseResult.HasError() == false)
             {
                 if (db.Setting.DisableChangeTracking == false)
                     db.ChangeTracker.TrackChanges(document, result.Result);
@@ -131,7 +131,7 @@ namespace ArangoDB.Client.Collection
 
             var result = await command.RequestMergedResult<DocumentIdentifierBaseResult>(edgeDocument).ConfigureAwait(false);
 
-            if (!result.BaseResult.Error)
+            if (result.BaseResult.HasError() == false)
             {
                 if (!db.Setting.DisableChangeTracking)
                 {
@@ -199,7 +199,7 @@ namespace ArangoDB.Client.Collection
 
             var result = await command.RequestMergedResult<DocumentIdentifierBaseResult>(document).ConfigureAwait(false);
 
-            if (!result.BaseResult.Error)
+            if (result.BaseResult.HasError() == false)
                 db.SharedSetting.IdentifierModifier.Modify(document, result.Result);
 
             if (baseResult != null)
@@ -246,7 +246,7 @@ namespace ArangoDB.Client.Collection
             if (baseResult != null)
                 baseResult(bResult);
 
-            if (!bResult.Error)
+            if (bResult.HasError() == false)
             {
                 container.Rev = result.Rev;
                 container.Document = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
@@ -365,7 +365,7 @@ namespace ArangoDB.Client.Collection
                 if (baseResult != null)
                     baseResult(bResult);
 
-                if (!bResult.Error)
+                if (bResult.HasError() == false)
                 {
                     container.Rev = result.Rev;
                     container.Document = jObject;
@@ -487,7 +487,7 @@ namespace ArangoDB.Client.Collection
             if (baseResult != null)
                 baseResult(bResult);
 
-            if (!bResult.Error)
+            if (bResult.HasError() == false)
                 db.ChangeTracker.StopTrackChanges(document);
 
             return result;
@@ -528,7 +528,7 @@ namespace ArangoDB.Client.Collection
             db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
 
             if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
-                (result.BaseResult.Error && result.BaseResult.ErrorNum != 1202))
+                (result.BaseResult.HasError() && result.BaseResult.ErrorNum != 1202))
                 new BaseResultAnalyzer(db).Throw(result.BaseResult);
 
             if (baseResult != null)
@@ -564,10 +564,10 @@ namespace ArangoDB.Client.Collection
             bool exists = false;
             var document = await DocumentAsync<T>(id, (b) =>
             {
-                if (b.Error && b.ErrorNum != 1202)
+                if (b.HasError() && b.ErrorNum != 1202)
                     new BaseResultAnalyzer(db).Throw(b);
-
-                exists = !b.Error;
+                
+                exists = b.HasError() == false;
 
                 if (baseResult != null)
                     baseResult(b);

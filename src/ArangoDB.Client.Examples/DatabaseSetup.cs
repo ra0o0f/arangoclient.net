@@ -23,8 +23,8 @@ namespace ArangoDB.Client.Examples
                 if (!_db.ListDatabases().Contains(sharedSetting.Database))
                     _db.CreateDatabase(sharedSetting.Database);
 
-                var collections = _db.ListCollections().Select(c=>c.Name).ToArray();
-                var collectionsToCreate = new string[]{ "Person","hosts" };
+                var collections = _db.ListCollections().Select(c => c.Name).ToArray();
+                var collectionsToCreate = new string[] { "Person", "hosts" };
 
                 foreach (var c in collectionsToCreate.Except(collections))
                     _db.CreateCollection(c);
@@ -32,7 +32,7 @@ namespace ArangoDB.Client.Examples
 
             return sharedSetting;
         });
-        
+
         public TestDatabaseSetup()
         {
             var sharedSetting = SharedSetting.Value;

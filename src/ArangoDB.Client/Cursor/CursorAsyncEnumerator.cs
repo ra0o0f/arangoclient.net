@@ -78,7 +78,7 @@ namespace ArangoDB.Client.Cursor
             {
                 new BaseResultAnalyzer(db).ThrowIfNeeded(CursorResult);
 
-                if (db.Setting.ThrowForServerErrors == false && CursorResult.Error)
+                if (db.Setting.ThrowForServerErrors == false && CursorResult.HasError())
                     return false;
             }
 

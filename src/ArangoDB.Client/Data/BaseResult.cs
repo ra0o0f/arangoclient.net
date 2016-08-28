@@ -9,35 +9,40 @@ namespace ArangoDB.Client.Data
 {
     public class BaseResult
     {
-        public int Code { get; set; }
+        public int? Code { get; set; }
 
-        public bool Error { get; set; }
+        public bool? Error { get; set; }
 
         public string ErrorMessage { get; set; }
 
-        public int ErrorNum { get; set; } 
+        public int? ErrorNum { get; set; } 
+
+        public bool HasError()
+        {
+            return Error == true;
+        }
 
         protected void SetProperties(BaseResult baseResult)
         {
-            this.Code = baseResult.Code;
-            this.Error = baseResult.Error;
-            this.ErrorMessage = baseResult.ErrorMessage;
-            this.ErrorNum = baseResult.ErrorNum;
+            Code = baseResult.Code;
+            Error = baseResult.Error;
+            ErrorMessage = baseResult.ErrorMessage;
+            ErrorNum = baseResult.ErrorNum;
         }
      
         internal virtual void SetFromJsonTextReader(string name, JsonToken token, object value)
         {
             if (name == "code" && token == JsonToken.Integer)
-                this.Code = Convert.ToInt32(value);
+                Code = Convert.ToInt32(value);
 
             if (name == "error" && token == JsonToken.Boolean)
-                this.Error = Convert.ToBoolean(value);
+                Error = Convert.ToBoolean(value);
 
             if (name == "errorMessage" && token == JsonToken.String)
-                this.ErrorMessage = value.ToString();
+                ErrorMessage = value.ToString();
 
             if (name == "errorNum" && token == JsonToken.Integer)
-                this.ErrorNum = Convert.ToInt32(value);
+                ErrorNum = Convert.ToInt32(value);
         }
     }
 }
