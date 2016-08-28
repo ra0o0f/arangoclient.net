@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Data;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -24,15 +25,22 @@ namespace ArangoDB.Client.Examples
                 ConfigurationManager.AppSettings["dbSystemUser"],
                 ConfigurationManager.AppSettings["dbSystemPass"]);
             sharedSetting.Credential = new System.Net.NetworkCredential(
-                ConfigurationManager.AppSettings["dbSystemUser"],
-                ConfigurationManager.AppSettings["dbSystemPass"]);
+                ConfigurationManager.AppSettings["dbExampleUser"],
+                ConfigurationManager.AppSettings["dbExamplePass"]);
 
             sharedSetting.Collection.ChangeIdentifierDefaultName(IdentifierType.Key, "Key");
 
             using (var _db = new ArangoDatabase(sharedSetting))
             {
                 if (!_db.ListDatabases().Contains(sharedSetting.Database))
-                    _db.CreateDatabase(sharedSetting.Database);
+                    _db.CreateDatabase(sharedSetting.Database, new List<DatabaseUser>
+                    {
+                        new DatabaseUser
+                        {
+                            Username = ConfigurationManager.AppSettings["dbExampleUser"],
+                            Passwd = ConfigurationManager.AppSettings["dbExamplePass"]
+                        }
+                    });
 
                 var collections = _db.ListCollections().Select(c => c.Name).ToArray();
                 var collectionsToCreate = new string[] { "Person", "hosts" };
