@@ -270,7 +270,7 @@ namespace ArangoDB.Client
 
             command.Query.Add("excludeSystem", excludeSystem.ToString());
 
-            var result = await command.RequestGenericListResult<CreateCollectionResult, CollectionsInheritedCommandResult<List<CreateCollectionResult>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<CreateCollectionResult, InheritedCommandResult<List<CreateCollectionResult>>>().ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);

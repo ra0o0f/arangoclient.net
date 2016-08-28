@@ -74,7 +74,6 @@
     <Compile Include="DatabaseSharedSetting.cs" />
     <Compile Include="Data\AddVertexCollectionData.cs" />
     <Compile Include="Data\BaseResult.cs" />
-    <Compile Include="Data\CollectionsInheritedCommandResult.cs" />
     <Compile Include="Data\CreateCollectionData.cs" />
     <Compile Include="Data\CreateCollectionResult.cs" />
     <Compile Include="Data\CreateDatabaseData.cs" />

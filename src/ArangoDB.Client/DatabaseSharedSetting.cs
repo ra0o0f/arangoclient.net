@@ -28,8 +28,8 @@ namespace ArangoDB.Client
             IdentifierModifier = new DocumentIdentifierModifier(this);
             CreateCollectionOnTheFly = true;
             Url = "http://localhost:8529";
-            Credential = new NetworkCredential("root", "");
-            SystemDatabaseCredential = new NetworkCredential("root", "");
+            Credential = new NetworkCredential("not-set", "");
+            SystemDatabaseCredential = new NetworkCredential("not-set", "");
             ThrowForServerErrors = true;
             Logger = new DatabaseLogSharedSetting
             {

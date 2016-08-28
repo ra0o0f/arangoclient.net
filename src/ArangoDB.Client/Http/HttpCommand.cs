@@ -205,7 +205,7 @@ namespace ArangoDB.Client.Http
                     result.Result = response.IsSuccessStatusCode ? serializer.Deserialize<T>(stream) : default(T);
                 }
 
-                result.BaseResult = !response.IsSuccessStatusCode ? serializer.Deserialize<BaseResult>(stream) : new BaseResult { Code = (int)response.StatusCode };
+                result.BaseResult = response.IsSuccessStatusCode == false ? serializer.Deserialize<BaseResult>(stream) : new BaseResult();
             }
 
             new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);

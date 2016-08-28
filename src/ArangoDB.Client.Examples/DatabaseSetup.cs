@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,21 @@ namespace ArangoDB.Client.Examples
     {
         protected IArangoDatabase db;
 
-        Lazy<DatabaseSharedSetting> SharedSetting = new Lazy<DatabaseSharedSetting>(() =>
+        static Lazy<DatabaseSharedSetting> SharedSetting = new Lazy<DatabaseSharedSetting>(() =>
         {
+            // Uncomment if you want your requests goes through proxy
+            //ArangoDatabase.ClientSetting.Proxy = new System.Net.WebProxy("http://localhost:8888");
+
             var sharedSetting = new DatabaseSharedSetting();
             sharedSetting.Database = "ExampleDB";
-            sharedSetting.Url = "http://localhost:8529";
+            sharedSetting.Url = "http://localhost.:8529";
+
+            sharedSetting.SystemDatabaseCredential = new System.Net.NetworkCredential(
+                ConfigurationManager.AppSettings["dbSystemUser"],
+                ConfigurationManager.AppSettings["dbSystemPass"]);
+            sharedSetting.Credential = new System.Net.NetworkCredential(
+                ConfigurationManager.AppSettings["dbSystemUser"],
+                ConfigurationManager.AppSettings["dbSystemPass"]);
 
             sharedSetting.Collection.ChangeIdentifierDefaultName(IdentifierType.Key, "Key");
 
