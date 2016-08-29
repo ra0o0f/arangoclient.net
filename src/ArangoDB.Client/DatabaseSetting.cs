@@ -9,8 +9,6 @@ namespace ArangoDB.Client
 {
     public class DatabaseSetting
     {
-        private bool? _createCollectionOnTheFly;
-
         private bool? _waitForSync;
 
         private bool? _throwForServerErrors;
@@ -27,21 +25,6 @@ namespace ArangoDB.Client
             this.Linq = new DatabaseLinqSetting(sharedSetting);
             this.Logger = new DatabaseLogSetting(sharedSetting);
             this.Serialization = new DatabaseSerializationSetting(sharedSetting);
-        }
-
-        public bool CreateCollectionOnTheFly
-        {
-            get
-            {
-                if (sharedSetting.ClusterMode == true)
-                    return false;
-
-                if (_createCollectionOnTheFly.HasValue)
-                    return _createCollectionOnTheFly.Value;
-
-                return sharedSetting.CreateCollectionOnTheFly;
-            }
-            set { _createCollectionOnTheFly = value; }
         }
 
         public bool WaitForSync

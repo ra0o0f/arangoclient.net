@@ -99,11 +99,11 @@ namespace ArangoDB.Client.Advanced
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        public BulkImportResult BulkImport<TCollection>(IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        public BulkImportResult BulkImport<TCollection>(IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null)
         {
-            return BulkImportAsync<TCollection>(documents, createCollection, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ResultSynchronizer();
+            return BulkImportAsync<TCollection>(documents, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -119,13 +119,32 @@ namespace ArangoDB.Client.Advanced
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        public async Task<BulkImportResult> BulkImportAsync<TCollection>(IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        public async Task<BulkImportResult> BulkImportAsync<TCollection>(IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null)
         {
             string collectionName = db.SharedSetting.Collection.ResolveCollectionName<TCollection>();
 
-            return await BulkImportAsync(collectionName, documents, createCollection, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ConfigureAwait(false);
+            return await BulkImportAsync(collectionName, documents, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Imports documents
+        /// </summary>
+        /// <param name="collection">The collection name</param>
+        /// <param name="documents">Documents to import</param>
+        /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
+        /// <param name="complete">If true, then it will make the whole import fail if any error occurs</param>
+        /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
+        /// <param name="baseResult"></param>
+        /// <returns>BulkImportResult</returns>
+        public BulkImportResult BulkImport(string collection, IEnumerable documents, bool? overwrite = null
+            , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
+            , Action<BaseResult> baseResult = null)
+        {
+            return BulkImportAsync(collection, documents, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -141,31 +160,10 @@ namespace ArangoDB.Client.Advanced
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        public BulkImportResult BulkImport(string collection, IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        public async Task<BulkImportResult> BulkImportAsync(string collection, IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null)
         {
-            return BulkImportAsync(collection, documents, createCollection, overwrite, waitForSync, onDuplicate, complete, details, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Imports documents
-        /// </summary>
-        /// <param name="collection">The collection name</param>
-        /// <param name="documents">Documents to import</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
-        /// <param name="complete">If true, then it will make the whole import fail if any error occurs</param>
-        /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
-        /// <param name="baseResult"></param>
-        /// <returns>BulkImportResult</returns>
-        public async Task<BulkImportResult> BulkImportAsync(string collection, IEnumerable documents, bool? createCollection = null, bool? overwrite = null
-            , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
-            , Action<BaseResult> baseResult = null)
-        {
-            createCollection = createCollection ?? db.Setting.CreateCollectionOnTheFly;
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(db)
@@ -177,7 +175,6 @@ namespace ArangoDB.Client.Advanced
 
             command.Query.Add("type", "documents");
             command.Query.Add("collection", collection);
-            command.Query.Add("createCollection", createCollection.ToString());
             command.Query.Add("waitForSync", waitForSync.ToString());
 
             if (overwrite.HasValue)

@@ -26,7 +26,6 @@ namespace ArangoDB.Client
             Serialization = new DatabaseSerializationSharedSetting();
             Collection = new DatabaseCollectionSetting(this);
             IdentifierModifier = new DocumentIdentifierModifier(this);
-            CreateCollectionOnTheFly = true;
             Url = "http://localhost:8529";
             Credential = new NetworkCredential("not-set", "");
             SystemDatabaseCredential = new NetworkCredential("not-set", "");
@@ -40,9 +39,7 @@ namespace ArangoDB.Client
                 HttpHeaders = false
             };
         }
-
-        private bool _createCollectionOnTheFly;
-
+        
         private string _url;
 
         public string Url
@@ -64,16 +61,7 @@ namespace ArangoDB.Client
         public bool WaitForSync { get; set; }
 
         public bool ThrowForServerErrors { get; set; }
-
-        public bool CreateCollectionOnTheFly
-        {
-            get
-            {
-                return _createCollectionOnTheFly && !ClusterMode;
-            }
-            set { _createCollectionOnTheFly = value; }
-        }
-
+        
         public NetworkCredential SystemDatabaseCredential { get; set; }
 
         public bool ClusterMode { get; set; }

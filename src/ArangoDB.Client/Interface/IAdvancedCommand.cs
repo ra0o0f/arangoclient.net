@@ -51,7 +51,6 @@ namespace ArangoDB.Client
         /// </summary>
         /// <typeparam name="TCollection">Collection Type</typeparam>
         /// <param name="documents">Documents to import</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
@@ -59,7 +58,7 @@ namespace ArangoDB.Client
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        BulkImportResult BulkImport<TCollection>(IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        BulkImportResult BulkImport<TCollection>(IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null);
 
@@ -68,7 +67,6 @@ namespace ArangoDB.Client
         /// </summary>
         /// <typeparam name="TCollection">Collection Type</typeparam>
         /// <param name="documents">Documents to import</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
@@ -76,7 +74,7 @@ namespace ArangoDB.Client
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        Task<BulkImportResult> BulkImportAsync<TCollection>(IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        Task<BulkImportResult> BulkImportAsync<TCollection>(IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null);
 
@@ -85,7 +83,6 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="collection">The collection name</param>
         /// <param name="documents">Documents to import</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
@@ -93,7 +90,7 @@ namespace ArangoDB.Client
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        BulkImportResult BulkImport(string collection, IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        BulkImportResult BulkImport(string collection, IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null);
 
@@ -102,7 +99,6 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="collection">The collection name</param>
         /// <param name="documents">Documents to import</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="overwrite">If true, then all data in the collection will be removed prior to the import</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <param name="onDuplicate">Controls what action is carried out in case of a unique key constraint violation</param>
@@ -110,7 +106,7 @@ namespace ArangoDB.Client
         /// <param name="details">If true, then the result will include details about documents that could not be imported</param>
         /// <param name="baseResult"></param>
         /// <returns>BulkImportResult</returns>
-        Task<BulkImportResult> BulkImportAsync(string collection, IEnumerable documents, bool? createCollection = null, bool? overwrite = null
+        Task<BulkImportResult> BulkImportAsync(string collection, IEnumerable documents, bool? overwrite = null
             , bool? waitForSync = null, ImportDuplicatePolicy? onDuplicate = null, bool? complete = null, bool? details = null
             , Action<BaseResult> baseResult = null);
     }

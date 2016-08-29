@@ -54,9 +54,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> InsertAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> InsertAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return await Collection<T>().InsertAsync(document, createCollection, waitForSync, baseResult).ConfigureAwait(false);
+            return await Collection<T>().InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace ArangoDB.Client
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Insert<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Insert<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return Collection<T>().Insert(document, createCollection, waitForSync, baseResult);
+            return Collection<T>().Insert(document, waitForSync, baseResult);
         }
 
         /// <summary>

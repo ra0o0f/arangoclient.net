@@ -57,10 +57,6 @@ namespace ArangoDB.Client.Examples.SetupClient
             // default: true
             sharedSetting.ThrowForServerErrors = false;
 
-            // if set to false, collections won't be created when inserting documents
-            // default: true
-            sharedSetting.CreateCollectionOnTheFly = false;
-
             // set default BatchSize for cursor all operations
             // default: null
             sharedSetting.Cursor.BatchSize = 1024;

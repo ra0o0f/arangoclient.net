@@ -61,19 +61,17 @@ namespace ArangoDB.Client
         /// Creates a new document in the collection for specific type
         /// </summary>
         /// <param name="document">Representation of the document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> InsertAsync<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> InsertAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new document in the collection for specific type
         /// </summary>
         /// <param name="document">Representation of the document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult Insert<T>(object document, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Insert<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge document in the collection
