@@ -26,7 +26,7 @@ namespace ArangoDB.Client
         /// Retrieves information about the current database
         /// </summary>
         /// <returns>DatabaseInformation</returns>
-        public async Task<DatabaseInformation> CurrentDatabaseInformationAsync(Action<BaseResult> baseResult=null)
+        public async Task<DatabaseInformation> CurrentDatabaseInformationAsync(Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -37,7 +37,7 @@ namespace ArangoDB.Client
 
             var result = await command.RequestGenericSingleResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>().ConfigureAwait(false);
 
-            if(baseResult!=null)
+            if (baseResult != null)
                 baseResult(result.BaseResult);
 
             return result.Result;
@@ -65,7 +65,7 @@ namespace ArangoDB.Client
                 Command = "user"
             };
 
-            var result = await command.RequestGenericListResult<string,InheritedCommandResult<List<string>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -155,12 +155,12 @@ namespace ArangoDB.Client
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
         /// <returns>CreateCollectionResult</returns>
-        public CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null, decimal? journalSize = null,
+        public CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null,
-            string shardKeys = null, Action<BaseResult> baseResult = null)
+            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
         {
             return CreateCollectionAsync(name, waitForSync, doCompact, journalSize, isSystem,
-                isVolatile, type, numberOfShards, shardKeys, baseResult).ResultSynchronizer();
+                isVolatile, type, numberOfShards, shardKeys, keyOptions, IndexBuckets, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -176,9 +176,9 @@ namespace ArangoDB.Client
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
         /// <returns>CreateCollectionResult</returns>
-        public async Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null, bool? doCompact = null, decimal? journalSize=null,
-            bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards=null
-            , string shardKeys = null, Action<BaseResult> baseResult = null)
+        public async Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
+            bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null
+            , string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -188,13 +188,16 @@ namespace ArangoDB.Client
 
             var data = new CreateCollectionData
             {
-                DoCompact=doCompact,
-                IsSystem=isSystem,
-                IsVolatile=isVolatile,
-                Name=name,
-                NumberOfShards=numberOfShards,
-                ShardKeys=shardKeys,
-                WaitForSync=waitForSync
+                DoCompact = doCompact,
+                IsSystem = isSystem,
+                IsVolatile = isVolatile,
+                Name = name,
+                NumberOfShards = numberOfShards,
+                ShardKeys = shardKeys,
+                WaitForSync = waitForSync,
+                JournalSize = journalSize,
+                KeyOptions = keyOptions,
+                IndexBuckets = IndexBuckets
             };
 
             if (type.HasValue)
@@ -259,7 +262,7 @@ namespace ArangoDB.Client
         /// <param name="excludeSystem">Exclude system collections</param>
         /// <param name="baseResult">Runs when base result is ready</param>
         /// <returns>List of collection properties</returns>
-        public async Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem=true, Action<BaseResult> baseResult = null)
+        public async Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem = true, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {

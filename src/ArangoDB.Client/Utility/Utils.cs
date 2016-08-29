@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArangoDB.Client.Data;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -56,6 +57,19 @@ namespace ArangoDB.Client.Utility
                     return "path";
                 default:
                     throw new InvalidOperationException($"UniquenessType {type} binding not found, this is a client bug");
+            }
+        }
+
+        public static string KeyGeneratorTypeToString(KeyGeneratorType type)
+        {
+            switch (type)
+            {
+                case KeyGeneratorType.Autoincrement:
+                    return "autoincrement";
+                case KeyGeneratorType.Traditional:
+                    return "traditional";
+                default:
+                    throw new InvalidOperationException($"KeyGeneratorType {type} binding not found, this is a client bug");
             }
         }
 

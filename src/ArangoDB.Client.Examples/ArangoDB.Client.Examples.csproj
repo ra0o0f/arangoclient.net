@@ -60,7 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\DatabaseCommand.cs" />
+    <Compile Include="Collections\CollectionCommand.cs" />
+    <Compile Include="Databases\DatabaseCommand.cs" />
     <Compile Include="Documents\DocumentCommand.cs" />
     <Compile Include="Linq\ModificationQuery.cs" />
     <Compile Include="Models\Host.cs" />

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ArangoDB.Client.Examples.Database
+namespace ArangoDB.Client.Examples.Databases
 {
     public class DatabaseCommand : TestDatabaseSetup
     {

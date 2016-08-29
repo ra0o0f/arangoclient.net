@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArangoDB.Client.Utility;
+using ArangoDB.Client.Data;
 
 namespace ArangoDB.Client.Serialization.Converters
 {
@@ -17,7 +18,8 @@ namespace ArangoDB.Client.Serialization.Converters
             [typeof(TraversalOrder?)] = (v) => { return Utils.TraversalOrderToString((TraversalOrder)v); },
             [typeof(TraversalItemOrder?)] = (v) => { return Utils.TraversalItemOrderToString((TraversalItemOrder)v); },
             [typeof(EdgeDirection?)] = (v) => { return Utils.EdgeDirectionToString((EdgeDirection)v); },
-            [typeof(IndexType?)] = (v) => { return Utils.IndexTypeToString((IndexType)v); }
+            [typeof(IndexType?)] = (v) => { return Utils.IndexTypeToString((IndexType)v); },
+            [typeof(KeyGeneratorType?)] = (v) => { return Utils.KeyGeneratorTypeToString((KeyGeneratorType)v); }
         };
 
         public override bool CanConvert(Type objectType)
@@ -27,7 +29,8 @@ namespace ArangoDB.Client.Serialization.Converters
                 || objectType == typeof(TraversalOrder) || objectType == typeof(TraversalOrder?)
                 || objectType == typeof(TraversalItemOrder) || objectType == typeof(TraversalItemOrder?)
                 || objectType == typeof(EdgeDirection) || objectType == typeof(EdgeDirection?)
-                || objectType == typeof(IndexType) || objectType == typeof(IndexType?))
+                || objectType == typeof(IndexType) || objectType == typeof(IndexType?)
+                || objectType == typeof(KeyGeneratorType) || objectType == typeof(KeyGeneratorType?))
                 return true;
 
             return false;
@@ -58,6 +61,9 @@ namespace ArangoDB.Client.Serialization.Converters
 
             else if ((value as IndexType?).HasValue)
                 writer.WriteValue(enumToStrings[typeof(IndexType?)](value));
+
+            else if ((value as KeyGeneratorType?).HasValue)
+                writer.WriteValue(enumToStrings[typeof(KeyGeneratorType?)](value));
 
             else
                 throw new InvalidOperationException($"Cant find binding to serialize type {value.GetType()}, this is client bug");
