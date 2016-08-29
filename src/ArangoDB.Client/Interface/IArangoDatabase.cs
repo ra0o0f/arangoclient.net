@@ -231,14 +231,14 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        T Document<T>(string id, Action<BaseResult> baseResult = null);
+        T Document<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Reads a single document
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        Task<T> DocumentAsync<T>(string id, Action<BaseResult> baseResult = null);
+        Task<T> DocumentAsync<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Check if document exists

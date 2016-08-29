@@ -24,12 +24,12 @@ namespace ArangoDB.Client.Collection
         IArangoDatabase db;
 
         CollectionType collectionType { get; set; }
-        
+
         /// <summary>
         /// Gets the collection for a specific type
         /// </summary>
         /// <returns></returns>
-        public ArangoCollection(IArangoDatabase db, CollectionType type,string collectionName)
+        public ArangoCollection(IArangoDatabase db, CollectionType type, string collectionName)
         {
             this.db = db;
             this.collectionName = collectionName;
@@ -498,9 +498,9 @@ namespace ArangoDB.Client.Collection
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public T Document<T>(string id, Action<BaseResult> baseResult = null)
+        public T Document<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return DocumentAsync<T>(id, baseResult).ResultSynchronizer();
+            return DocumentAsync<T>(id, ifMatchRev, ifNoneMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -508,24 +508,25 @@ namespace ArangoDB.Client.Collection
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public async Task<T> DocumentAsync<T>(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> DocumentAsync<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
 
-            var command = new HttpCommand(this.db)
+            var command = new HttpCommand(db)
             {
-                Api = collectionType == CollectionType.Document ? CommandApi.Document : CommandApi.Edge,
+                Api = CommandApi.Document,
                 Method = HttpMethod.Get,
                 Command = apiCommand,
-                EnableChangeTracking = db.Setting.DisableChangeTracking == false
+                EnableChangeTracking = db.Setting.DisableChangeTracking == false,
+                Headers = new Dictionary<string, string>()
             };
 
-            var defaultThrowForServerErrors = db.Setting.ThrowForServerErrors;
-            db.Setting.ThrowForServerErrors = false;
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
+            else if (string.IsNullOrEmpty(ifNoneMatchRev) == false)
+                command.Headers.Add("If-None-Match", ifNoneMatchRev);
 
-            var result = await command.RequestDistinctResult<T>().ConfigureAwait(false);
-
-            db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
+            var result = await command.RequestDistinctResult<T>(throwForServerErrors: false).ConfigureAwait(false);
 
             if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
                 (result.BaseResult.HasError() && result.BaseResult.ErrorNum != 1202))
@@ -562,17 +563,17 @@ namespace ArangoDB.Client.Collection
             db.Setting.ThrowForServerErrors = false;
 
             bool exists = false;
-            var document = await DocumentAsync<T>(id, (b) =>
-            {
-                if (b.HasError() && b.ErrorNum != 1202)
-                    new BaseResultAnalyzer(db).Throw(b);
-                
-                exists = b.HasError() == false;
+            var document = await DocumentAsync<T>(id, baseResult: (b) =>
+             {
+                 if (b.HasError() && b.ErrorNum != 1202)
+                     new BaseResultAnalyzer(db).Throw(b);
 
-                if (baseResult != null)
-                    baseResult(b);
+                 exists = b.HasError() == false;
 
-            }).ConfigureAwait(false);
+                 if (baseResult != null)
+                     baseResult(b);
+
+             }).ConfigureAwait(false);
 
             if (onDocumentLoad != null)
                 onDocumentLoad(document);
@@ -940,7 +941,7 @@ namespace ArangoDB.Client.Collection
         IArangoDatabase db;
 
         CollectionType collectionType { get; set; }
-        
+
         /// <summary>
         /// Gets the collection by its type
         /// </summary>
@@ -1128,7 +1129,7 @@ namespace ArangoDB.Client.Collection
         {
             return await collectionMethods.UpdateAsync(document, keepNull, mergeObjects, policy, waitForSync, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Deletes the document without change tracking
         /// </summary>
@@ -1187,9 +1188,9 @@ namespace ArangoDB.Client.Collection
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public T Document(string id, Action<BaseResult> baseResult = null)
+        public T Document(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return DocumentAsync(id, baseResult).ResultSynchronizer();
+            return DocumentAsync(id, ifMatchRev, ifNoneMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -1197,9 +1198,9 @@ namespace ArangoDB.Client.Collection
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public async Task<T> DocumentAsync(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> DocumentAsync(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.DocumentAsync<T>(id, baseResult).ConfigureAwait(false);
+            return await collectionMethods.DocumentAsync<T>(id, ifMatchRev, ifNoneMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>

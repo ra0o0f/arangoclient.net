@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Serialization;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -32,17 +33,17 @@ namespace ArangoDB.Client.Http
 
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
-            
+
             if (ArangoDatabase.ClientSetting.HttpRequestTimeout.HasValue)
                 httpClient.Timeout = ArangoDatabase.ClientSetting.HttpRequestTimeout.Value;
-            
+
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(".NETClient", Utility.Utils.GetAssemblyVersion()));
-            
+
             ArangoDatabase.ClientSetting.HttpClientInitialized = true;
 
             return httpClient;
         });
-        
+
         private static HttpClient httpClient
         { get { return httpClientLazily.Value; } }
 
@@ -71,12 +72,16 @@ namespace ArangoDB.Client.Http
 #endif
         }
 
-        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, Func<StreamWriter,Task> onStreamReady, NetworkCredential credential)
+        public async Task<HttpResponseMessage> SendCommandAsync(HttpMethod method, Uri uri, object data, Func<StreamWriter, Task> onStreamReady, NetworkCredential credential, Dictionary<string, string> headers)
         {
             var requestMessage = new HttpRequestMessage(method, uri);
 
             string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
             requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
+
+            if (headers != null)
+                foreach (var h in headers)
+                    requestMessage.Headers.TryAddWithoutValidation(h.Key, h.Value);
 
             if (db.LoggerAvailable)
             {
@@ -96,12 +101,12 @@ namespace ArangoDB.Client.Http
                 if (db.Setting.Logger.LogOnlyLightOperations == false)
                     db.Log($"data: {new DocumentSerializer(db).SerializeWithoutReader(data)}");
             }
-            
+
             if (onStreamReady == null && data != null)
                 requestMessage.Content = new JsonContent(db, data);
-            if(onStreamReady != null)
+            if (onStreamReady != null)
                 requestMessage.Content = new GenericStreamContent(db, onStreamReady);
-            
+
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (db.LoggerAvailable)

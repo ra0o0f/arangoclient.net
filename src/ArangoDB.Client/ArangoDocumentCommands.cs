@@ -302,9 +302,9 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public T Document<T>(string id, Action<BaseResult> baseResult = null)
+        public T Document<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return Collection<T>().Document(id, baseResult);
+            return Collection<T>().Document(id, ifMatchRev, ifNoneMatchRev, baseResult);
         }
 
         /// <summary>
@@ -312,9 +312,9 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
-        public async Task<T> DocumentAsync<T>(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> DocumentAsync<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Collection<T>().DocumentAsync(id, baseResult).ConfigureAwait(false);
+            return await Collection<T>().DocumentAsync(id, ifMatchRev, ifNoneMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>

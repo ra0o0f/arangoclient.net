@@ -70,6 +70,8 @@ namespace ArangoDB.Client.Http
 
         public Dictionary<string,string> Query { get; set; }
 
+        public Dictionary<string, string> Headers { get; set; }
+
         public bool EnableChangeTracking { get; set; }
 
         Uri BuildUrl()
@@ -179,7 +181,7 @@ namespace ArangoDB.Client.Http
 
         // T can be any type
         // method should be used when base result is provided on server errors
-        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null, Func<StreamWriter, Task> onStreamReady = null)
+        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null, Func<StreamWriter, Task> onStreamReady = null, bool? throwForServerErrors = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
 
@@ -205,10 +207,14 @@ namespace ArangoDB.Client.Http
                     result.Result = response.IsSuccessStatusCode ? serializer.Deserialize<T>(stream) : default(T);
                 }
 
-                result.BaseResult = response.IsSuccessStatusCode == false ? serializer.Deserialize<BaseResult>(stream) : new BaseResult();
+                // response has not BaseResult if If-None-Match point to a match revision (status: HttpStatusCode.NotModified)
+                result.BaseResult = response.IsSuccessStatusCode == false && response.StatusCode != HttpStatusCode.NotModified
+                    ? serializer.Deserialize<BaseResult>(stream) 
+                    : new BaseResult();
             }
 
-            new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
+            if(throwForServerErrors.HasValue == false || throwForServerErrors.Value == true)
+                new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
 
             return result;
         }
@@ -216,13 +222,13 @@ namespace ArangoDB.Client.Http
         public async Task<HttpResponseMessage> SendCommandAsync(object data = null)
         {
             NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential).ConfigureAwait(false);
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential, Headers).ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> SendStreamCommandAsync(Func<StreamWriter,Task> onStreamReady)
         {
             NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential).ConfigureAwait(false);
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential, Headers).ConfigureAwait(false);
         }
 
         public ICursor<T> CreateCursor<T>(object data=null)

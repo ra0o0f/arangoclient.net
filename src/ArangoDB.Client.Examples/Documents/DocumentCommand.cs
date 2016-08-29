@@ -30,7 +30,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.NotNull(person.Key);
         }
-        
+
         [Fact]
         public void Update()
         {
@@ -40,7 +40,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             db.Update<Person>(person);
 
-            Assert.Equal(db.Document<Person>(person.Key).Age,20);
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
         }
 
         [Fact]
@@ -55,6 +55,54 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
+        public void DocumentIfMatchRev()
+        {
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            var loadedPerson = db.Document<Person>(person.Key, ifMatchRev: personInfo.Rev);
+
+            Assert.Equal(person.Name, loadedPerson.Name);
+            Assert.Equal(person.Key, loadedPerson.Key);
+        }
+
+        [Fact]
+        public void DocumentIfMatchRevFailed()
+        {
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.Document<Person>(person.Key, ifMatchRev: $"{personInfo.Rev}1"));
+        }
+
+        [Fact]
+        public void DocumentIfNotMatchRev()
+        {
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            var loadedPerson = db.Document<Person>(person.Key, ifNoneMatchRev: personInfo.Rev);
+
+            Assert.Null(loadedPerson);
+        }
+
+        [Fact]
+        public void DocumentIfNotMatchRevFailed()
+        {
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            var loadedPerson = db.Document<Person>(person.Key, ifNoneMatchRev: $"{personInfo.Rev}1");
+
+            Assert.Equal(person.Name, loadedPerson.Name);
+            Assert.Equal(person.Key, loadedPerson.Key);
+        }
+
+        [Fact]
         public void Remove()
         {
             var person = InsertAPerson();
@@ -63,7 +111,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Null(db.Document<Person>(person.Key));
         }
-        
+
         [Fact]
         public void Replace()
         {
