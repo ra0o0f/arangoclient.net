@@ -209,9 +209,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult ReplaceById(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceByIdAsync(id, document, rev, policy, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -219,31 +219,30 @@ namespace ArangoDB.Client.Collection
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
         /// <param name="document">Representation of the new document</param>
-        /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null,
-            ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
-
-            policy = policy ?? db.Setting.Document.ReplacePolicy;
+            
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
-            var command = new HttpCommand(this.db)
+            var command = new HttpCommand(db)
             {
                 Api = CommandApi.Document,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                Command = apiCommand
+                Command = apiCommand,
+                Headers = new Dictionary<string, string>()
             };
 
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
+
             command.Query.Add("waitForSync", waitForSync.ToString());
-            if (rev != null)
-                command.Query.Add("rev", rev);
-            if (policy.HasValue)
-                command.Query.Add("policy", policy.Value == ReplacePolicy.Last ? "last" : "error");
+            if (ignoreRevs.HasValue)
+                command.Query.Add("ignoreRevs", ignoreRevs.Value.ToString());
 
             var result = await command.RequestMergedResult<DocumentIdentifierBaseResult>(document).ConfigureAwait(false);
 
@@ -264,9 +263,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceAsync(document, policy, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceAsync(document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -278,18 +277,16 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use ReplaceById() instead");
 
             var container = db.ChangeTracker.FindDocumentInfo(document);
-            policy = policy ?? db.Setting.Document.ReplacePolicy;
-            string rev = policy.HasValue && policy.Value == ReplacePolicy.Error ? container.Rev : null;
 
             BaseResult bResult = null;
 
-            var result = await ReplaceByIdAsync(container.Id, document, rev, policy, waitForSync, (b) => bResult = b).ConfigureAwait(false);
+            var result = await ReplaceByIdAsync(container.Id, document, waitForSync, ignoreRevs, ifMatchRev, (b) => bResult = b).ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(bResult);
@@ -1091,9 +1088,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult ReplaceById(string id, object document, string rev = null, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult ReplaceById(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceByIdAsync(id, document, rev, policy, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -1105,10 +1102,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, string rev = null,
-            ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.ReplaceByIdAsync(id, document, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.ReplaceByIdAsync(id, document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1119,9 +1115,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Replace(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceAsync(document, policy, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceAsync(document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -1133,9 +1129,9 @@ namespace ArangoDB.Client.Collection
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.ReplaceAsync(document, policy, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.ReplaceAsync(document, waitForSync, ignoreRevs, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         ///<summary>

@@ -226,16 +226,17 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
-        public void UpdateById()
+        public void ReplaceIfMatch()
         {
             ClearDatabase();
 
             var person = InsertAPerson();
 
-            db.UpdateById<Person>(person.Key, new { Age = 20 });
+            var personInfo = db.FindDocumentInfo(person);
 
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
-            Assert.Equal(db.Document<Person>(person.Key).Name, person.Name);
+            person.Age = 20;
+
+            Assert.Throws<ArangoServerException>(() => db.Replace<Person>(person, ifMatchRev: $"{personInfo.Rev}1"));
         }
 
         [Fact]
@@ -249,6 +250,31 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Null(db.Document<Person>(person.Key).Name);
             Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+        }
+
+        [Fact]
+        public void ReplaceByIdIfMatch()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.ReplaceById<Person>(person.Key, new { Age = 20 }, ifMatchRev:$"{personInfo.Rev}1"));
+        }
+
+        [Fact]
+        public void UpdateById()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            db.UpdateById<Person>(person.Key, new { Age = 20 });
+
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(db.Document<Person>(person.Key).Name, person.Name);
         }
 
         [Fact]
