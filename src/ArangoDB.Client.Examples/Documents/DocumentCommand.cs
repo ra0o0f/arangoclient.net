@@ -24,6 +24,54 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
+        public void InsertMultiple()
+        {
+            List<Person> persons = new List<Person>
+            {
+                new Person
+                {
+                    Age = 21,
+                    Name = "A"
+                },
+                new Person
+                {
+                    Age = 22,
+                    Name = "B"
+                }
+            };
+
+            var collection = db.Collection("Person") as Collection.ArangoCollection;
+
+            var results = collection.InsertMultipleAsync(persons, baseResults: (bs) =>
+            {
+                Assert.Equal(bs.Count, 2);
+                Assert.True(bs.All(x => x.HasError() == false));
+            }).Result;
+
+            Assert.Equal(results.Count, 2);
+            Assert.True(results.All(x => string.IsNullOrEmpty(x.Key) == false));
+        }
+
+        [Fact]
+        public void InsertFailed()
+        {
+            var person = InsertAPerson();
+
+            db.Setting.ThrowForServerErrors = false;
+
+            var result = db.Insert<Person>(person, baseResult: (b) =>
+             {
+                 Assert.True(b.HasError());
+             });
+
+            db.Setting.ThrowForServerErrors = true;
+
+            Assert.NotNull(result);
+
+            Assert.Null(result.Key);
+        }
+        
+        [Fact]
         public void Insert()
         {
             var person = InsertAPerson();

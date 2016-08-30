@@ -156,6 +156,31 @@ namespace ArangoDB.Client.Http
             return result;
         }
 
+        public async Task<List<ICommandResult<T>>> RequestMultipleMergedResult<T>(object data = null)
+        {
+            var results = new List<ICommandResult<T>>();
+            var response = await SendCommandAsync(data).ConfigureAwait(false);
+
+            using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                var serializer = new DocumentSerializer(db);
+
+                var _results = serializer.Deserialize<List<T>>(stream);
+                foreach (var r in _results)
+                {
+                    var distinctResult = new DistinctCommandResult<T>
+                    {
+                        Result = r,
+                        BaseResult = r as BaseResult
+                    };
+
+                    results.Add(distinctResult);
+                }
+            }
+            
+            return results;
+        }
+
         // T can be any type that derived from BaseResult and results are not change tracked
         // method could be used if we dont want to change track T here
         public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
@@ -166,12 +191,9 @@ namespace ArangoDB.Client.Http
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
                 var serializer = new DocumentSerializer(db);
-
+                
                 result.Result = serializer.Deserialize<T>(stream);
                 result.BaseResult = result.Result as BaseResult;
-
-                if (!response.IsSuccessStatusCode)
-                    result.Result = default(T);
             }
 
             new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);

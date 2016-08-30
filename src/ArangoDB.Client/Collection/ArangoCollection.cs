@@ -6,6 +6,7 @@ using ArangoDB.Client.Http;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Utility;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -34,6 +35,46 @@ namespace ArangoDB.Client.Collection
             this.db = db;
             this.collectionName = collectionName;
             collectionType = type;
+        }
+
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="document">Representation of the document</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Document identifiers</returns>
+        public async Task<List<IDocumentIdentifierResult>> InsertMultipleAsync(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            waitForSync = waitForSync ?? db.Setting.WaitForSync;
+
+            var command = new HttpCommand(db)
+            {
+                Api = CommandApi.Document,
+                Method = HttpMethod.Post,
+                Query = new Dictionary<string, string>(),
+                Command = collectionName
+            };
+
+            command.Query.Add("waitForSync", waitForSync.ToString());
+
+            var results = await command.RequestMultipleMergedResult<DocumentIdentifierBaseResult>(documents).ConfigureAwait(false);
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                if (results[i].BaseResult.HasError() == false)
+                {
+                    if (db.Setting.DisableChangeTracking == false)
+                        db.ChangeTracker.TrackChanges(documents[i], results[i].Result);
+
+                    db.SharedSetting.IdentifierModifier.Modify(documents[i], results[i].Result);
+                }
+            }
+
+            if (baseResults != null)
+                baseResults(results.Select(x => x.BaseResult).ToList());
+
+            return results.Select(x => x.Result as IDocumentIdentifierResult).ToList();
         }
 
         /// <summary>
