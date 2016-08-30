@@ -24,8 +24,43 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
+        public void InsertMultipleFailed()
+        {
+            ClearDatabase();
+
+            List<Person> persons = new List<Person>
+            {
+                new Person
+                {
+                    Key = "K",
+                    Age = 21,
+                    Name = "A"
+                },
+                new Person
+                {
+                    Key = "K",
+                    Age = 22,
+                    Name = "B"
+                }
+            };
+
+            var results = db.InsertMultiple<Person>(persons, baseResults: (bs) =>
+            {
+                Assert.Equal(bs.Count, 2);
+                Assert.True(bs[0].HasError() == false);
+                Assert.True(bs[1].HasError());
+            });
+
+            Assert.Equal(results.Count, 2);
+            Assert.True(string.IsNullOrEmpty(results[0].Key) == false);
+            Assert.True(string.IsNullOrEmpty(results[1].Key));
+        }
+
+        [Fact]
         public void InsertMultiple()
         {
+            ClearDatabase();
+
             List<Person> persons = new List<Person>
             {
                 new Person
@@ -40,13 +75,11 @@ namespace ArangoDB.Client.Examples.Documents
                 }
             };
 
-            var collection = db.Collection("Person") as Collection.ArangoCollection;
-
-            var results = collection.InsertMultipleAsync(persons, baseResults: (bs) =>
+            var results = db.InsertMultiple<Person>(persons, baseResults: (bs) =>
             {
                 Assert.Equal(bs.Count, 2);
                 Assert.True(bs.All(x => x.HasError() == false));
-            }).Result;
+            });
 
             Assert.Equal(results.Count, 2);
             Assert.True(results.All(x => string.IsNullOrEmpty(x.Key) == false));
@@ -55,6 +88,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void InsertFailed()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             db.Setting.ThrowForServerErrors = false;
@@ -70,10 +105,12 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Null(result.Key);
         }
-        
+
         [Fact]
         public void Insert()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             Assert.NotNull(person.Key);
@@ -82,6 +119,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Update()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             person.Age = 20;
@@ -94,6 +133,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Document()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             var loadedPerson = db.Document<Person>(person.Key);
@@ -105,6 +146,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfMatchRev()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -118,6 +161,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfMatchRevFailed()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -128,6 +173,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfNotMatchRev()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -140,6 +187,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfNotMatchRevFailed()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -153,6 +202,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Remove()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             db.Remove<Person>(person);
@@ -163,6 +214,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Replace()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             person.Age = 20;
@@ -175,6 +228,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void UpdateById()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             db.UpdateById<Person>(person.Key, new { Age = 20 });
@@ -186,6 +241,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void ReplaceById()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             db.ReplaceById<Person>(person.Key, new { Age = 20 });
@@ -197,6 +254,8 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void RemoveById()
         {
+            ClearDatabase();
+
             var person = InsertAPerson();
 
             db.RemoveById<Person>(person.Key);

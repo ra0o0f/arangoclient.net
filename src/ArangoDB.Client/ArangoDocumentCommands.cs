@@ -1,6 +1,7 @@
 ﻿using ArangoDB.Client.Collection;
 using ArangoDB.Client.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -45,6 +46,30 @@ namespace ArangoDB.Client
         public IEdgeCollection EdgeCollection(string collection)
         {
             return new ArangoCollection(this, CollectionType.Edge, collection);
+        }
+        
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="documents">Representation of the documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Documents identifiers</returns>
+        public async Task<List<IDocumentIdentifierResult>> InsertMultipleAsync<T>(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            return await Collection<T>().InsertMultipleAsync(documents, waitForSync, baseResults).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="documents">Representation of the documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Documents identifiers</returns>
+        public List<IDocumentIdentifierResult> InsertMultiple<T>(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            return Collection<T>().InsertMultiple(documents, waitForSync, baseResults);
         }
 
         /// <summary>

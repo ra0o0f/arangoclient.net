@@ -1,4 +1,5 @@
 ﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Examples.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -57,6 +58,11 @@ namespace ArangoDB.Client.Examples
             var sharedSetting = SharedSetting.Value;
 
             db = new ArangoDatabase(sharedSetting);
+        }
+
+        protected void ClearDatabase()
+        {
+            db.Query<Person>().Remove().Execute();
         }
 
         public void Dispose()

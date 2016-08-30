@@ -40,10 +40,22 @@ namespace ArangoDB.Client.Collection
         /// <summary>
         /// Creates a new document in the collection
         /// </summary>
-        /// <param name="document">Representation of the document</param>
+        /// <param name="documents">Representation of the documents</param>
         /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
+        /// <returns>Documents identifiers</returns>
+        public List<IDocumentIdentifierResult> InsertMultiple(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            return InsertMultipleAsync(documents, waitForSync, baseResults).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="documents">Representation of the documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Documents identifiers</returns>
         public async Task<List<IDocumentIdentifierResult>> InsertMultipleAsync(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
         {
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
@@ -988,6 +1000,30 @@ namespace ArangoDB.Client.Collection
             string collectionName = db.SharedSetting.Collection.ResolveCollectionName<T>();
             collectionMethods = new ArangoCollection(db, type, collectionName);
             collectionType = type;
+        }
+
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="documents">Representation of the documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Documents identifiers</returns>
+        public List<IDocumentIdentifierResult> InsertMultiple(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            return InsertMultipleAsync(documents, waitForSync, baseResults).ResultSynchronizer();
+        }
+
+        /// <summary>
+        /// Creates a new document in the collection
+        /// </summary>
+        /// <param name="documents">Representation of the documents</param>
+        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>Documents identifiers</returns>
+        public async Task<List<IDocumentIdentifierResult>> InsertMultipleAsync(IList documents, bool? waitForSync = null, Action<List<BaseResult>> baseResults = null)
+        {
+            return await collectionMethods.InsertMultipleAsync(documents, waitForSync, baseResults).ConfigureAwait(false);
         }
 
         /// <summary>
