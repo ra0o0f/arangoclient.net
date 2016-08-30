@@ -117,20 +117,6 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
-        public void Update()
-        {
-            ClearDatabase();
-
-            var person = InsertAPerson();
-
-            person.Age = 20;
-
-            db.Update<Person>(person);
-
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
-        }
-
-        [Fact]
         public void Document()
         {
             ClearDatabase();
@@ -253,7 +239,7 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
-        public void ReplaceByIdIfMatch()
+        public void ReplaceByIdIfMatchFailed()
         {
             ClearDatabase();
 
@@ -262,6 +248,18 @@ namespace ArangoDB.Client.Examples.Documents
             var personInfo = db.FindDocumentInfo(person);
 
             Assert.Throws<ArangoServerException>(() => db.ReplaceById<Person>(person.Key, new { Age = 20 }, ifMatchRev:$"{personInfo.Rev}1"));
+        }
+
+        [Fact]
+        public void UpdateByIdIfMatchFailed()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.UpdateById<Person>(person.Key, new { Age = 20 }, ifMatchRev: $"{personInfo.Rev}1"));
         }
 
         [Fact]
@@ -275,6 +273,34 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Equal(db.Document<Person>(person.Key).Age, 20);
             Assert.Equal(db.Document<Person>(person.Key).Name, person.Name);
+        }
+
+        [Fact]
+        public void UpdateIfMatchFailed()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            person.Age = 20;
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.Update<Person>(person, ifMatchRev: $"{personInfo.Rev}1"));
+        }
+
+        [Fact]
+        public void Update()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            person.Age = 20;
+
+            db.Update<Person>(person);
+
+            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
         }
 
         [Fact]
