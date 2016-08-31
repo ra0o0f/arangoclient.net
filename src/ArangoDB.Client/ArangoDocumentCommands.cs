@@ -270,9 +270,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public IDocumentIdentifierResult Remove<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Remove<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return Collection<T>().Remove(document, policy, waitForSync, baseResult);
+            return Collection<T>().Remove(document, waitForSync, ifMatchRev, baseResult);
         }
 
         /// <summary>
@@ -282,9 +282,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<IDocumentIdentifierResult> RemoveAsync<T>(object document, ReplacePolicy? policy = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> RemoveAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Collection<T>().RemoveAsync(document, policy, waitForSync, baseResult).ConfigureAwait(false);
+            return await Collection<T>().RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -295,10 +295,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public IDocumentIdentifierResult RemoveById<T>(string id, string rev = null, ReplacePolicy? policy = null,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult RemoveById<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return Collection<T>().RemoveById(id, rev, policy, waitForSync, baseResult);
+            return Collection<T>().RemoveById(id, waitForSync, ifMatchRev, baseResult);
         }
 
         /// <summary>
@@ -309,10 +308,9 @@ namespace ArangoDB.Client
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public async Task<IDocumentIdentifierResult> RemoveByIdAsync<T>(string id, string rev = null, ReplacePolicy? policy = null,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> RemoveByIdAsync<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Collection<T>().RemoveByIdAsync(id, rev, policy, waitForSync, baseResult).ConfigureAwait(false);
+            return await Collection<T>().RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>

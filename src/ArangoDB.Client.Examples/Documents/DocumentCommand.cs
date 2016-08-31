@@ -184,19 +184,7 @@ namespace ArangoDB.Client.Examples.Documents
             Assert.Equal(person.Name, loadedPerson.Name);
             Assert.Equal(person.Key, loadedPerson.Key);
         }
-
-        [Fact]
-        public void Remove()
-        {
-            ClearDatabase();
-
-            var person = InsertAPerson();
-
-            db.Remove<Person>(person);
-
-            Assert.Null(db.Document<Person>(person.Key));
-        }
-
+        
         [Fact]
         public void Replace()
         {
@@ -304,6 +292,18 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
+        public void RemoveByIdIfMatchFailed()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.RemoveById<Person>(person.Key, ifMatchRev: $"{personInfo.Rev}1"));
+        }
+
+        [Fact]
         public void RemoveById()
         {
             ClearDatabase();
@@ -311,6 +311,30 @@ namespace ArangoDB.Client.Examples.Documents
             var person = InsertAPerson();
 
             db.RemoveById<Person>(person.Key);
+
+            Assert.Null(db.Document<Person>(person.Key));
+        }
+        
+        [Fact]
+        public void RemoveIfMatchFailed()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            var personInfo = db.FindDocumentInfo(person);
+
+            Assert.Throws<ArangoServerException>(() => db.Remove<Person>(person, ifMatchRev: $"{personInfo.Rev}1"));
+        }
+
+        [Fact]
+        public void Remove()
+        {
+            ClearDatabase();
+
+            var person = InsertAPerson();
+
+            db.Remove<Person>(person);
 
             Assert.Null(db.Document<Person>(person.Key));
         }
