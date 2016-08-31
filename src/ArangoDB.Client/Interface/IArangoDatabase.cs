@@ -91,28 +91,6 @@ namespace ArangoDB.Client
         IDocumentIdentifierResult Insert<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult InsertEdge<T, TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-
-        /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> InsertEdgeAsync<T,TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null);
-
-        /// <summary>
         /// Completely updates the document
         /// </summary>
         /// <param name="document">Representation of the new document</param>

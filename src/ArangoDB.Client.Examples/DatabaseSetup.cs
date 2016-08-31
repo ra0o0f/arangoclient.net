@@ -44,10 +44,15 @@ namespace ArangoDB.Client.Examples
                     });
 
                 var collections = _db.ListCollections().Select(c => c.Name).ToArray();
-                var collectionsToCreate = new string[] { "Person", "hosts" };
+                var collectionsToCreate = new Tuple<string, CollectionType>[] {
+                    new Tuple<string, CollectionType>("Person", CollectionType.Document),
+                    new Tuple<string, CollectionType>("hosts", CollectionType.Document),
+                    new Tuple<string, CollectionType>("Follow", CollectionType.Edge)
+                };
 
-                foreach (var c in collectionsToCreate.Except(collections))
-                    _db.CreateCollection(c);
+                foreach (var c in collectionsToCreate)
+                    if (collections.Contains(c.Item1) == false)
+                        _db.CreateCollection(c.Item1, type: c.Item2);
             }
 
             return sharedSetting;

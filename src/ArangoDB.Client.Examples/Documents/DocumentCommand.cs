@@ -338,5 +338,36 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Null(db.Document<Person>(person.Key));
         }
+
+        [Fact]
+        public void InsertEdge()
+        {
+            ClearDatabase();
+
+            var person1 = new Person
+            {
+                Age = 22,
+                Name = "A"
+            };
+
+            var person2 = new Person
+            {
+                Age = 25,
+                Name = "B"
+            };
+
+            db.InsertMultiple<Person>(new Person[] { person1, person2 });
+
+            var follow = new Follow
+            {
+                CreatedDate = DateTime.Now,
+                Follower = person1.Id,
+                Followee = person2.Id
+            };
+
+            db.Insert<Follow>(follow);
+
+            Assert.NotNull(follow.Key);
+        }
     }
 }

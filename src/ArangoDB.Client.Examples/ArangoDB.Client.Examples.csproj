@@ -64,6 +64,7 @@
     <Compile Include="Databases\DatabaseCommand.cs" />
     <Compile Include="Documents\DocumentCommand.cs" />
     <Compile Include="Linq\ModificationQuery.cs" />
+    <Compile Include="Models\Follow.cs" />
     <Compile Include="Models\Host.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

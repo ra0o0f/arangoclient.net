@@ -139,68 +139,6 @@ namespace ArangoDB.Client.Collection
         }
 
         /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult InsertEdge(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            return InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> InsertEdgeAsync(string from, string to, object edgeDocument, bool? createCollection, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            waitForSync = waitForSync ?? db.Setting.WaitForSync;
-
-            var command = new HttpCommand(this.db)
-            {
-                Api = CommandApi.Edge,
-                Method = HttpMethod.Post,
-                Query = new Dictionary<string, string>()
-            };
-
-            command.Query.Add("collection", collectionName);
-            command.Query.Add("waitForSync", waitForSync.ToString());
-            command.Query.Add("from", from);
-            command.Query.Add("to", to);
-
-            var result = await command.RequestMergedResult<DocumentIdentifierBaseResult>(edgeDocument).ConfigureAwait(false);
-
-            if (result.BaseResult.HasError() == false)
-            {
-                if (!db.Setting.DisableChangeTracking)
-                {
-                    var container = db.ChangeTracker.TrackChanges(edgeDocument, result.Result);
-                    if (container != null)
-                    {
-                        container.From = from;
-                        container.To = to;
-                    }
-                }
-
-                db.SharedSetting.IdentifierModifier.Modify(edgeDocument, result.Result, from, to);
-            }
-
-            if (baseResult != null)
-                baseResult(result.BaseResult);
-
-            return result.Result;
-        }
-
-        /// <summary>
         /// Completely updates the document with no change tracking
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
@@ -1036,39 +974,7 @@ namespace ArangoDB.Client.Collection
         {
             return await collectionMethods.InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult InsertEdge<TFrom, TTo>(string from, string to, object edgeDocument, bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            return InsertEdgeAsync<TFrom, TTo>(from, to, edgeDocument, createCollection, waitForSync, baseResult).ResultSynchronizer();
-        }
-
-        /// <summary>
-        /// Creates a new edge document in the collection
-        /// </summary>
-        /// <param name="from">The document handle or key of the start point</param>
-        /// <param name="to"> The document handle or key of the end point</param>
-        /// <param name="edgeDocument">Representation of the edge document</param>
-        /// <param name="createCollection">If true, then the collection is created if it does not yet exist</param>
-        /// <param name="waitForSync">Wait until document has been synced to disk</param>
-        /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<TFrom, TTo>(string from, string to, object edgeDocument,
-            bool? createCollection = null, bool? waitForSync = null, Action<BaseResult> baseResult = null)
-        {
-            from = from.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TFrom>()}/{from}" : from;
-            to = to.IndexOf("/") == -1 ? $"{db.SharedSetting.Collection.ResolveCollectionName<TTo>()}/{to}" : to;
-
-            return await collectionMethods.InsertEdgeAsync(from, to, edgeDocument, createCollection, waitForSync, baseResult).ConfigureAwait(false);
-        }
-
+        
         /// <summary>
         /// Completely updates the document with no change tracking
         /// </summary>
