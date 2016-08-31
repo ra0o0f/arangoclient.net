@@ -369,5 +369,48 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.NotNull(follow.Key);
         }
+
+        [Fact]
+        public void ReadEdges()
+        {
+            ClearDatabase();
+
+            var person1 = new Person
+            {
+                Age = 22,
+                Name = "A"
+            };
+
+            var person2 = new Person
+            {
+                Age = 25,
+                Name = "B"
+            };
+
+            db.InsertMultiple<Person>(new Person[] { person1, person2 });
+
+            var follow = new Follow
+            {
+                CreatedDate = DateTime.Now,
+                Follower = person1.Id,
+                Followee = person2.Id
+            };
+
+            db.Insert<Follow>(follow);
+
+            var outboundEdge = db.Edges<Follow>(person1.Id, direction: EdgeDirection.Outbound);
+
+            Assert.Equal(outboundEdge.Count, 1);
+
+            var inboundEdge = db.Edges<Follow>(person1.Id, direction: EdgeDirection.Inbound);
+
+            Assert.Equal(inboundEdge.Count, 0);
+
+            var anyEdge = db.Edges<Follow>(person2.Id);
+
+            Assert.Equal(anyEdge.Count, 1);
+
+            Assert.Equal(anyEdge[0].Key, follow.Key);
+        }
     }
 }

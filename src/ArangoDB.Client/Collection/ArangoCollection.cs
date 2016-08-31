@@ -597,7 +597,7 @@ namespace ArangoDB.Client.Collection
         /// <returns>Returns a list of edges starting or ending in the vertex identified by vertex document handle</returns>
         public async Task<List<T>> EdgesAsync<T>(string vertexId, EdgeDirection? direction = null, Action<BaseResult> baseResult = null)
         {
-            var command = new HttpCommand(this.db)
+            var command = new HttpCommand(db)
             {
                 Api = CommandApi.AllEdges,
                 Method = HttpMethod.Get,
