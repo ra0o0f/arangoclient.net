@@ -29,8 +29,8 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestDistinctResult<Person>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Null(result.BaseResult.Code);
+            Assert.False(result.BaseResult.HasError());
 
             Assert.Equal(result.Result.Age, 27);
             Assert.Equal(result.Result.Fullname, "raoof hojat");
@@ -56,8 +56,8 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestDistinctResult<Person>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Null(result.BaseResult.Code);
+            Assert.False(result.BaseResult.HasError());
 
             Assert.Equal(result.Result.Age, 27);
             Assert.Equal(result.Result.Fullname, "raoof hojat");
@@ -422,7 +422,7 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestMergedResult<Flight>();
 
-            Assert.Null(result.Result);
+            Assert.NotNull(result.Result);
             Assert.Equal(result.BaseResult.Code, 400);
             Assert.Equal(result.BaseResult.Error, true);
             Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
