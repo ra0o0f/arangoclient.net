@@ -45,6 +45,33 @@ namespace ArangoDB.Client.Examples.Graphs
         }
 
         [Fact]
+        public void ExtendEdgeDefinitions()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var result = graph.Edge("Relation").ExtendDefinitions(
+                new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() },
+                new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() });
+
+            Assert.Equal(result.EdgeDefinitions.Count, 2);
+        }
+
+        [Fact]
+        public void EditEdgeDefinition()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var result = graph.EditEdgeDefinition<Follow, Follow>(new List<Type> { typeof(Host) }, new List<Type> { typeof(Host) });
+
+            Assert.Equal(result.EdgeDefinitions.Count, 1);
+            Assert.Equal(result.EdgeDefinitions[0].From[0], db.SharedSetting.Collection.ResolveCollectionName<Host>());
+        }
+
+        [Fact]
         public void DeleteEdgeDefinition()
         {
             var graph = Graph();
@@ -54,6 +81,24 @@ namespace ArangoDB.Client.Examples.Graphs
             var result = graph.DeleteEdgeDefinition<Follow>();
 
             Assert.Equal(result.EdgeDefinitions.Count, 0);
+        }
+
+        [Fact]
+        public void ListVertexCollections()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            graph.AddVertexCollection<Host>();
+
+            var result = graph.ListVertexCollections();
+
+            Assert.Equal(result.Count, 2);
+            Assert.Equal(result.Except(new string[] {
+            db.SharedSetting.Collection.ResolveCollectionName<Host>(),
+            db.SharedSetting.Collection.ResolveCollectionName<Person>()
+            }).Count(), 0);
         }
 
         [Fact]

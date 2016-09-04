@@ -95,7 +95,7 @@ namespace ArangoDB.Client.Graph
             var command = new HttpCommand(db)
             {
                 Api = CommandApi.Graph,
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Put,
                 Command = $"{graphName}/edge/{collection}"
             };
 

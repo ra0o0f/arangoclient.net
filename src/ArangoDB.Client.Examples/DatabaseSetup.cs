@@ -47,7 +47,8 @@ namespace ArangoDB.Client.Examples
                 var collectionsToCreate = new Tuple<string, CollectionType>[] {
                     new Tuple<string, CollectionType>("Person", CollectionType.Document),
                     new Tuple<string, CollectionType>("hosts", CollectionType.Document),
-                    new Tuple<string, CollectionType>("Follow", CollectionType.Edge)
+                    new Tuple<string, CollectionType>("Follow", CollectionType.Edge),
+                    new Tuple<string, CollectionType>("Relation", CollectionType.Edge)
                 };
 
                 foreach (var c in collectionsToCreate)
