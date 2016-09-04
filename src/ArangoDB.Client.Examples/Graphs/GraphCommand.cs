@@ -32,6 +32,70 @@ namespace ArangoDB.Client.Examples.Graphs
         }
 
         [Fact]
+        public void UpdateVertexIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            person.Age = 33;
+
+            Assert.Throws<ArangoServerException>(() => graph.UpdateVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void UpdateVertex()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            person.Age = 33;
+
+            graph.UpdateVertex<Person>(person, ifMatchRev: inserted.Rev);
+
+            var updated = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Equal(updated.Age, 33);
+        }
+
+        [Fact]
+        public void UpdateVertexById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var inserted = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            graph.UpdateVertexById<Person>(inserted.Key, new { Age = 22 });
+
+            var updated = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Equal(updated.Age, 22);
+        }
+
+        [Fact]
         public void InsertVertex()
         {
             var graph = Graph();
@@ -72,10 +136,31 @@ namespace ArangoDB.Client.Examples.Graphs
             var graph = Graph();
 
             var createdGraph = CreateNewGraph();
-            
+
             var result = graph.GetVertex<Person>("none");
 
             Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetVertexIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var inserted = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var vertexInfo = db.FindDocumentInfo(inserted.Id);
+
+            Assert.NotNull(vertexInfo);
+            Assert.NotNull(vertexInfo.Rev);
+
+            Assert.Throws<ArangoServerException>(() => graph.GetVertex<Person>(inserted.Key, ifMatchRev: $"{vertexInfo.Rev}0"));
         }
 
         [Fact]

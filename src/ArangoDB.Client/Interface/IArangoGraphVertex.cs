@@ -86,7 +86,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the vertex with no change tracking
@@ -98,7 +98,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the vertex
@@ -108,7 +108,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the vertex
@@ -118,7 +118,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex with no change tracking
@@ -270,7 +270,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the vertex with no change tracking
@@ -282,7 +282,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the vertex
@@ -292,7 +292,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the vertex
@@ -302,7 +302,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex with no change tracking

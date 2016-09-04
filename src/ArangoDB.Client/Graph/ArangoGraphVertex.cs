@@ -211,10 +211,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult UpdateById(string id, object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateByIdAsync(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -226,8 +225,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
 
@@ -239,8 +237,12 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = new HttpMethod("PATCH"),
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}"
+                Command = $"{graphName}/vertex/{documentHandle}",
+                Headers = new Dictionary<string, string>()
             };
+
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
 
             command.Query.Add("keepNull", keepNull.ToString());
             command.Query.Add("waitForSync", waitForSync.ToString());
@@ -260,10 +262,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Update(object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateAsync(document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         ///<summary>
@@ -274,7 +275,7 @@ namespace ArangoDB.Client.Graph
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use UpdateById() instead");
@@ -287,7 +288,7 @@ namespace ArangoDB.Client.Graph
             {
                 BaseResult bResult = null;
 
-                var result = await UpdateByIdAsync(container.Id, changed, waitForSync, keepNull, (b) => bResult = b).ConfigureAwait(false);
+                var result = await UpdateByIdAsync(container.Id, changed, waitForSync, keepNull, ifMatchRev, (b) => bResult = b).ConfigureAwait(false);
 
                 if (bResult.HasError() == false)
                 {
@@ -587,10 +588,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult UpdateById(string id, object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateByIdAsync(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -602,10 +602,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await collectionMethods.UpdateByIdAsync(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -615,10 +614,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Update(object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateAsync(document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         ///<summary>
@@ -628,10 +626,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="keepNull">For remove any attributes from the existing document that are contained in the patch document with an attribute value of null</param>
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> UpdateAsync(object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.UpdateAsync(document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await collectionMethods.UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>

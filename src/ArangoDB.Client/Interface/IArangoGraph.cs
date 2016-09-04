@@ -236,7 +236,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         IDocumentIdentifierResult UpdateVertexById<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the vertex with no change tracking
@@ -248,7 +248,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> UpdateVertexByIdAsync<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
 
         ///<summary>
@@ -259,7 +259,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult UpdateVertex<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the vertex
@@ -269,7 +269,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateVertexAsync<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         
         /// <summary>

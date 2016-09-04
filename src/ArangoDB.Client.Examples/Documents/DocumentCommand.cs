@@ -120,6 +120,14 @@ namespace ArangoDB.Client.Examples.Documents
         }
 
         [Fact]
+        public void DocumentNotFound()
+        {
+            var loadedPerson = db.Document<Person>("none");
+
+            Assert.Null(loadedPerson);
+        }
+
+        [Fact]
         public void DocumentIfMatchRev()
         {
             var person = InsertAPerson();

@@ -430,9 +430,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="baseResult"></param>
         /// <returns></returns>
         public IDocumentIdentifierResult UpdateVertexById<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateVertexByIdAsync<T>(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateVertexByIdAsync<T>(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -445,9 +445,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="baseResult"></param>
         /// <returns></returns>
         public async Task<IDocumentIdentifierResult> UpdateVertexByIdAsync<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -458,9 +458,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         public IDocumentIdentifierResult UpdateVertex<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateVertexAsync<T>(document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateVertexAsync<T>(document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         ///<summary>
@@ -471,9 +471,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> UpdateVertexAsync<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().UpdateAsync(document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
         
         /// <summary>
