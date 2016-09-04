@@ -180,7 +180,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult DeleteEdgeDefinition<T>(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult DeleteEdgeDefinition<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove an edge definition form the graph
@@ -188,7 +188,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null);
         
         /// <summary>
         /// Creates a new vertex

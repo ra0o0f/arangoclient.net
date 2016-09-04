@@ -356,7 +356,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public GraphIdentifierResult DeleteEdgeDefinition<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
+        public GraphIdentifierResult DeleteEdgeDefinition<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null)
         {
             return DeleteEdgeDefinitionAsync<T>(dropCollection, baseResult).ResultSynchronizer();
         }
@@ -367,7 +367,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null)
         {
             return await Edge<T>().DeleteDefinitionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }

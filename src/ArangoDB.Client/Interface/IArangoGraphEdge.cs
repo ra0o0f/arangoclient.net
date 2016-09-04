@@ -53,7 +53,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> DeleteDefinitionAsync( bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> DeleteDefinitionAsync(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove an edge definition form the graph
@@ -61,7 +61,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult DeleteDefinition(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult DeleteDefinition(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge
@@ -259,7 +259,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult DeleteDefinition(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult DeleteDefinition(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove an edge definition form the graph
@@ -267,7 +267,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection"> Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> DeleteDefinitionAsync(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> DeleteDefinitionAsync(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge

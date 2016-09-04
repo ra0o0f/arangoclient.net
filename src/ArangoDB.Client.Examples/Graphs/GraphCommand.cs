@@ -32,6 +32,31 @@ namespace ArangoDB.Client.Examples.Graphs
         }
 
         [Fact]
+        public void ListEdgeDefinitions()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var list = graph.ListEdgeDefinitions();
+
+            Assert.Equal(list.Count, 1);
+            Assert.Equal(list[0], db.SharedSetting.Collection.ResolveCollectionName<Follow>());
+        }
+
+        [Fact]
+        public void DeleteEdgeDefinition()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var result = graph.DeleteEdgeDefinition<Follow>();
+
+            Assert.Equal(result.EdgeDefinitions.Count, 0);
+        }
+
+        [Fact]
         public void AddVertexCollection()
         {
             var graph = Graph();
@@ -52,7 +77,9 @@ namespace ArangoDB.Client.Examples.Graphs
 
             graph.AddVertexCollection<Host>();
 
-            graph.RemoveVertexCollection<Host>();
+            var result = graph.RemoveVertexCollection<Host>();
+
+            Assert.Equal(result.OrphanCollections.Count, 0);
         }
 
         [Fact]
