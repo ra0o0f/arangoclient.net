@@ -32,6 +32,53 @@ namespace ArangoDB.Client.Examples.Graphs
         }
 
         [Fact]
+        public void InsertVertex()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var result = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            Assert.NotNull(result.Key);
+        }
+
+        [Fact]
+        public void GetVertex()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var inserted = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var result = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.NotNull(result);
+            Assert.NotNull(result.Key);
+        }
+
+        [Fact]
+        public void GetVertexNotFound()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+            
+            var result = graph.GetVertex<Person>("none");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
         public void ListEdgeDefinitions()
         {
             var graph = Graph();

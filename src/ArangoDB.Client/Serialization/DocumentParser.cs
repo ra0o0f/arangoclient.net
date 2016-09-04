@@ -52,7 +52,9 @@ namespace ArangoDB.Client.Serialization
 
             if (jsonTextReader.TokenType == JsonToken.EndObject)
             {
-                new BaseResultAnalyzer(db).ThrowIfNeeded(baseResult);
+                // no need to check for base result
+                //new BaseResultAnalyzer(db).ThrowIfNeeded(baseResult);
+                return result;
             }
 
             while (readerState.ReadNextArrayValue(jsonTextReader))

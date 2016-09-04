@@ -215,7 +215,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        T GetVertex<T>(string id, Action<BaseResult> baseResult = null);
+        T GetVertex<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing vertex
@@ -224,7 +224,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        Task<T> GetVertexAsync<T>(string id, Action<BaseResult> baseResult = null);
+        Task<T> GetVertexAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the vertex with no change tracking

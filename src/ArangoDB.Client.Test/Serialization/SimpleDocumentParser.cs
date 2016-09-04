@@ -116,7 +116,14 @@ namespace ArangoDB.Client.Test.Serialization
                 var documentParser = new DocumentParser(new ArangoDatabase());
 
                 BaseResult baseResult = null;
-                Assert.Throws<ArangoServerException>(() => documentParser.ParseBatchResult<Person>(reader, out baseResult));
+
+                var result = documentParser.ParseBatchResult<Person>(reader, out baseResult);
+
+                Assert.NotNull(result);
+                Assert.Equal(result.Count, 0);
+
+                // old behavior
+                //Assert.Throws<ArangoServerException>(() => documentParser.ParseBatchResult<Person>(reader, out baseResult));
             }
         }
 

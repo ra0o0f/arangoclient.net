@@ -403,9 +403,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public T GetVertex<T>(string id, Action<BaseResult> baseResult = null)
+        public T GetVertex<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return GetVertexAsync<T>(id, baseResult).ResultSynchronizer();
+            return GetVertexAsync<T>(id, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -415,9 +415,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public async Task<T> GetVertexAsync<T>(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> GetVertexAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().GetAsync(id, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().GetAsync(id, ifMatchRev, baseResult).ConfigureAwait(false);
         }
         
         /// <summary>

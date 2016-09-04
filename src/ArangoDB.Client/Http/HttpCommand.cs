@@ -128,7 +128,7 @@ namespace ArangoDB.Client.Http
 
         // TDeserialize can be : InheritedCommandResult<TResult>, DocumentInheritedCommandResult<TResult>
         // method should be used when TResult can be change tracked
-        public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
+        public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null, bool? throwForServerErrors = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
 
@@ -151,7 +151,8 @@ namespace ArangoDB.Client.Http
                 }
             }
 
-            new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
+            if (throwForServerErrors.HasValue == false || throwForServerErrors.Value == true)
+                new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
 
             return result;
         }

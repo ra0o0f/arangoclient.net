@@ -162,9 +162,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public T Get<T>(string id, Action<BaseResult> baseResult = null)
+        public T Get<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return GetAsync<T>(id, baseResult).ResultSynchronizer();
+            return GetAsync<T>(id, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public async Task<T> GetAsync<T>(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> GetAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
 
@@ -183,15 +183,14 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
                 Command = $"{graphName}/vertex/{documentHandle}",
-                EnableChangeTracking = !db.Setting.DisableChangeTracking
+                EnableChangeTracking = db.Setting.DisableChangeTracking == false,
+                Headers = new Dictionary<string, string>()
             };
 
-            var defaultThrowForServerErrors = db.Setting.ThrowForServerErrors;
-            db.Setting.ThrowForServerErrors = false;
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
 
-            var result = await command.RequestGenericSingleResult<T, VertexInheritedCommandResult<T>>().ConfigureAwait(false);
-
-            db.Setting.ThrowForServerErrors = defaultThrowForServerErrors;
+            var result = await command.RequestGenericSingleResult<T, VertexInheritedCommandResult<T>>(throwForServerErrors: false).ConfigureAwait(false);
 
             if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
                 (result.BaseResult.HasError() && result.BaseResult.ErrorNum != 1202))
@@ -562,9 +561,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public T Get(string id, Action<BaseResult> baseResult = null)
+        public T Get(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return GetAsync(id, baseResult).ResultSynchronizer();
+            return GetAsync(id, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -574,9 +573,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public async Task<T> GetAsync(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> GetAsync(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.GetAsync<T>(id, baseResult).ConfigureAwait(false);
+            return await collectionMethods.GetAsync<T>(id, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
