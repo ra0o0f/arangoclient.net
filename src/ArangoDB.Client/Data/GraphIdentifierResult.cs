@@ -8,6 +8,9 @@ namespace ArangoDB.Client.Data
 {
     public class GraphIdentifierResult
     {
+        [DocumentProperty(Identifier = IdentifierType.Key)]
+        public string Key { get; set; }
+
         [DocumentProperty(Identifier = IdentifierType.Handle)]
         public string Id { get; set; }
 

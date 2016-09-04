@@ -63,11 +63,16 @@ namespace ArangoDB.Client.Examples
             var sharedSetting = SharedSetting.Value;
 
             db = new ArangoDatabase(sharedSetting);
+
+            ClearDatabase();
         }
 
-        protected void ClearDatabase()
+        private void ClearDatabase()
         {
             db.Query<Person>().Remove().Execute();
+
+            if (db.ListGraphs().Count(x => x.Key == "SocialGraph") != 0)
+                db.Graph("SocialGraph").Drop();
         }
 
         public void Dispose()

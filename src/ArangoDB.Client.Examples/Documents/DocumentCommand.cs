@@ -26,8 +26,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void InsertMultipleFailed()
         {
-            ClearDatabase();
-
             List<Person> persons = new List<Person>
             {
                 new Person
@@ -59,8 +57,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void InsertMultiple()
         {
-            ClearDatabase();
-
             List<Person> persons = new List<Person>
             {
                 new Person
@@ -88,8 +84,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void InsertFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             db.Setting.ThrowForServerErrors = false;
@@ -109,8 +103,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Insert()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             Assert.NotNull(person.Key);
@@ -119,8 +111,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Document()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var loadedPerson = db.Document<Person>(person.Key);
@@ -132,8 +122,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfMatchRev()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -147,8 +135,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfMatchRevFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -159,8 +145,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfNotMatchRev()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -173,8 +157,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void DocumentIfNotMatchRevFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -188,22 +170,18 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Replace()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             person.Age = 20;
 
             db.Replace<Person>(person);
-
+                
             Assert.Equal(db.Document<Person>(person.Key).Age, 20);
         }
 
         [Fact]
         public void ReplaceIfMatch()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -216,8 +194,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void ReplaceById()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             db.ReplaceById<Person>(person.Key, new { Age = 20 });
@@ -229,8 +205,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void ReplaceByIdIfMatchFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -241,8 +215,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void UpdateByIdIfMatchFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -253,8 +225,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void UpdateById()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             db.UpdateById<Person>(person.Key, new { Age = 20 });
@@ -266,8 +236,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void UpdateIfMatchFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             person.Age = 20;
@@ -280,8 +248,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Update()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             person.Age = 20;
@@ -294,8 +260,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void RemoveByIdIfMatchFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -306,8 +270,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void RemoveById()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             db.RemoveById<Person>(person.Key);
@@ -318,8 +280,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void RemoveIfMatchFailed()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             var personInfo = db.FindDocumentInfo(person);
@@ -330,8 +290,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void Remove()
         {
-            ClearDatabase();
-
             var person = InsertAPerson();
 
             db.Remove<Person>(person);
@@ -342,8 +300,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void InsertEdge()
         {
-            ClearDatabase();
-
             var person1 = new Person
             {
                 Age = 22,
@@ -373,8 +329,6 @@ namespace ArangoDB.Client.Examples.Documents
         [Fact]
         public void ReadEdges()
         {
-            ClearDatabase();
-
             var person1 = new Person
             {
                 Age = 22,

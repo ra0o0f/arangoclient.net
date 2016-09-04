@@ -132,7 +132,7 @@ namespace ArangoDB.Client.Graph
         /// </summary>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns></returns>
-        public bool Drop(bool dropCollections = false, Action<BaseResult> baseResult = null)
+        public bool Drop(bool? dropCollections = null, Action<BaseResult> baseResult = null)
         {
             return DropAsync(dropCollections, baseResult).ResultSynchronizer();
         }
@@ -142,21 +142,20 @@ namespace ArangoDB.Client.Graph
         /// </summary>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns></returns>
-        public async Task<bool> DropAsync(bool dropCollections = false, Action<BaseResult> baseResult = null)
+        public async Task<bool> DropAsync(bool? dropCollections = null, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(db)
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
-                Command = graphName
+                Command = graphName,
+                Query = new Dictionary<string, string>()
             };
 
-            var data = new DropGraphData
-            {
-                DropCollections = dropCollections
-            };
+            if (dropCollections.HasValue)
+                command.Query.Add("dropCollections", dropCollections.Value.ToString());
 
-            var result = await command.RequestMergedResult<DropGraphResult>(data).ConfigureAwait(false);
+            var result = await command.RequestMergedResult<DropGraphResult>().ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -254,7 +253,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public GraphIdentifierResult RemoveVertexCollection<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
+        public GraphIdentifierResult RemoveVertexCollection<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null)
         {
             return RemoveVertexCollectionAsync<T>(dropCollection, baseResult).ResultSynchronizer();
         }
@@ -265,7 +264,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> RemoveVertexCollectionAsync<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null)
         {
             return await Vertex<T>().RemoveCollectionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }

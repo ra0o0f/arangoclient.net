@@ -27,8 +27,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void All()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var cursor = db.All<Person>();
@@ -47,8 +45,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void AllWithBatch()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var cursor = db.All<Person>(batchSize: 1);
@@ -67,8 +63,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void Any()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var person = db.Any<Person>();
@@ -79,8 +73,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void ByExample()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var loadedPersons = db.ByExample<Person>(new { Name = "Dr. frank celler" }).ToList();
@@ -92,8 +84,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void FirstExample()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var loadedPerson = db.FirstExample<Person>(new { Name = "Dr. frank celler" });
@@ -105,8 +95,6 @@ namespace ArangoDB.Client.Examples.SimpleQueries
         [Fact]
         public void Range()
         {
-            ClearDatabase();
-
             var persons = InsertSomePerson();
 
             var loadedPerson = db.Range<Person>(x => x.Age, 25, 28, closed: true).ToList();

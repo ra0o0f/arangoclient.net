@@ -29,7 +29,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult RemoveCollection(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult RemoveCollection(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove a vertex collection form the graph
@@ -37,7 +37,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> RemoveCollectionAsync(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> RemoveCollectionAsync(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new vertex
@@ -214,7 +214,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> RemoveCollectionAsync(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> RemoveCollectionAsync(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove a vertex collection form the graph
@@ -222,7 +222,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult RemoveCollection(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult RemoveCollection(bool? dropCollection = null, Action<BaseResult> baseResult = null);
         
         /// <summary>
         /// Creates a new vertex

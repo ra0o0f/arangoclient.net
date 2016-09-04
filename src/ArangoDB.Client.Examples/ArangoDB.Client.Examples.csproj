@@ -63,6 +63,7 @@
     <Compile Include="Collections\CollectionCommand.cs" />
     <Compile Include="Databases\DatabaseCommand.cs" />
     <Compile Include="Documents\DocumentCommand.cs" />
+    <Compile Include="Graphs\GraphCommand.cs" />
     <Compile Include="Linq\ModificationQuery.cs" />
     <Compile Include="Models\Follow.cs" />
     <Compile Include="Models\Host.cs" />

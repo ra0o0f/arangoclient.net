@@ -59,14 +59,14 @@ namespace ArangoDB.Client
         /// </summary>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns></returns>
-        bool Drop(bool dropCollections = false, Action<BaseResult> baseResult = null);
+        bool Drop(bool? dropCollections = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Delete graph
         /// </summary>
         /// <param name="dropCollections">Drop collections of this graph as well. Collections will only be dropped if they are not used in other graphs.</param>
         /// <returns>Task</returns>
-        Task<bool> DropAsync(bool dropCollections = false, Action<BaseResult> baseResult = null);
+        Task<bool> DropAsync(bool? dropCollections = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Get graph info
@@ -114,7 +114,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        Task<GraphIdentifierResult> RemoveVertexCollectionAsync<T>(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        Task<GraphIdentifierResult> RemoveVertexCollectionAsync<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Remove a vertex collection form the graph
@@ -122,7 +122,7 @@ namespace ArangoDB.Client
         /// <param name="dropCollection">Drop the collection as well. Collection will only be dropped if it is not used in other graphs</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        GraphIdentifierResult RemoveVertexCollection<T>(bool dropCollection = false, Action<BaseResult> baseResult = null);
+        GraphIdentifierResult RemoveVertexCollection<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Lists all edge definitions
