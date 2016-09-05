@@ -578,9 +578,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        public IDocumentIdentifierResult InsertEdge<T, TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult InsertEdge<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return InsertEdgeAsync<T, TFrom, TTo>(from, to, document, waitForSync, baseResult).ResultSynchronizer();
+            return InsertEdgeAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -590,9 +590,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<T, TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> InsertEdgeAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().InsertAsync<TFrom, TTo>(from, to, document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Edge<T>().InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -602,9 +602,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public T GetEdge<T>(string id, Action<BaseResult> baseResult = null)
+        public T GetEdge<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return GetEdgeAsync<T>(id, baseResult).ResultSynchronizer();
+            return GetEdgeAsync<T>(id, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -614,9 +614,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        public async Task<T> GetEdgeAsync<T>(string id, Action<BaseResult> baseResult = null)
+        public async Task<T> GetEdgeAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().GetAsync(id, baseResult).ConfigureAwait(false);
+            return await Edge<T>().GetAsync(id, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -629,9 +629,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="baseResult"></param>
         /// <returns></returns>
         public IDocumentIdentifierResult UpdateEdgeById<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateEdgeByIdAsync<T>(id, document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateEdgeByIdAsync<T>(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -644,9 +644,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="baseResult"></param>
         /// <returns></returns>
         public async Task<IDocumentIdentifierResult> UpdateEdgeByIdAsync<T>(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await Edge<T>().UpdateByIdAsync(id, document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         ///<summary>
@@ -657,9 +657,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         public IDocumentIdentifierResult UpdateEdge<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return UpdateEdgeAsync<T>(document, waitForSync, keepNull, baseResult).ResultSynchronizer();
+            return UpdateEdgeAsync<T>(document, waitForSync, keepNull, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         ///<summary>
@@ -670,9 +670,9 @@ namespace ArangoDB.Client.Graph
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> UpdateEdgeAsync<T>(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null)
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().UpdateAsync(document, waitForSync, keepNull, baseResult).ConfigureAwait(false);
+            return await Edge<T>().UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -683,9 +683,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public IDocumentIdentifierResult ReplaceEdgeById<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceEdgeByIdAsync<T>(id, document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceEdgeByIdAsync<T>(id, document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -696,9 +696,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> ReplaceEdgeByIdAsync<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().ReplaceByIdAsync(id, document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Edge<T>().ReplaceByIdAsync(id, document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -707,9 +707,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult ReplaceEdge<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult ReplaceEdge<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceEdgeAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceEdgeAsync<T>(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -718,9 +718,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceEdgeAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceEdgeAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Edge<T>().ReplaceAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -729,10 +729,10 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveEdgeById<T>(string id, bool? waitForSync = null
+        public bool RemoveEdgeById<T>(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null)
         {
-            return RemoveEdgeByIdAsync<T>(id, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveEdgeByIdAsync<T>(id, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -742,9 +742,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveEdgeByIdAsync<T>(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+            return await Edge<T>().RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -753,9 +753,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveEdge<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public bool RemoveEdge<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return RemoveEdgeAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveEdgeAsync<T>(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -765,9 +765,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveEdgeAsync<T>(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Edge<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Edge<T>().RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
         
     }

@@ -31,6 +31,426 @@ namespace ArangoDB.Client.Examples.Graphs
             });
         }
 
+        // edge examples
+
+        [Fact]
+        public void RemoveEdgeIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            Assert.Throws<ArangoServerException>(() => graph.RemoveEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void RemoveEdge()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            graph.RemoveEdge<Follow>(follow, ifMatchRev: inserted.Rev);
+
+            var removed = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Null(removed);
+        }
+
+        [Fact]
+        public void RemoveEdgeById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            graph.RemoveEdgeById<Follow>(inserted.Key);
+
+            var removed = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Null(removed);
+        }
+
+        [Fact]
+        public void ReplaceEdgeIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            Assert.Throws<ArangoServerException>(() => graph.ReplaceEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void ReplaceEdge()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            follow.CreatedDate = new DateTime(1900, 1, 1);
+
+            graph.ReplaceEdge<Follow>(follow, ifMatchRev: inserted.Rev);
+
+            var replaced = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Equal(replaced.CreatedDate.Year, 1900);
+        }
+
+        [Fact]
+        public void ReplaceEdgeById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            graph.ReplaceEdgeById<Follow>(inserted.Key, new
+            {
+                _from = v1.Id,
+                _to = v2.Id,
+                CreatedDate = new DateTime(1900, 1, 1)
+            });
+
+            var replaced = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Equal(replaced.CreatedDate.Year, 1900);
+        }
+
+        [Fact]
+        public void UpdateEdgeIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            follow.CreatedDate = new DateTime(1900, 1, 1);
+
+            Assert.Throws<ArangoServerException>(() => graph.UpdateEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void UpdateEdge()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var follow = new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            var inserted = graph.InsertEdge<Follow>(follow);
+
+            follow.CreatedDate = new DateTime(1900, 1, 1);
+
+            graph.UpdateEdge<Follow>(follow, ifMatchRev: inserted.Rev);
+
+            var updated = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Equal(updated.CreatedDate.Year, 1900);
+        }
+
+        [Fact]
+        public void UpdateEdgeById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var inserted = graph.InsertEdge<Follow>(new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id,
+                CreatedDate = DateTime.Now
+            });
+
+            graph.UpdateEdgeById<Follow>(inserted.Key, new { CreatedDate = new DateTime(1900, 1, 1) });
+
+            var updated = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.Equal(updated.CreatedDate.Year, 1900);
+        }
+
+        [Fact]
+        public void InsertEdge()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var inserted = graph.InsertEdge<Follow>(new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id
+            });
+
+            Assert.NotNull(inserted.Key);
+        }
+
+        [Fact]
+        public void GetEdge()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var inserted = graph.InsertEdge<Follow>(new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id
+            });
+
+            var result = graph.GetEdge<Follow>(inserted.Key);
+
+            Assert.NotNull(result);
+            Assert.NotNull(result.Key);
+        }
+
+        [Fact]
+        public void GetEdgeNotFound()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var result = graph.GetEdge<Follow>("none");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetEdgeIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var v1 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var v2 = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            var inserted = graph.InsertEdge<Follow>(new Follow
+            {
+                Followee = v1.Id,
+                Follower = v2.Id
+            });
+
+            var edgeInfo = db.FindDocumentInfo(inserted.Id);
+
+            Assert.NotNull(edgeInfo);
+            Assert.NotNull(edgeInfo.Rev);
+
+            Assert.Throws<ArangoServerException>(() => graph.GetEdge<Follow>(inserted.Key, ifMatchRev: $"{edgeInfo.Rev}0"));
+        }
+
+        // vertex examples
+
         [Fact]
         public void RemoveVertexIfMatchFailed()
         {
@@ -287,6 +707,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             Assert.Throws<ArangoServerException>(() => graph.GetVertex<Person>(inserted.Key, ifMatchRev: $"{vertexInfo.Rev}0"));
         }
+
+        // management examples
 
         [Fact]
         public void ListEdgeDefinitions()

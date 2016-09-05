@@ -70,7 +70,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        IDocumentIdentifierResult Insert(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Insert(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge
@@ -79,7 +79,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        Task<IDocumentIdentifierResult> InsertAsync(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> InsertAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing edge
@@ -88,7 +88,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        T Get<T>(string id, Action<BaseResult> baseResult = null);
+        T Get<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing edge
@@ -97,7 +97,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        Task<T> GetAsync<T>(string id, Action<BaseResult> baseResult = null);
+        Task<T> GetAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the edge with no change tracking
@@ -109,7 +109,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the edge with no change tracking
@@ -121,7 +121,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the edge
@@ -131,7 +131,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the edge
@@ -141,7 +141,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge with no change tracking
@@ -151,7 +151,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge with no change tracking
@@ -161,7 +161,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge
@@ -169,7 +169,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge
@@ -177,7 +177,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge without change tracking
@@ -185,7 +185,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveById(string id, bool? waitForSync = null
+        bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge
@@ -203,7 +203,7 @@ namespace ArangoDB.Client
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge
@@ -212,7 +212,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
     }
 
     public interface IArangoGraphEdge<T>
@@ -276,7 +276,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        IDocumentIdentifierResult Insert<TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Insert(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge
@@ -285,7 +285,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Define if the request should wait until synced to disk</param>
         /// <param name="baseResult"></param>
         /// <returns>DocumentIdentifierResult</returns>
-        Task<IDocumentIdentifierResult> InsertAsync<TFrom, TTo>(string from, string to, object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> InsertAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing edge
@@ -294,7 +294,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        T Get(string id, Action<BaseResult> baseResult = null);
+        T Get(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Fetches an existing edge
@@ -303,7 +303,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="baseResult"></param>
         /// <returns>T</returns>
-        Task<T> GetAsync(string id, Action<BaseResult> baseResult = null);
+        Task<T> GetAsync(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the edge with no change tracking
@@ -315,7 +315,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         IDocumentIdentifierResult UpdateById(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Partially updates the edge with no change tracking
@@ -327,7 +327,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document
-            , bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+            , bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the edge
@@ -337,7 +337,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult Update(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         ///<summary>
         ///Partially updates the edge
@@ -347,7 +347,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> UpdateAsync(object document,
-           bool? waitForSync = null, bool? keepNull = null, Action<BaseResult> baseResult = null);
+           bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge with no change tracking
@@ -357,7 +357,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge with no change tracking
@@ -367,7 +367,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge
@@ -375,7 +375,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the edge
@@ -383,7 +383,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge without change tracking
@@ -391,7 +391,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveById(string id, bool? waitForSync = null
+        bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge
@@ -409,7 +409,7 @@ namespace ArangoDB.Client
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the edge
@@ -418,6 +418,6 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
     }
 }
