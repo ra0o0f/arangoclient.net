@@ -32,6 +32,131 @@ namespace ArangoDB.Client.Examples.Graphs
         }
 
         [Fact]
+        public void RemoveVertexIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            Assert.Throws<ArangoServerException>(() => graph.RemoveVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void RemoveVertex()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            graph.RemoveVertex<Person>(person, ifMatchRev: inserted.Rev);
+
+            var removed = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Null(removed);
+        }
+
+        [Fact]
+        public void RemoveVertexById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var inserted = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            graph.RemoveVertexById<Person>(inserted.Key);
+
+            var removed = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Null(removed);
+        }
+
+        [Fact]
+        public void ReplaceVertexIfMatchFailed()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            person.Age = 33;
+
+            Assert.Throws<ArangoServerException>(() => graph.ReplaceVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+        }
+
+        [Fact]
+        public void ReplaceVertex()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var person = new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            };
+
+            var inserted = graph.InsertVertex<Person>(person);
+
+            person.Age = 33;
+
+            graph.ReplaceVertex<Person>(person, ifMatchRev: inserted.Rev);
+
+            var replaced = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Equal(replaced.Age, 33);
+        }
+
+        [Fact]
+        public void ReplaceVertexById()
+        {
+            var graph = Graph();
+
+            var createdGraph = CreateNewGraph();
+
+            var inserted = graph.InsertVertex<Person>(new Person
+            {
+                Age = 21,
+                Name = "raoof hojat"
+            });
+
+            graph.ReplaceVertexById<Person>(inserted.Key, new { Age = 22 });
+
+            var replaced = graph.GetVertex<Person>(inserted.Key);
+
+            Assert.Null(replaced.Name);
+            Assert.Equal(replaced.Age, 22);
+        }
+
+        [Fact]
         public void UpdateVertexIfMatchFailed()
         {
             var graph = Graph();

@@ -484,9 +484,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public IDocumentIdentifierResult ReplaceVertexById<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceVertexByIdAsync<T>(id, document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceVertexByIdAsync<T>(id, document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -497,9 +497,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> ReplaceVertexByIdAsync<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().ReplaceByIdAsync(id, document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().ReplaceByIdAsync(id, document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -508,9 +508,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceVertexAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceVertexAsync<T>(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -519,9 +519,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().ReplaceAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -530,10 +530,10 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveVertexById<T>(string id, bool? waitForSync = null
+        public bool RemoveVertexById<T>(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null)
         {
-            return RemoveVertexByIdAsync<T>(id, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveVertexByIdAsync<T>(id, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -543,9 +543,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveVertexByIdAsync<T>(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -554,9 +554,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public bool RemoveVertex<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return RemoveVertexAsync<T>(document, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveVertexAsync<T>(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -566,9 +566,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveVertexAsync<T>(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await Vertex<T>().RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await Vertex<T>().RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>

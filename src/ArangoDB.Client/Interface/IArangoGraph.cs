@@ -280,7 +280,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceVertexById<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex with no change tracking
@@ -290,7 +290,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceVertexByIdAsync<T>(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -298,7 +298,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult ReplaceVertex<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -306,7 +306,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> ReplaceVertexAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex without change tracking
@@ -314,7 +314,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveVertexById<T>(string id, bool? waitForSync = null
+        bool RemoveVertexById<T>(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveVertexByIdAsync<T>(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -332,7 +332,7 @@ namespace ArangoDB.Client
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveVertex<T>(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        bool RemoveVertex<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -341,7 +341,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveVertexAsync<T>(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Creates a new edge

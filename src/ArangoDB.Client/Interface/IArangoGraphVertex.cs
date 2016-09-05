@@ -128,7 +128,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex with no change tracking
@@ -138,7 +138,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -146,7 +146,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -154,7 +154,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex without change tracking
@@ -162,7 +162,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveById(string id, bool? waitForSync = null
+        bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -180,7 +180,7 @@ namespace ArangoDB.Client
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -189,7 +189,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
     }
 
     public interface IArangoGraphVertex<T>
@@ -312,7 +312,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex with no change tracking
@@ -322,7 +322,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -330,7 +330,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Completely updates the vertex
@@ -338,7 +338,7 @@ namespace ArangoDB.Client
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document without change tracking
@@ -346,7 +346,7 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool RemoveById(string id, bool? waitForSync = null
+        bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -364,7 +364,7 @@ namespace ArangoDB.Client
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null);
+        bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the vertex
@@ -373,6 +373,6 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null);
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
     }
 }

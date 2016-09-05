@@ -312,9 +312,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceByIdAsync(id, document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
 
@@ -336,8 +336,12 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}"
+                Command = $"{graphName}/vertex/{documentHandle}",
+                Headers = new Dictionary<string, string>()
             };
+
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
 
             command.Query.Add("waitForSync", waitForSync.ToString());
 
@@ -358,9 +362,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceAsync(document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceAsync(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -369,7 +373,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use ReplaceById() instead");
@@ -378,7 +382,7 @@ namespace ArangoDB.Client.Graph
 
             BaseResult bResult = null;
 
-            var result = await ReplaceByIdAsync(container.Id, document, waitForSync, (b) => bResult = b).ConfigureAwait(false);
+            var result = await ReplaceByIdAsync(container.Id, document, waitForSync, ifMatchRev, (b) => bResult = b).ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(bResult);
@@ -399,10 +403,10 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveById(string id, bool? waitForSync = null
+        public bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null)
         {
-            return RemoveByIdAsync(id, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -412,7 +416,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
 
@@ -420,11 +424,15 @@ namespace ArangoDB.Client.Graph
 
             var command = new HttpCommand(this.db)
             {
-                Api = CommandApi.Document,
+                Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}"
+                Command = $"{graphName}/vertex/{documentHandle}",
+                Headers = new Dictionary<string, string>()
             };
+
+            if (string.IsNullOrEmpty(ifMatchRev) == false)
+                command.Headers.Add("If-Match", ifMatchRev);
 
             command.Query.Add("waitForSync", waitForSync.ToString());
 
@@ -442,9 +450,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return RemoveAsync(document, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -454,7 +462,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             if (db.Setting.DisableChangeTracking == true)
                 throw new InvalidOperationException("Change tracking is disabled, use RemoveById() instead");
@@ -463,7 +471,7 @@ namespace ArangoDB.Client.Graph
 
             BaseResult bResult = null;
 
-            var result = await RemoveByIdAsync(container.Id, waitForSync, (b) => bResult = b).ConfigureAwait(false);
+            var result = await RemoveByIdAsync(container.Id, waitForSync, ifMatchRev, (b) => bResult = b).ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(bResult);
@@ -639,9 +647,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public IDocumentIdentifierResult ReplaceById(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceByIdAsync(id, document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceByIdAsync(id, document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -652,9 +660,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.ReplaceByIdAsync(id, document, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.ReplaceByIdAsync(id, document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -663,9 +671,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public IDocumentIdentifierResult Replace(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return ReplaceAsync(document, waitForSync, baseResult).ResultSynchronizer();
+            return ReplaceAsync(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -674,9 +682,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">Representation of the new document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
-        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public async Task<IDocumentIdentifierResult> ReplaceAsync(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.ReplaceAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.ReplaceAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -685,10 +693,10 @@ namespace ArangoDB.Client.Graph
         /// <param name="id">The document handle or key of document</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool RemoveById(string id, bool? waitForSync = null
+        public bool RemoveById(string id, bool? waitForSync = null, string ifMatchRev = null
             , Action<BaseResult> baseResult = null)
         {
-            return RemoveByIdAsync(id, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -698,9 +706,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveByIdAsync(string id,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.RemoveByIdAsync(id, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
         
         /// <summary>
@@ -709,9 +717,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="document">document reference</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
-        public bool Remove(object document, bool? waitForSync = null, Action<BaseResult> baseResult = null)
+        public bool Remove(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return RemoveAsync(document, waitForSync, baseResult).ResultSynchronizer();
+            return RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -721,9 +729,9 @@ namespace ArangoDB.Client.Graph
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         public async Task<bool> RemoveAsync(object document,
-            bool? waitForSync = null, Action<BaseResult> baseResult = null)
+            bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            return await collectionMethods.RemoveAsync(document, waitForSync, baseResult).ConfigureAwait(false);
+            return await collectionMethods.RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
     }
 }
