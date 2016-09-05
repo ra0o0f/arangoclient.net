@@ -16,5 +16,10 @@ namespace ArangoDB.Client.Examples.Models
         
         [DocumentProperty(Identifier = IdentifierType.Handle)]
         public string Id { get; set; }
+
+        public override string ToString()
+        {
+            return Name?.ToString();
+        }
     }
 }

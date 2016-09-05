@@ -47,7 +47,7 @@ namespace ArangoDB.Client
         public TraversalUniqueness Uniqueness { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public TraversalStrategy Strategy { get; set; }
+        public TraversalStrategy? Strategy { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string GraphName { get; set; }
