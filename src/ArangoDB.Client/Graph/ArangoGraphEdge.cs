@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ArangoDB.Client.Utility;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.ChangeTracking;
 

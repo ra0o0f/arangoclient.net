@@ -1,4 +1,4 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Linq;
 using ArangoDB.Client.Property;
@@ -94,7 +94,7 @@ namespace ArangoDB.Client
         public DatabaseSerializationSharedSetting()
         {
             SerializeEnumAsInteger = true;
-            MetadataPropertyHandling = ArangoDB.Client.Common.Newtonsoft.Json.MetadataPropertyHandling.Default;
+            MetadataPropertyHandling = Newtonsoft.Json.MetadataPropertyHandling.Default;
             Converters = new List<JsonConverter>();
         }
 

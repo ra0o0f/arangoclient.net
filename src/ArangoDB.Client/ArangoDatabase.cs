@@ -41,7 +41,7 @@ namespace ArangoDB.Client
 
         public ArangoDatabase()
         {
-            SharedSetting = new DatabaseSharedSetting();
+            SharedSetting = FindSetting("default");
             Setting = new DatabaseSetting(SharedSetting);
             Connection = new HttpConnection(this);
             ChangeTracker = new DocumentTracker(this);

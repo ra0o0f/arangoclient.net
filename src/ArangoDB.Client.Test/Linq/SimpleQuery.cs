@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using ArangoDB.Client.Test.Utility;
-using ArangoDB.Client.Common.Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace ArangoDB.Client.Test.Linq
 {

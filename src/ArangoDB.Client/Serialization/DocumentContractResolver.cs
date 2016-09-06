@@ -1,5 +1,5 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using ArangoDB.Client.Common.Utility;
 using ArangoDB.Client.Utility;
 using System;
@@ -14,11 +14,24 @@ namespace ArangoDB.Client.Serialization
 {
     public class DocumentContractResolver : DefaultContractResolver
     {
-        IArangoDatabase db;
-        public DocumentContractResolver(IArangoDatabase db) 
-            : base(true) 
+        private static readonly ConcurrentDictionary<DatabaseSharedSetting, DocumentContractResolver> _cachedContractResolvers = new ConcurrentDictionary<DatabaseSharedSetting, DocumentContractResolver>();
+
+        DatabaseSharedSetting sharedSetting;
+
+        private DocumentContractResolver() : base() 
         {
-            this.db = db;
+        }
+        
+        public static DocumentContractResolver GetContractResolver(IArangoDatabase db)
+        {
+            DocumentContractResolver contractResolver = null;
+            if(_cachedContractResolvers.TryGetValue(db.SharedSetting, out contractResolver) == false)
+            {
+                contractResolver = new DocumentContractResolver() { sharedSetting = db.SharedSetting };
+                _cachedContractResolvers.TryAdd(db.SharedSetting, contractResolver);
+            }
+
+            return contractResolver;
         }
 
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
@@ -29,14 +42,14 @@ namespace ArangoDB.Client.Serialization
             foreach (var p in properties)
             {
                 IDocumentPropertySetting documentProperty = null;
-                db.SharedSetting.Collection.ChangeDocumentPropertyForType(type, p.UnderlyingName, x => documentProperty = x);
+                sharedSetting.Collection.ChangeDocumentPropertyForType(type, p.UnderlyingName, x => documentProperty = x);
                 if (documentProperty != null)
                 {
                     if (documentProperty.IgnoreProperty)
                         continue;
                 }
 
-                p.PropertyName = db.SharedSetting.Collection.ResolvePropertyName(type, p.UnderlyingName);
+                p.PropertyName = sharedSetting.Collection.ResolvePropertyName(type, p.UnderlyingName);
 
                 if (p.PropertyName == "_key" || p.PropertyName == "_id" || p.PropertyName == "_rev")
                     p.NullValueHandling = NullValueHandling.Ignore;

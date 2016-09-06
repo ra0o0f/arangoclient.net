@@ -1,4 +1,4 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ArangoDB.Client.Data;
 using System;
 using System.Collections.Generic;

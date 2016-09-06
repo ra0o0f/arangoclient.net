@@ -8,7 +8,7 @@ using ArangoDB.Client.Utility;
 using ArangoDB.Client.Http;
 using System.Net.Http;
 using ArangoDB.Client.ChangeTracking;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using ArangoDB.Client.Serialization;
 
 namespace ArangoDB.Client.Graph

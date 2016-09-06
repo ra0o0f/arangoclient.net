@@ -1,4 +1,4 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json.Converters;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Test.Database;
 using ArangoDB.Client.Test.Model;

@@ -1,6 +1,6 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json;
-using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization.Converters;
 using System;
@@ -97,7 +97,7 @@ namespace ArangoDB.Client.Serialization
 
                 return new JsonSerializerSettings
                 {
-                    ContractResolver = new DocumentContractResolver(db),
+                    ContractResolver = DocumentContractResolver.GetContractResolver(db),
                     Converters = convertes,
                     DateParseHandling = DateParseHandling.None,
                     MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling

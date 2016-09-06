@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>ArangoDB.Client</id>
+    <version>0.7.41</version>
+    <title>ArangoDB .NET Client</title>
+    <description>.NET client for ArangoDB with Linq provider</description>
+    <language>en-US</language>
+    <authors>raoof hojat</authors>
+    <owners>ra0o0f</owners>
+    <licenseUrl>https://github.com/ra0o0f/arangoclient.net/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>http://www.arangoclient.net/</projectUrl>
+    <iconUrl>http://arangoclient.net/arangodbLogo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>ArangoDB v3.0 support</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>ArangoDB Arango Client NoSql Database</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="7.0.1" />
+    </dependencies>
+  </metadata>
+</package>

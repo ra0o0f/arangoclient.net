@@ -1,5 +1,5 @@
 ﻿using ArangoDB.Client.ChangeTracking;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using ArangoDB.Client.Test.Database;
 using ArangoDB.Client.Test.Model;
 using ArangoDB.Client.Test.Utility;
