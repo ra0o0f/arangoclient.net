@@ -3,8 +3,7 @@
 
 ##### [ArangoDB](http://www.arangodb.net) .Net client driver written in c# portable class library[.net 4.5, winphone 8.1]
 
-#####Join the chat:
-[![Join the chat at https://gitter.im/ra0o0f/arangoclient.net](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ra0o0f/arangoclient.net?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Client now supports ArangoDB v3.0, install older version of the client by `Install-Package ArangoDB.Client -Version 0.7.31` if you need to work with ArangoDB v2.8 or erlier
 
 <hr/>
 
