@@ -31,7 +31,7 @@ namespace ArangoDB.Client.Linq
 
             protected override Expression VisitParameter(ParameterExpression node)
             {
-                if (_unchangedParametersExpressions.Count(p => p.Name == node.Name)==0)
+                if (_unchangedParametersExpressions.Count(p => p.Name == node.Name) == 0)
                     return _newParameterExpression;
                 else
                     return node;

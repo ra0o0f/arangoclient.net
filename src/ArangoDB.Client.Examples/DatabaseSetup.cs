@@ -72,6 +72,7 @@ namespace ArangoDB.Client.Examples
         {
             db.Query<Person>().Remove().Execute();
             db.Query<Follow>().Remove().Execute();
+            db.Query<Host>().Remove().Execute();
 
             if (db.ListGraphs().Count(x => x.Key == "SocialGraph") != 0)
                 db.Graph("SocialGraph").Drop();

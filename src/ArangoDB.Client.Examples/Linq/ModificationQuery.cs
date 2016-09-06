@@ -11,11 +11,24 @@ namespace ArangoDB.Client.Examples.Linq
     public class ModificationQuery : TestDatabaseSetup
     {
         [Fact]
+        public void Select()
+        {
+            db.Insert<Person>(new Person
+            {
+                Age = 28,
+                Name = "raoof hojat"
+            });
+
+            var person = db.Query<Person>()
+                .Where(x => x.Age == 28)
+                .First();
+
+            Assert.Equal(person.Name, "raoof hojat");
+        }
+
+        [Fact]
         public void Upsert()
         {
-            // first remove all hosts
-            db.Query<Host>().Remove().Execute();
-
             var query = db.Query()
                 .Upsert<Host>(_ => new Host { Ip = "192.168.173.94" },
                                   _ => new Host { Ip = "192.168.173.94", Name = "chorweiler", Tags = new string[] { "development" } },
@@ -41,9 +54,6 @@ namespace ArangoDB.Client.Examples.Linq
         [Fact]
         public void UpsertOnCollection()
         {
-            // first remove all hosts
-            db.Query<Host>().Remove().Execute();
-
             // insert a host
             db.Insert<Host>(new Host { Key = "123", Tags = new string[] { "1", "2", "3" } });
 

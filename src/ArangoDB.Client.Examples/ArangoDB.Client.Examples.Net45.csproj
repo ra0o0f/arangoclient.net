@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,8 +60,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\CollectionCommand.cs" />
+    <Compile Include="Databases\DatabaseCommand.cs" />
     <Compile Include="Documents\DocumentCommand.cs" />
+    <Compile Include="Graphs\GraphCommand.cs" />
     <Compile Include="Linq\ModificationQuery.cs" />
+    <Compile Include="Models\Follow.cs" />
     <Compile Include="Models\Host.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,11 +73,13 @@
     <Compile Include="SetupClient\DatabaseSetting.cs" />
     <Compile Include="DatabaseSetup.cs" />
     <Compile Include="SimpleQueries\SimpleQueryCommand.cs" />
+    <Compile Include="Traversal\TraversalCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
