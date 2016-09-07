@@ -27,10 +27,10 @@
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.Collections.Generic;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts a binary value to and from a base 64 string value.

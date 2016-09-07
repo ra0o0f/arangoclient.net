@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Represents a reader that provides fast, non-cached, forward-only access to serialized Json data.

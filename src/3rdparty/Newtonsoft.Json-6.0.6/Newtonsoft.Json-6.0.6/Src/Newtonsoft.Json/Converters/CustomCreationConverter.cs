@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Create a custom object

@@ -27,14 +27,14 @@
 using System;
 using System.Collections.Generic;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System.Text;
 using System.Reflection;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.Globalization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     /// <summary>
     /// Get and set values for a <see cref="MemberInfo"/> using dynamic methods.

@@ -28,7 +28,7 @@ using System;
 using System.Reflection.Emit;
 using System.Reflection;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class ILGeneratorExtensions
     {

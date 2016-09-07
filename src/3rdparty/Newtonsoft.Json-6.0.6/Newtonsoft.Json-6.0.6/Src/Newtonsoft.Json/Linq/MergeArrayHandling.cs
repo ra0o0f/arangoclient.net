@@ -1,4 +1,4 @@
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Specifies how JSON arrays are merged together.

@@ -31,9 +31,9 @@ using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts an ExpandoObject to and from JSON.

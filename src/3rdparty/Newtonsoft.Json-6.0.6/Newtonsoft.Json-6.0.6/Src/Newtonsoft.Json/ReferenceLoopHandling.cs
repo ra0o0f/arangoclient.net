@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies reference loop handling options for the <see cref="JsonSerializer"/>.

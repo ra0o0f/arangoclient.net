@@ -25,14 +25,14 @@
 
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     /// <summary>
     /// Used by <see cref="JsonSerializer"/> to resolves a <see cref="JsonContract"/> for a given <see cref="Type"/>.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverObject" title="IContractResolver Class" />
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverExample" title="IContractResolver Example" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverObject" title="IContractResolver Class" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverExample" title="IContractResolver Example" />
     /// </example>
     public interface IContractResolver
     {

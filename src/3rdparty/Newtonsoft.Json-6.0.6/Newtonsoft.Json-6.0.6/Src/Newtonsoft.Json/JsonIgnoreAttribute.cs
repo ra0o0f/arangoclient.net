@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Instructs the <see cref="JsonSerializer"/> not to serialize the public field or public read/write property value.

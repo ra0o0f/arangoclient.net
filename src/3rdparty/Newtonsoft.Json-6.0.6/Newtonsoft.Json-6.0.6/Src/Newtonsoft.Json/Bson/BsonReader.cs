@@ -28,11 +28,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.IO;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Bson
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson
 {
     /// <summary>
     /// Represents a reader that provides fast, non-cached, forward-only access to serialized Json data.

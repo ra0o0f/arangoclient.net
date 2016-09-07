@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>ArangoDB.Client</id>
-    <version>0.7.41</version>
+    <version>0.7.42</version>
     <title>ArangoDB .NET Client</title>
     <description>.NET client for ArangoDB with Linq provider</description>
     <language>en-US</language>
@@ -12,7 +12,7 @@
     <projectUrl>http://www.arangoclient.net/</projectUrl>
     <iconUrl>http://arangoclient.net/arangodbLogo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>ArangoDB v3.0 support</releaseNotes>
+    <releaseNotes>ArangoDB v3.0 support, Remove Embedded Json.net</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>ArangoDB Arango Client NoSql Database</tags>
     <dependencies>

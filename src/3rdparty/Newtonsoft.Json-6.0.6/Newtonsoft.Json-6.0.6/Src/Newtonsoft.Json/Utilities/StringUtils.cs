@@ -29,13 +29,13 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class StringUtils
     {

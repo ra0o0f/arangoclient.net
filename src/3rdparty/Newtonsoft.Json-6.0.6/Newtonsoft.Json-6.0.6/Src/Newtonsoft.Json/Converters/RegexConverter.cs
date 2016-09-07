@@ -25,11 +25,11 @@
 
 using System;
 using System.Text.RegularExpressions;
-using ArangoDB.Client.Common.Newtonsoft.Json.Bson;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts a <see cref="Regex"/> to and from JSON and BSON.

@@ -25,7 +25,7 @@
 
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     /// <summary>
     /// When applied to a method, specifies that the method is called when an error occurs serializing an object.

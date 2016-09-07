@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies how object creation is handled by the <see cref="JsonSerializer"/>.

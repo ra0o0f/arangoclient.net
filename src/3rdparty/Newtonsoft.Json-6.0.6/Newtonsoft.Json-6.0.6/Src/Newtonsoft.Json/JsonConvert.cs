@@ -32,23 +32,23 @@ using System.Numerics;
 #if !(NET20 || NET35 || PORTABLE40)
 using System.Threading.Tasks;
 #endif
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.Xml;
-using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 using System.Text;
 #if !(NET20 || PORTABLE40)
 using System.Xml.Linq;
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Provides methods for converting between common language runtime types and JSON types.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="SerializeObject" title="Serializing and Deserializing JSON with JsonConvert" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="SerializeObject" title="Serializing and Deserializing JSON with JsonConvert" />
     /// </example>
     public static class JsonConvert
     {

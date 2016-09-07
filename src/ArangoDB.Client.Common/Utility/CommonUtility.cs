@@ -1,4 +1,4 @@
-﻿using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+﻿using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using ArangoDB.Client.Common.Remotion.Linq.Utilities;
 using Remotion.Utilities;
 using System;

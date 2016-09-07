@@ -25,9 +25,9 @@
 
 using System;
 using System.Reflection;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     internal static class CachedAttributeGetter<T> where T : Attribute
     {

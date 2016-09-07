@@ -27,10 +27,10 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     internal class JsonFormatterConverter : IFormatterConverter
     {

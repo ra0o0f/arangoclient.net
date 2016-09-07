@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies how floating point numbers, e.g. 1.0 and 9.9, are parsed when reading JSON text.

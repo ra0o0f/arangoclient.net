@@ -38,15 +38,15 @@ using System.Numerics;
 #endif
 using System.Reflection;
 using System.Runtime.Serialization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     internal class JsonSerializerInternalReader : JsonSerializerInternalBase
     {

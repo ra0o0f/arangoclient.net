@@ -30,9 +30,9 @@ using System.Text;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal class ExpressionReflectionDelegateFactory : ReflectionDelegateFactory
     {

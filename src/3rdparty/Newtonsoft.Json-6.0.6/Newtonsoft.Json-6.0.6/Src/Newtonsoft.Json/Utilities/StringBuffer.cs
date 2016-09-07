@@ -25,7 +25,7 @@
 
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     /// <summary>
     /// Builds a string. Unlike StringBuilder this class lets you reuse it's internal buffer.

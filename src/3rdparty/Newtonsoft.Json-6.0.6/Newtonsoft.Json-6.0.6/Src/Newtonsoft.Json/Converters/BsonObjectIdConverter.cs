@@ -24,11 +24,11 @@
 #endregion
 
 using System;
-using ArangoDB.Client.Common.Newtonsoft.Json.Bson;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts a <see cref="BsonObjectId"/> to and from JSON and BSON.

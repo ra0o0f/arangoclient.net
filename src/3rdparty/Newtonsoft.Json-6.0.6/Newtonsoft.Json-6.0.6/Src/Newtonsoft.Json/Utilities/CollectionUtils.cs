@@ -30,14 +30,14 @@ using System.Reflection;
 using System.Text;
 using System.Collections;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class CollectionUtils
     {

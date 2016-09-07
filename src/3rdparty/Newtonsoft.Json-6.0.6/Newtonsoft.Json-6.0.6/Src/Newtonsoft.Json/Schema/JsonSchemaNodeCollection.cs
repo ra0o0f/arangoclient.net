@@ -25,7 +25,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     internal class JsonSchemaNodeCollection : KeyedCollection<string, JsonSchemaNode>
     {

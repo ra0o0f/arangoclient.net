@@ -25,7 +25,7 @@
 
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Instructs the <see cref="JsonSerializer"/> to use the specified constructor when deserializing that object.

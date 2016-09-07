@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Bson
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson
 {
     /// <summary>
     /// Represents a BSON Oid (object id).

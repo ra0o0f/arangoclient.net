@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using DiagnosticsTrace = System.Diagnostics.Trace;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     /// <summary>
     /// Represents a trace writer that writes to the application's <see cref="TraceListener"/> instances.
@@ -57,12 +57,12 @@ namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
                 {
                     lock (listener)
                     {
-                        listener.TraceEvent(eventCache, "ArangoDB.Client.Common.Newtonsoft.Json", traceEventType, 0, message);
+                        listener.TraceEvent(eventCache, "ArangoDB.Client.Common.EmbeddedNewtonsoft.Json", traceEventType, 0, message);
                     }
                 }
                 else
                 {
-                    listener.TraceEvent(eventCache, "ArangoDB.Client.Common.Newtonsoft.Json", traceEventType, 0, message);
+                    listener.TraceEvent(eventCache, "ArangoDB.Client.Common.EmbeddedNewtonsoft.Json", traceEventType, 0, message);
                 }
 
                 if (DiagnosticsTrace.AutoFlush)

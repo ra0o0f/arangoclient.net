@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     /// <summary>
     /// Specifies undefined schema Id handling options for the <see cref="JsonSchemaGenerator"/>.

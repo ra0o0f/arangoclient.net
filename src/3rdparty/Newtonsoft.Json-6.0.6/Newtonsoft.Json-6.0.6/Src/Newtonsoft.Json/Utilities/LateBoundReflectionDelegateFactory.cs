@@ -24,14 +24,14 @@
 #endregion
 
 using System;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 using System.Reflection;
 
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal class LateBoundReflectionDelegateFactory : ReflectionDelegateFactory
     {

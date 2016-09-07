@@ -26,17 +26,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.IO;
 using System.Globalization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Represents a JSON array.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text" />
     /// </example>
     public class JArray : JContainer, IList<JToken>
     {
@@ -140,7 +140,7 @@ namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
         /// <param name="json">A <see cref="String"/> that contains JSON.</param>
         /// <returns>A <see cref="JArray"/> populated from the string that contains JSON.</returns>
         /// <example>
-        ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text" />
+        ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text" />
         /// </example>
         public new static JArray Parse(string json)
         {
@@ -225,7 +225,7 @@ namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="ArangoDB.Client.Common.Newtonsoft.Json.Linq.JToken"/> at the specified index.
+        /// Gets or sets the <see cref="ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq.JToken"/> at the specified index.
         /// </summary>
         /// <value></value>
         public JToken this[int index]

@@ -32,9 +32,9 @@ using System.Numerics;
 using System.Text;
 using System.IO;
 using System.Xml;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Represents a writer that provides a fast, non-cached, forward-only way of generating Json data.

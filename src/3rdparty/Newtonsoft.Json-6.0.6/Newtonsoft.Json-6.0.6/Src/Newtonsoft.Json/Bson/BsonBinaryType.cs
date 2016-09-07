@@ -25,7 +25,7 @@
 
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Bson
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson
 {
     internal enum BsonBinaryType : byte
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Specifies the settings used when merging JSON.

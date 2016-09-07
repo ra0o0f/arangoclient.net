@@ -40,18 +40,18 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Xml.Serialization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
 using System.Runtime.CompilerServices;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
     internal struct ResolverContractKey : IEquatable<ResolverContractKey>
     {

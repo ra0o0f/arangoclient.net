@@ -27,17 +27,17 @@ using System;
 using System.Globalization;
 using System.ComponentModel;
 using System.Collections.Generic;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     /// <summary>
     /// Generates a <see cref="JsonSchema"/> from a specified <see cref="Type"/>.

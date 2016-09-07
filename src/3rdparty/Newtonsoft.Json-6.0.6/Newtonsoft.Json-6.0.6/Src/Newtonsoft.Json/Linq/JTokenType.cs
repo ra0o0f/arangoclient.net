@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Specifies the type of token.

@@ -1,8 +1,8 @@
 ﻿
 #if (NETFX_CORE || PORTABLE40 || PORTABLE)
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies what messages to output for the <see cref="ITraceWriter"/> class.

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq.JsonPath
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq.JsonPath
 {
     internal class QueryFilter : PathFilter
     {

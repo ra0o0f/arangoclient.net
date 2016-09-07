@@ -24,10 +24,10 @@
 #endregion
 
 using System.Collections.Generic;
-using ArangoDB.Client.Common.Newtonsoft.Json.Linq;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     internal class JsonSchemaModel
     {

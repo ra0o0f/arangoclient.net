@@ -26,7 +26,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Bson
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson
 {
     internal abstract class BsonToken
     {

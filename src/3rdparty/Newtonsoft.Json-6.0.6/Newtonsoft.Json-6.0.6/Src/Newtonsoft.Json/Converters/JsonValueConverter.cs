@@ -29,10 +29,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Security;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using Windows.Data.Json;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts a <see cref="IJsonValue"/> to and from JSON.

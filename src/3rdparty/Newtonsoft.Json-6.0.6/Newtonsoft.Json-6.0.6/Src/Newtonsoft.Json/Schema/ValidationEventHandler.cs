@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     /// <summary>
     /// Represents the callback method that will handle JSON schema validation events and the <see cref="ValidationEventArgs"/>.

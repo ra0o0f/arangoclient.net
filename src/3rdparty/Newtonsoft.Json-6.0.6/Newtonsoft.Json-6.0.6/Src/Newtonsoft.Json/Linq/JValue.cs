@@ -25,7 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.Globalization;
 #if !(NET35 || NET20 || PORTABLE40)
 using System.Dynamic;
@@ -36,7 +36,7 @@ using System.Numerics;
 
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Represents a value in JSON (string, integer, date, etc).

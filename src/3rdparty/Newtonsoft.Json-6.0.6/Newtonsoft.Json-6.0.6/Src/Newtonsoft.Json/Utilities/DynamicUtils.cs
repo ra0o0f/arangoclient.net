@@ -37,9 +37,9 @@ using Microsoft.CSharp.RuntimeBinder;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class DynamicUtils
     {

@@ -32,17 +32,17 @@ using System.Numerics;
 #endif
 using System.Text;
 using System.Text.RegularExpressions;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 using System.Reflection;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #endif
 #if !(NETFX_CORE || PORTABLE40 || PORTABLE)
 using System.Data.SqlTypes;
 
 #endif
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal enum PrimitiveTypeCode
     {

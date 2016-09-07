@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 #if NET20
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq.JsonPath
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq.JsonPath
 {
     internal class FieldMultipleFilter : PathFilter
     {

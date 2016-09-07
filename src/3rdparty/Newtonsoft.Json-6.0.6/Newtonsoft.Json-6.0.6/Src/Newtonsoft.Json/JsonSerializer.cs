@@ -29,13 +29,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
-using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 using System.Runtime.Serialization;
-using ErrorEventArgs = ArangoDB.Client.Common.Newtonsoft.Json.Serialization.ErrorEventArgs;
+using ErrorEventArgs = ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization.ErrorEventArgs;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Serializes and deserializes objects into and from the JSON format.

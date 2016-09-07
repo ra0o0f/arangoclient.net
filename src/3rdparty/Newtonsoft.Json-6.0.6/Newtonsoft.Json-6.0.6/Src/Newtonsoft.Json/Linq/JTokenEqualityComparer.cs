@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Compares tokens to determine whether they are equal.

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq.JsonPath
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq.JsonPath
 {
     internal class ArraySliceFilter : PathFilter
     {

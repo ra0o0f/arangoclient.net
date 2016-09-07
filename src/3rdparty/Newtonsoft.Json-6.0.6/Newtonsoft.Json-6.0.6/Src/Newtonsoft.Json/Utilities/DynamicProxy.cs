@@ -31,7 +31,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal class DynamicProxy<T>
     {

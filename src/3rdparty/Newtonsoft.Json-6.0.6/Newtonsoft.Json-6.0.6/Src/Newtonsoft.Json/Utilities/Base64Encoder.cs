@@ -26,7 +26,7 @@
 using System;
 using System.IO;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal class Base64Encoder
     {

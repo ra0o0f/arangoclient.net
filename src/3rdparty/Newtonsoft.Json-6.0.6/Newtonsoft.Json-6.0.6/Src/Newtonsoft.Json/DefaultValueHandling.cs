@@ -26,14 +26,14 @@
 using System;
 using System.ComponentModel;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies default value handling options for the <see cref="JsonSerializer"/>.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingObject" title="DefaultValueHandling Class" />
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingExample" title="DefaultValueHandling Ignore Example" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingObject" title="DefaultValueHandling Class" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingExample" title="DefaultValueHandling Ignore Example" />
     /// </example>
     [Flags]
     public enum DefaultValueHandling

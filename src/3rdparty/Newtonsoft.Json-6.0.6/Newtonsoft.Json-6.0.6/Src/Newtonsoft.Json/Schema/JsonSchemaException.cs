@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     /// <summary>
     /// Returns detailed information about the schema exception.

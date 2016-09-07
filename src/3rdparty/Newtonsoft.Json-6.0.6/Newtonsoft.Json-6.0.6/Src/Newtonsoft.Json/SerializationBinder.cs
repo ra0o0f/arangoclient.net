@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Allows users to control class loading and mandate what class to load.

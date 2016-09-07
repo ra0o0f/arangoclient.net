@@ -27,7 +27,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Linq
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Linq
 {
     /// <summary>
     /// Represents a view of a <see cref="JProperty"/>.

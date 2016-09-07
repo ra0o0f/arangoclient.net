@@ -26,9 +26,9 @@
 #if !(NETFX_CORE || PORTABLE40 || PORTABLE)
 using System;
 using System.Data;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Converters
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Converters
 {
     /// <summary>
     /// Converts a <see cref="DataSet"/> to and from JSON.

@@ -27,9 +27,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using ArangoDB.Client.Common.Newtonsoft.Json.Utilities;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Bson
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Bson
 {
     internal class BsonBinaryWriter
     {

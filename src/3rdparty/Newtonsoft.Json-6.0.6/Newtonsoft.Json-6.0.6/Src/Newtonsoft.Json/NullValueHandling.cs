@@ -23,14 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Specifies null value handling options for the <see cref="JsonSerializer"/>.
     /// </summary>
     /// <example>
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingObject" title="NullValueHandling Class" />
-    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingExample" title="NullValueHandling Ignore Example" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingObject" title="NullValueHandling Class" />
+    ///   <code lang="cs" source="..\Src\ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingExample" title="NullValueHandling Ignore Example" />
     /// </example>
     public enum NullValueHandling
     {

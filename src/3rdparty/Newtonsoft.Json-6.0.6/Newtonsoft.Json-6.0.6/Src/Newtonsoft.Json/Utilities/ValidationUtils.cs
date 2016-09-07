@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class ValidationUtils
     {

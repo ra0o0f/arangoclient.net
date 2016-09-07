@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Schema
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Schema
 {
     internal static class JsonSchemaConstants
     {

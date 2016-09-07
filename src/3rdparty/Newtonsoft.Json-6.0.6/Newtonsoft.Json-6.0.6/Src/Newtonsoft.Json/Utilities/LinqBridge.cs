@@ -33,9 +33,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using ArangoDB.Client.Common.Newtonsoft.Json.Serialization;
+using ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities.LinqBridge
 {
   /// <summary>
   /// Provides a set of static (Shared in Visual Basic) methods for 
@@ -2973,7 +2973,7 @@ namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities.LinqBridge
   }
 }
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Serialization
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
 {
 #pragma warning disable 1591
   public delegate TResult Func<TResult>();

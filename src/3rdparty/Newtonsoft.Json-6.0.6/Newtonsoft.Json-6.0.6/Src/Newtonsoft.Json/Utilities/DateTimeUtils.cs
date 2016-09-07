@@ -28,7 +28,7 @@ using System.IO;
 using System.Xml;
 using System.Globalization;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json.Utilities
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Utilities
 {
     internal static class DateTimeUtils
     {

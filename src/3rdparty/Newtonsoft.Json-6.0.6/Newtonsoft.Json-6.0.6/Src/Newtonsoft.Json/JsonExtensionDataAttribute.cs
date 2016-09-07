@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArangoDB.Client.Common.Newtonsoft.Json
+namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
 {
     /// <summary>
     /// Instructs the <see cref="JsonSerializer"/> to deserialize properties with no matching class member into the specified collection
