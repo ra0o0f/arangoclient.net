@@ -34,9 +34,16 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -138,48 +145,51 @@
     <Compile Include="Interface\IDocumentIdentifierResult.cs" />
     <Compile Include="Interface\IDocumentPropertySetting.cs" />
     <Compile Include="Interface\IEdgeCollection.cs" />
-    <Compile Include="Linq\AqlExpressionTreeVisitor.cs" />
-    <Compile Include="Linq\AqlExpressionTreeVisitorLookups.cs" />
-    <Compile Include="Linq\AqlFunctionCache.cs" />
-    <Compile Include="Linq\AqlModelVisitor.cs" />
-    <Compile Include="Linq\AqlQueryable.cs" />
-    <Compile Include="Linq\AqlQueryExecuter.cs" />
-    <Compile Include="Linq\AqlQueryProvider.cs" />
-    <Compile Include="Linq\Clause\FilterClause.cs" />
-    <Compile Include="Linq\Clause\FilterExpressionNode.cs" />
-    <Compile Include="Linq\Clause\LetLambdaExpressionNode.cs" />
-    <Compile Include="Linq\Clause\GroupByClause.cs" />
-    <Compile Include="Linq\Clause\GroupByExpressionNode.cs" />
-    <Compile Include="Linq\Clause\IModifyExpressionNode.cs" />
-    <Compile Include="Linq\Clause\InModifyExpressionNode.cs" />
-    <Compile Include="Linq\Clause\InsertAndReturnClause.cs" />
-    <Compile Include="Linq\Clause\InsertAndReturnExpressionNode.cs" />
-    <Compile Include="Linq\Clause\LetClause.cs" />
-    <Compile Include="Linq\Clause\LetExpressionNode.cs" />
-    <Compile Include="Linq\Clause\RemoveAndReturnClause.cs" />
-    <Compile Include="Linq\Clause\RemoveAndReturnExpressionNode.cs" />
-    <Compile Include="Linq\Clause\ReturnResultModifyExpressionNode.cs" />
-    <Compile Include="Linq\Clause\SkipExpressionNode.cs" />
-    <Compile Include="Linq\Clause\SkipTakeClause.cs" />
-    <Compile Include="Linq\Clause\LimitExpressionNode.cs" />
-    <Compile Include="Linq\Clause\TakeExpressionNode.cs" />
-    <Compile Include="Linq\Clause\UpdateAndReturnClause.cs" />
-    <Compile Include="Linq\Clause\UpdateAndReturnExpressionNode.cs" />
-    <Compile Include="Linq\Clause\UpsertAndReturnClause.cs" />
-    <Compile Include="Linq\Clause\UpsertAndReturnExpressionNode.cs" />
-    <Compile Include="Linq\DefaultExtentionAttribute.cs" />
-    <Compile Include="Linq\Grouping.cs" />
-    <Compile Include="Linq\GroupQuerySource.cs" />
-    <Compile Include="Linq\LinqUtility.cs" />
-    <Compile Include="Linq\NamedExpression.cs" />
-    <Compile Include="Linq\PredicateRewriter.cs" />
-    <Compile Include="Linq\VisitorCrudState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\CollectionPropertyAttribute.cs" />
     <Compile Include="Property\DatabaseCollectionSetting.cs" />
     <Compile Include="Property\DocumentIdentifierModifier.cs" />
     <Compile Include="Property\DocumentPropertySetting.cs" />
     <Compile Include="Attributes\DocumentPropertyAttribute.cs" />
+    <Compile Include="Query\AqlFunctionCache.cs" />
+    <Compile Include="Query\AQLParser.cs" />
+    <Compile Include="Query\ArangoExpressionTreeVisitor.cs" />
+    <Compile Include="Query\ArangoExpressionTreeVisitorLookups.cs" />
+    <Compile Include="Query\ArangoModelVisitor.cs" />
+    <Compile Include="Query\ArangoQueryable.cs" />
+    <Compile Include="Query\ArangoQueryExecuter.cs" />
+    <Compile Include="Query\ArangoQueryProvider.cs" />
+    <Compile Include="Query\Clause\FilterClause.cs" />
+    <Compile Include="Query\Clause\FilterExpressionNode.cs" />
+    <Compile Include="Query\Clause\GroupByClause.cs" />
+    <Compile Include="Query\Clause\GroupByExpressionNode.cs" />
+    <Compile Include="Query\Clause\IgnoreModificationSelectExpressionNode.cs" />
+    <Compile Include="Query\Clause\IModificationClause.cs" />
+    <Compile Include="Query\Clause\InModificationExpressionNode.cs" />
+    <Compile Include="Query\Clause\InsertClause.cs" />
+    <Compile Include="Query\Clause\InsertExpressionNode.cs" />
+    <Compile Include="Query\Clause\LetClause.cs" />
+    <Compile Include="Query\Clause\LetLambdaExpressionNode.cs" />
+    <Compile Include="Query\Clause\LetSelectExpressionNode.cs" />
+    <Compile Include="Query\Clause\RemoveClause.cs" />
+    <Compile Include="Query\Clause\RemoveExpressionNode.cs" />
+    <Compile Include="Query\Clause\SelectExpressionNode.cs" />
+    <Compile Include="Query\Clause\SelectModificationClause.cs" />
+    <Compile Include="Query\Clause\SelectModificationExpressionNode.cs" />
+    <Compile Include="Query\Clause\SkipExpressionNode.cs" />
+    <Compile Include="Query\Clause\SkipTakeClause.cs" />
+    <Compile Include="Query\Clause\TakeExpressionNode.cs" />
+    <Compile Include="Query\Clause\UpdateReplaceClause.cs" />
+    <Compile Include="Query\Clause\UpdateReplaceExpressionNode.cs" />
+    <Compile Include="Query\Clause\UpsertClause.cs" />
+    <Compile Include="Query\Clause\UpsertExpressionNode.cs" />
+    <Compile Include="Query\ExpressionParameterRewriter.cs" />
+    <Compile Include="Query\ExtentionIdentifierAttribute.cs" />
+    <Compile Include="Query\Grouping.cs" />
+    <Compile Include="Query\LinqUtility.cs" />
+    <Compile Include="Query\NamedExpression.cs" />
+    <Compile Include="Query\SupportedMethodSpecifications.cs" />
+    <Compile Include="Query\VisitorModificationData.cs" />
     <Compile Include="Serialization\Converters\DateTimeConverter.cs" />
     <Compile Include="Serialization\Converters\EnumValueConverter.cs" />
     <Compile Include="Serialization\Converters\QueryParameterConverter.cs" />
@@ -188,15 +198,29 @@
     <Compile Include="Serialization\DocumentSerializer.cs" />
     <Compile Include="Property\CollectionPropertySetting.cs" />
     <Compile Include="DatabaseSetting.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\CachedAttributeGetter.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\CollectionUtils.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ConvertUtils.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\DynamicReflectionDelegateFactory.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ExpressionReflectionDelegateFactory.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ILGeneratorExtensions.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\JsonContainerAttribute.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\JsonTypeReflector.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\LateBoundReflectionDelegateFactory.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\MethodBinder.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\MethodCall.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\NamingStrategy.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ReflectionDelegateFactory.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ReflectionObject.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ReflectionUtils.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\StringUtils.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ThreadSafeStore.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\TypeExtentions.cs" />
+    <Compile Include="Utility\Newtonsoft.Json\ValidationUtils.cs" />
+    <Compile Include="Utility\ReflectionUtils.cs" />
     <Compile Include="Utility\StringUtils.cs" />
     <Compile Include="Utility\SynchronizionUtils.cs" />
     <Compile Include="Utility\Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
-      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
-      <Name>ArangoDB.Client.Common.Net45</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.ArangoDB.Client.Net45.config" />

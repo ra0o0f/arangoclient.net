@@ -1,9 +1,8 @@
 ﻿using ArangoDB.Client.Advanced;
 using ArangoDB.Client.ChangeTracking;
-using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
-using ArangoDB.Client.Linq;
+using ArangoDB.Client.Query;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Utility;
 using System;
@@ -31,9 +30,9 @@ namespace ArangoDB.Client
         public DatabaseSetting Setting { get; set; }
 
         public IAdvancedOperation Advanced { get; set; }
-
+        
         public static ClientSetting ClientSetting { get; private set; }
-
+        
         static ArangoDatabase()
         {
             ClientSetting = new ClientSetting();
@@ -142,18 +141,29 @@ namespace ArangoDB.Client
 
         }
 
-        public AqlQueryable<T> Query<T>()
+        public ArangoQueryable<T> Query<T>()
         {
-            var queryParser = LinqUtility.CreateQueryParser();
-            var executer = new AqlQueryExecuter(this);
-
-            return new AqlQueryable<T>(queryParser, executer, this);
+            AQLParser queryParser = new AQLParser(this);
+            return queryParser.CreateQueryable<T>();
         }
 
-        public AqlQueryable<AQL> Query()
+        public ArangoQueryable<AQL> Query()
         {
             return Query<AQL>();
         }
+
+        //public AqlQueryable<T> Query<T>()
+        //{
+        //    var queryParser = Linq.LinqUtility.CreateQueryParser();
+        //    var executer = new AqlQueryExecuter(this);
+
+        //    return new AqlQueryable<T>(queryParser, executer, this);
+        //}
+
+        //public AqlQueryable<AQL> Query()
+        //{
+        //    return Query<AQL>();
+        //}
 
         public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null,
            bool ? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)

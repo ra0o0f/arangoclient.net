@@ -1,4 +1,4 @@
-﻿using ArangoDB.Client.Linq;
+﻿using ArangoDB.Client.Query;
 using System;
 using System.Collections;
 using System.Collections.Generic;

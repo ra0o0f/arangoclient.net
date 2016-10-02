@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using ArangoDB.Client.Common.Utility;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization;
 using System;

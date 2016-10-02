@@ -69,7 +69,8 @@ return {
                 .Upsert<Host>(_ => new Host { Ip = "192.168.173.94" },
                                   _ => new Host { Ip = "192.168.173.94", Name = "chorweiler", Tags = new string[] { "development" } },
                                  (_, o) => new Host { Tags = AQL.Push(o.Tags, "development", true) })
-                                 .In<Host>().ReturnResult(true);
+                                 .In<Host>()
+                                 .Select((n, o) => n);
 
             var queryData = query.GetQueryData();
 
@@ -78,8 +79,7 @@ upsert @P1
 insert @P2
 update { `tags` : push( `OLD` .`tags` , @P3 , @P4  )  }
 in `hosts`
-let crudResult = NEW 
-return crudResult
+return `NEW`
                     ".RemoveSpaces());
 
             ObjectUtility.AssertSerialize(queryData.BindVars[0].Value, new { ip = "192.168.173.94" },db);

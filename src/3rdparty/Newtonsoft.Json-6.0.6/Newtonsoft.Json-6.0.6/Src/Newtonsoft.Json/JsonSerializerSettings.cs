@@ -176,7 +176,7 @@ namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json
         /// Gets or sets how a type name assembly is written and resolved by the serializer.
         /// </summary>
         /// <value>The type name assembly format.</value>
-        public FormatterAssemblyStyle TypeNameAssemblyFormat
+        internal FormatterAssemblyStyle TypeNameAssemblyFormat
         {
             get { return _typeNameAssemblyFormat ?? DefaultFormatterAssemblyStyle; }
             set { _typeNameAssemblyFormat = value; }

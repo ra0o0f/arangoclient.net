@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ArangoDB.Client.Http;
-using ArangoDB.Client.Linq;
+using ArangoDB.Client.Query;
 using ArangoDB.Client.Property;
 using ArangoDB.Client.Utility;
 using System;

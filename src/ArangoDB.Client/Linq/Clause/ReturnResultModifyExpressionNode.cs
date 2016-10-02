@@ -13,10 +13,10 @@ namespace ArangoDB.Client.Linq.Clause
 {
     public class ReturnResultModifyExpressionNode : MethodCallExpressionNodeBase
     {
-        public static readonly MethodInfo[] SupportedMethods = new[]
-                                                                {
-                                                                    GetSupportedMethod(() => QueryableExtensions.ReturnResult<object>(null,false))
-                                                                };
+        //public static readonly MethodInfo[] SupportedMethods = new[]
+        //                                                        {
+        //                                                            GetSupportedMethod(() => QueryableExtensions.ReturnResult<object>(null,false))
+        //                                                        };
 
         ConstantExpression returnNewResult;
 

@@ -40,6 +40,10 @@
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -85,16 +89,13 @@
     <Compile Include="Utility\StringUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.ArangoDB.Client.Test.Net45.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
-      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
-      <Name>ArangoDB.Client.Common.Net45</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ArangoDB.Client\ArangoDB.Client.Net45.csproj">
       <Project>{216d8159-a346-491a-973e-aee95575f111}</Project>
       <Name>ArangoDB.Client.Net45</Name>

@@ -1,10 +1,7 @@
-﻿using ArangoDB.Client.Common.Remotion.Linq.Parsing.ExpressionTreeVisitors;
-using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.IntermediateModel;
-using ArangoDB.Client.Common.Remotion.Linq.Parsing.Structure.NodeTypeProviders;
-using ArangoDB.Client.Common.Remotion.Linq.Utilities;
-using ArangoDB.Client.Data;
-using ArangoDB.Client.Linq;
-using ArangoDB.Client.Utility;
+﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Query;
+using ArangoDB.Client.Query;
+using ArangoDB.Client.Query.Clause;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,55 +16,36 @@ namespace ArangoDB.Client
 
     public static class QueryableExtensions
     {
-        internal static readonly MethodInfo[] OrderBySupportedMethods = new[]
-                                                           {
-                                                               GetSupportedMethod (() => Queryable.OrderBy<object, object> (null, null)),
-                                                               GetSupportedMethod (() => Enumerable.OrderBy<object, object> (null, null)),
-                                                               GetSupportedMethod (() => Sort<object, object> (null, null))
-                                                           };
-
-        internal static readonly MethodInfo[] OrderByDescendingSupportedMethods = new[]
-                                                           {
-                                                               GetSupportedMethod (() => Queryable.OrderByDescending<object, object> (null, null)),
-                                                               GetSupportedMethod (() => Enumerable.OrderByDescending<object, object> (null, null)),
-                                                               GetSupportedMethod (() => SortDescending<object, object> (null, null))
-                                                           };
-
-        public static readonly MethodInfo[] SelectManySupportedMethods = new[]
-                                                           {
-                                                               GetSupportedMethod (
-                                                                   () => Queryable.SelectMany<object, object[], object> (null, o => null, null)),
-                                                               GetSupportedMethod (
-                                                                   () => Enumerable.SelectMany<object, object[], object> (null, o => null, null)),
-                                                               GetSupportedMethod (
-                                                                   () => Queryable.SelectMany<object, object[]> (null, o => null)),
-                                                               GetSupportedMethod (
-                                                                   () => Enumerable.SelectMany<object, object[]> (null, o => null)),
-                                                               GetSupportedMethod (
-                                                                   () => For<object, object> (null, o => null))
-                                                           };
-
-        static MethodInfo GetSupportedMethod<T>(Expression<Func<T>> methodCall)
+        static QueryableExtensions()
         {
-            Utils.CheckNotNull("methodCall", methodCall);
+            var extention = typeof(QueryableExtensions)
+                .GetRuntimeMethods()
+                .Where(x => x.GetCustomAttribute<ExtentionIdentifierAttribute>() != null)
+                .GroupBy(x => x.GetCustomAttribute<ExtentionIdentifierAttribute>().Identifier)
+                .Select(g => new { g.Key, Count = g.Count() })
+                .Where(x => x.Count > 1)
+                .FirstOrDefault();
 
-            var method = ReflectionUtility.GetMethod(methodCall);
-            return MethodInfoBasedNodeTypeRegistry.GetRegisterableMethodDefinition(method, throwOnAmbiguousMatch: true);
+            if (extention != null)
+                throw new InvalidOperationException($"Multiple extention identifier {extention.Key} found");
         }
 
-        public static AqlQueryable<T> AsAqlQueryable<T>(this IQueryable<T> source)
+        public static ArangoQueryable<T> AsArangoQueryable<T>(this IQueryable<T> source)
         {
-            var queryable = (source) as AqlQueryable<T>;
+            if (source == null)
+                throw new InvalidCastException("Queryable source is null");
+
+            var queryable = (source) as ArangoQueryable<T>;
 
             if (queryable == null)
-                throw new InvalidCastException("Queryable source is not type of AqlQueryable");
+                throw new InvalidCastException("Queryable source is not type of ArangoQueryable");
 
             return queryable;
         }
 
         public static QueryData GetQueryData<T>(this IQueryable<T> source)
         {
-            return source.AsAqlQueryable<T>().GetQueryData();
+            return source.AsArangoQueryable().GetQueryData();
         }
 
         public static Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source)
@@ -122,154 +100,82 @@ namespace ArangoDB.Client
         {
             if (predicate != null)
                 source = source.Where(predicate);
+
             var cursor = source.AsCursor() as Cursor<T>;
             return cursor.ExecuteScalar(returnDefaultWhenEmpty: returnDefaultWhenEmpty, throwIfNotSingle: true);
         }
 
         public static Task<List<T>> ToListAsync<T>(this IQueryable<T> source)
         {
-            return source.AsAqlQueryable<T>().ToListAsync();
+            return source.AsArangoQueryable<T>().ToListAsync();
         }
 
         public static void ForEach<T>(this IQueryable<T> source, Action<T> action)
         {
-            source.AsAqlQueryable<T>().ForEach(x => action(x));
+            source.AsArangoQueryable<T>().ForEach(x => action(x));
         }
 
         public static async Task ForEachAsync<T>(this IQueryable<T> source, Action<T> action)
         {
-            await source.AsAqlQueryable<T>().ForEachAsync(x => action(x)).ConfigureAwait(false);
+            await source.AsArangoQueryable<T>().ForEachAsync(x => action(x)).ConfigureAwait(false);
         }
 
         public static ICursor<T> AsCursor<T>(this IQueryable<T> source)
         {
-            return source.AsAqlQueryable<T>().AsCursor();
-        }
-
-        /*crud extentions*/
-
-        public static void ForEach<T>(this IAqlModifiable<T> source, Action<T> action)
-        {
-            ForEach<T>(source, x => action(x), IsNewResult(source));
-        }
-
-        public static void ForEach<T>(this IAqlModifiable<T> source, Action<T> action, bool returnNewResult)
-        {
-            var newSource = ReturnResult<T>(source, returnNewResult);
-            newSource.AsAqlQueryable<T>().ForEach(x => action(x));
-        }
-
-        public static async Task<List<T>> ToListAsync<T>(this IAqlModifiable<T> source)
-        {
-            return await ToListAsync<T>(source, IsNewResult(source));
-        }
-
-        public static async Task<List<T>> ToListAsync<T>(this IAqlModifiable<T> source, bool returnNewResult)
-        {
-            var newSource = ReturnResult<T>(source, returnNewResult);
-            return await source.AsAqlQueryable<T>().ToListAsync().ConfigureAwait(false);
-        }
-
-        public static async Task ForEachAsync<T>(this IAqlModifiable<T> source, Action<T> action)
-        {
-            await ForEachAsync<T>(source, action, IsNewResult(source)).ConfigureAwait(false);
-        }
-
-        public static async Task ForEachAsync<T>(this IAqlModifiable<T> source, Action<T> action, bool returnNewResult)
-        {
-            var newSource = ReturnResult<T>(source, returnNewResult);
-            await newSource.AsAqlQueryable<T>().ForEachAsync(x => action(x)).ConfigureAwait(false);
-        }
-
-        public static List<T> ToList<T>(this IAqlModifiable<T> source)
-        {
-            return ToList(source, IsNewResult(source));
-        }
-
-        public static List<T> ToList<T>(this IAqlModifiable<T> source, bool returnNewResult)
-        {
-            var newSource = ReturnResult<T>(source, returnNewResult);
-            return newSource.AsAqlQueryable<T>().ToList();
-        }
-
-        private static bool IsNewResult<T>(IAqlModifiable<T> source)
-        {
-            switch (source.AsAqlQueryable().StateValues["CrudFunction"])
-            {
-                case "insert":
-                case "update":
-                case "replace":
-                case "upsert":
-                    return true;
-                case "remove":
-                    return false;
-                default:
-                    return false;
-            }
+            return source.AsArangoQueryable<T>().AsCursor();
         }
 
         public static void Execute<T>(this IAqlModifiable<T> source)
         {
-            source.AsAqlQueryable<T>().ToList();
+            // AsCursor is needed for executing query by ArangoQueryable methods instead of ArangoQueryExecuter
+            source.IgnoreModificationSelect().AsCursor().ToList();
         }
 
         /*Relinq Extentions*/
 
-        private static ConcurrentDictionary<string, MethodInfo> _cachedMethodInfos = new ConcurrentDictionary<string, MethodInfo>();
+        private static ConcurrentDictionary<string, MethodInfo> cachedExtentions = new ConcurrentDictionary<string, MethodInfo>();
 
-        private static MethodInfo FindCachedMethod(string name, params Type[] arguments)
+        private static MethodInfo FindExtention(string identifier, params Type[] arguments)
         {
-            string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
-            return _cachedMethodInfos.GetOrAdd(key,
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x => x.Name == name).First().MakeGenericMethod(arguments));
+            string key = $"{identifier}_{string.Join("_", arguments.Select(x => x.FullName))}";
+
+            return cachedExtentions
+                .GetOrAdd(key, typeof(QueryableExtensions)
+                .GetRuntimeMethods()
+                .ToList()
+                .First(x => x.GetCustomAttribute<ExtentionIdentifierAttribute>()?.Identifier == identifier)
+                .MakeGenericMethod(arguments));
         }
 
-        private static MethodInfo FindCachedDefaultMethod(string name, params Type[] arguments)
-        {
-            return FindCachedDefaultMethod(name, "default", arguments);
-        }
-
-        private static MethodInfo FindCachedDefaultMethod(string name, string defaultMethod, params Type[] arguments)
-        {
-            string key = name + "-" + string.Join("-", arguments.Select(x => x.Name).ToList());
-            return _cachedMethodInfos.GetOrAdd(key,
-                typeof(QueryableExtensions).GetRuntimeMethods().ToList()
-                .Where(x =>
-                    x.GetCustomAttribute<DefaultExtentionAttribute>() != null
-                    && x.GetCustomAttribute<DefaultExtentionAttribute>().Name == defaultMethod
-                    && x.Name == name)
-                .First().MakeGenericMethod(arguments));
-        }
-
+        [ExtentionIdentifier("For")]
         public static IQueryable<TResult> For<TSource, TResult>(this IEnumerable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
         {
             var queryableSource = source.AsQueryable();
 
             return queryableSource.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("For", typeof(TSource), typeof(TResult)),
+                    FindExtention("For", typeof(TSource), typeof(TResult)),
                     queryableSource.Expression,
                     Expression.Quote(selector)
                     ));
         }
 
+        [ExtentionIdentifier("Collect")]
         public static IQueryable<IGrouping<TKey, TSource>> Collect<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
             return source.Provider.CreateQuery<IGrouping<TKey, TSource>>(
                 Expression.Call(
-                    FindCachedMethod("Collect", typeof(TSource), typeof(TKey)),
+                    FindExtention("Collect", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
 
-        [DefaultExtention]
+        [ExtentionIdentifier("Limit")]
         public static IQueryable<TSource> Limit<TSource>(this IQueryable<TSource> source, int offset, int count)
         {
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    // 3 parameter for providing 0 for offset
-                    FindCachedMethod("Limit", typeof(TSource)),
+                    FindExtention("Limit", typeof(TSource)),
                     source.Expression,
                     Expression.Constant(count),
                     Expression.Constant(offset)));
@@ -302,28 +208,27 @@ namespace ArangoDB.Client
             return UpdateReplace(source, withSelector, keySelector, "replace");
         }
 
+        [ExtentionIdentifier("UpdateReplace")]
         internal static IAqlModifiable<TSource> UpdateReplace<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> withSelector
             , Expression<Func<TSource, object>> keySelector, string command)
         {
             if (keySelector == null)
                 keySelector = x => null;
 
-            source.AsAqlQueryable().StateValues["CrudFunction"] = command;
-
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("UpdateReplace", typeof(TSource)),
+                    FindExtention("UpdateReplace", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(withSelector),
                     Expression.Quote(keySelector),
                     Expression.Constant(command)
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+                    )) as IAqlModifiable<TSource>;
         }
 
         public static IAqlModifiable<AQL> Upsert<TSource>(this IQueryable source, Expression<Func<AQL, object>> searchExpression,
             Expression<Func<AQL, object>> insertExpression, Expression<Func<AQL, TSource, object>> updateExpression)
         {
-            return InternalUpsert<AQL, TSource>(source.OfType<AQL>(), searchExpression, insertExpression, updateExpression, typeof(TSource));
+            return InternalUpsert(source.OfType<AQL>(), searchExpression, insertExpression, updateExpression, typeof(TSource));
         }
 
         public static IAqlModifiable<TSource> Upsert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> searchExpression,
@@ -332,24 +237,23 @@ namespace ArangoDB.Client
             return InternalUpsert(source, searchExpression, insertExpression, updateExpression, typeof(TSource));
         }
 
+        [ExtentionIdentifier("InternalUpsert")]
         internal static IAqlModifiable<TSource> InternalUpsert<TSource, TOld>(this IQueryable<TSource> source, Expression<Func<TSource, object>> searchExpression,
             Expression<Func<TSource, object>> insertExpression, Expression<Func<TSource, TOld, object>> updateExpression, Type updateType)
         {
-            source.AsAqlQueryable().StateValues["CrudFunction"] = "upsert";
-
-            var newUpdateExp = PredicateRewriter.Rewrite(updateExpression, "OLD");
+            var newUpdateExp = ExpressionParameterRewriter.RewriteParameterAt(updateExpression, 1, "OLD");
 
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("InternalUpsert", typeof(TSource), typeof(TOld)),
+                    FindExtention("InternalUpsert", typeof(TSource), typeof(TOld)),
                     source.Expression,
                     Expression.Quote(searchExpression),
                     Expression.Quote(insertExpression),
                     Expression.Quote(newUpdateExp),
                     Expression.Constant(updateType)
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+                    )) as IAqlModifiable<TSource>;
         }
-
+        
         public static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source)
         {
             return Insert(source, null);
@@ -360,21 +264,19 @@ namespace ArangoDB.Client
             return Insert(source, selector, typeof(TSource));
         }
 
-        [DefaultExtention]
+        [ExtentionIdentifier("Insert")]
         internal static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, object>> selector, Type type)
         {
             if (selector == null)
                 selector = x => null;
 
-            source.AsAqlQueryable().StateValues["CrudFunction"] = "insert";
-
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedDefaultMethod("Insert", typeof(TSource)),
+                    FindExtention("Insert", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(selector),
                     Expression.Constant(type)
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+                    )) as IAqlModifiable<TSource>;
         }
 
         public static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source)
@@ -388,57 +290,69 @@ namespace ArangoDB.Client
             return Remove(source, keySelector, typeof(TSource));
         }
 
-        [DefaultExtention]
+        [ExtentionIdentifier("Remove")]
         internal static IAqlModifiable<TSource> Remove<TSource>(this IQueryable<TSource> source,
             Expression<Func<TSource, object>> keySelector, Type type)
         {
             if (keySelector == null)
                 keySelector = x => null;
 
-            source.AsAqlQueryable().StateValues["CrudFunction"] = "remove";
-
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedDefaultMethod("Remove", typeof(TSource)),
+                    FindExtention("Remove", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(keySelector),
                     Expression.Constant(type)
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TSource>;
+                    )) as IAqlModifiable<TSource>;
         }
 
+        [ExtentionIdentifier("In")]
         public static IAqlModifiable<TResult> In<TResult>(this IAqlModifiable source)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("In", typeof(TResult)),
+                    FindExtention("In", typeof(TResult)),
                     source.Expression
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
+                    )) as IAqlModifiable<TResult>;
         }
 
-        internal static IAqlModifiable<TResult> ReturnResult<TResult>(this IAqlModifiable<TResult> source, bool returnNewResult)
+        [ExtentionIdentifier("SelectModification")]
+        public static IQueryable<TResult> Select<TSource, TResult>(this IAqlModifiable<TSource> source, Expression<Func<TSource, TSource, TResult>> selector)
+        {
+            var newSelector = ExpressionParameterRewriter.RewriteParameters(selector, "NEW", "OLD");
+
+            return source.Provider.CreateQuery<TResult>(
+                Expression.Call(
+                    FindExtention("SelectModification", typeof(TSource), typeof(TResult)),
+                    source.Expression,
+                    Expression.Quote(newSelector)));
+        }
+
+        [ExtentionIdentifier("IgnoreModificationSelect")]
+        internal static IQueryable<TResult> IgnoreModificationSelect<TResult>(this IAqlModifiable<TResult> source)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("ReturnResult", typeof(TResult)),
-                    source.Expression,
-                    Expression.Constant(returnNewResult)
-                    )).AsAqlQueryable().KeepState(source as IQueryableState) as IAqlModifiable<TResult>;
+                    FindExtention("IgnoreModificationSelect", typeof(TResult)),
+                    source.Expression));
         }
 
+        [ExtentionIdentifier("Return")]
         public static IQueryable<TResult> Return<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedMethod("Return", typeof(TSource), typeof(TResult)),
+                    FindExtention("Return", typeof(TSource), typeof(TResult)),
                     source.Expression,
                     Expression.Quote(selector)));
         }
 
+        [ExtentionIdentifier("Sort")]
         public static IOrderedQueryable<TSource> Sort<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
             return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("Sort", typeof(TSource), typeof(TKey)),
+                    FindExtention("Sort", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
@@ -448,43 +362,35 @@ namespace ArangoDB.Client
             return source.AsQueryable().SortDescending(keySelector);
         }
 
+        [ExtentionIdentifier("SortDescending")]
         public static IOrderedQueryable<TSource> SortDescending<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
             return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("SortDescending", typeof(TSource), typeof(TKey)),
+                    FindExtention("SortDescending", typeof(TSource), typeof(TKey)),
                     source.Expression,
                     Expression.Quote(keySelector)));
         }
 
-        [DefaultExtention(Name = "Let1")]
+        [ExtentionIdentifier("Let")]
         public static IQueryable<TResult> Let<TSource, TLet, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TLet>> letSelector, Expression<Func<IQueryable<TSource>, TLet, IQueryable<TResult>>> querySelector)
         {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
-                    FindCachedDefaultMethod("Let", "Let1", typeof(TSource), typeof(TLet), typeof(TResult)),
+                    FindExtention("Let", typeof(TSource), typeof(TLet), typeof(TResult)),
                     source.Expression,
                     Expression.Quote(letSelector),
                     Expression.Quote(querySelector)));
         }
 
+        [ExtentionIdentifier("Filter")]
         public static IQueryable<TSource> Filter<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
         {
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
-                    FindCachedMethod("Filter", typeof(TSource)),
+                    FindExtention("Filter", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(predicate)));
-        }
-
-        private static IQueryable<T> CreateQuery<T, TR>(
-      IQueryable<T> source, Expression<Func<IQueryable<T>, TR>> expression)
-        {
-            var newQueryExpression = ReplacingExpressionTreeVisitor.Replace(
-                expression.Parameters[0],
-                source.Expression,
-                expression.Body);
-            return source.Provider.CreateQuery<T>(newQueryExpression);
         }
     }
 }

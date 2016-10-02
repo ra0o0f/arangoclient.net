@@ -114,7 +114,7 @@ namespace ArangoDB.Client.Common.EmbeddedNewtonsoft.Json.Serialization
             set { _serializer.MetadataPropertyHandling = value; }
         }
 
-        public override FormatterAssemblyStyle TypeNameAssemblyFormat
+        internal override FormatterAssemblyStyle TypeNameAssemblyFormat
         {
             get { return _serializer.TypeNameAssemblyFormat; }
             set { _serializer.TypeNameAssemblyFormat = value; }

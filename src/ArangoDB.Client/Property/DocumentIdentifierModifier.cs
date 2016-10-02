@@ -1,5 +1,5 @@
-﻿using ArangoDB.Client.Common.Utility;
-using ArangoDB.Client.Data;
+﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -77,7 +77,7 @@ namespace ArangoDB.Client.Property
             if(!methods.TryGetValue(type, out identifierMethod))
             {
                 identifierMethod=new IdentifierMethod();
-                var typeMemberInfos = CommonUtility.GetFieldsAndProperties_PublicInstance(type);
+                var typeMemberInfos = ReflectionUtils.GetFieldsAndProperties_PublicInstance(type);
                 foreach (var m in typeMemberInfos)
                 {
                     string resolvedName = setting.Collection.ResolvePropertyName(type, m.Name);
@@ -108,10 +108,10 @@ namespace ArangoDB.Client.Property
 
         Action<object, object> BuildSetAccessor(Type type, string memberName)
         {
-            var propertyInfo = CommonUtility.GetProperty(type, memberName);
+            var propertyInfo = ReflectionUtils.GetProperty(type, memberName);
             if (propertyInfo != null)
             {
-                var setMethod = CommonUtility.GetSetMethod(propertyInfo);
+                var setMethod = ReflectionUtils.GetSetMethod(propertyInfo);
 
                 if (setMethod != null)
                 {
@@ -119,7 +119,7 @@ namespace ArangoDB.Client.Property
                 }
             }
 
-            var memberInfo = CommonUtility.GetField(type, memberName);
+            var memberInfo = ReflectionUtils.GetField(type, memberName);
             if(memberInfo!=null)
             {
                 var fieldInfo = memberInfo as FieldInfo;

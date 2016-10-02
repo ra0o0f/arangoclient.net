@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using ArangoDB.Client.Common.Utility;
 using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
@@ -27,7 +26,7 @@ namespace ArangoDB.Client.Property
             ICollectionPropertySetting collectionSetting = null;
             if (!cachedCollectionProperties.TryGetValue(type, out collectionSetting))
             {
-                collectionSetting = CommonUtility.GetAttribute<CollectionPropertyAttribute>(type, false);
+                collectionSetting = ReflectionUtils.GetAttribute<CollectionPropertyAttribute>(type, false);
 
                 cachedCollectionProperties.TryAdd(type, collectionSetting);
             }

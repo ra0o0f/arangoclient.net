@@ -1,5 +1,4 @@
-﻿using ArangoDB.Client.Common.Utility;
-using ArangoDB.Client.Utility;
+﻿using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -28,12 +27,12 @@ namespace ArangoDB.Client.Property
             ConcurrentDictionary<string, IDocumentPropertySetting> typeSetting = null;
             if (!cachedAttributeProperties.TryGetValue(type, out typeSetting))
             {
-                var typeMemberInfos = CommonUtility.GetFieldsAndProperties_PublicInstance(type);
+                var typeMemberInfos = ReflectionUtils.GetFieldsAndProperties_PublicInstance(type);
 
                 typeSetting = new ConcurrentDictionary<string, IDocumentPropertySetting>();
 
                 foreach (var m in typeMemberInfos)
-                    typeSetting.TryAdd(m.Name, CommonUtility.GetAttribute<DocumentPropertyAttribute>(m, false));
+                    typeSetting.TryAdd(m.Name, ReflectionUtils.GetAttribute<DocumentPropertyAttribute>(m, false));
 
                 cachedAttributeProperties.TryAdd(type, typeSetting);
             }

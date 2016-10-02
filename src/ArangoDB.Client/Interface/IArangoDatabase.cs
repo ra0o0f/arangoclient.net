@@ -2,7 +2,8 @@
 using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
-using ArangoDB.Client.Linq;
+using ArangoDB.Client.Query;
+using ArangoDB.Client.Query;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,9 +37,9 @@ namespace ArangoDB.Client
         ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null, bool? count = null,
             int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null);
 
-        AqlQueryable<T> Query<T>();
+        ArangoQueryable<T> Query<T>();
 
-        AqlQueryable<AQL> Query();
+        ArangoQueryable<AQL> Query();
 
         void Log(string message);
 

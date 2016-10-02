@@ -37,6 +37,10 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -84,13 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.ArangoDB.Client.Examples.Net45.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArangoDB.Client.Common\ArangoDB.Client.Common.Net45.csproj">
-      <Project>{120709df-5bef-43a0-8125-7efbaae9a8ae}</Project>
-      <Name>ArangoDB.Client.Common.Net45</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ArangoDB.Client.Test\ArangoDB.Client.Test.Net45.csproj">
       <Project>{05abccd9-2eff-4276-9328-cba5ddd2a326}</Project>
       <Name>ArangoDB.Client.Test.Net45</Name>
