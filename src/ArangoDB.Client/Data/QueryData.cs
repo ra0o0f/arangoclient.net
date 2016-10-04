@@ -26,6 +26,7 @@ namespace ArangoDB.Client.Data
         [JsonConverter(typeof(QueryParameterConverter))]
         public IList<QueryParameter> BindVars { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public QueryOption Options { get; set; }
 
         public string QueryReplacedWithVariables(IArangoDatabase db)

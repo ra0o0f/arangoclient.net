@@ -1,0 +1,12 @@
+﻿{
+  "dependencies": {
+    "Newtonsoft.Json": "7.0.1",
+    "Remotion.Linq": "2.1.1"
+  },
+  "frameworks": {
+    ".NETPortable,Version=v4.5,Profile=Profile111": {}
+  },
+  "runtimes": {
+    "win": {}
+  }
+}

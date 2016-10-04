@@ -2,8 +2,8 @@
 using ArangoDB.Client.Examples.Models;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +12,11 @@ namespace ArangoDB.Client.Examples
     public abstract class TestDatabaseSetup : IDisposable
     {
         protected IArangoDatabase db;
+
+        static NetworkCredential GetCredential()
+        {
+            return new NetworkCredential("root", "123456");
+        }
 
         static Lazy<DatabaseSharedSetting> SharedSetting = new Lazy<DatabaseSharedSetting>(() =>
         {
@@ -22,12 +27,14 @@ namespace ArangoDB.Client.Examples
             sharedSetting.Database = "ExampleDB";
             sharedSetting.Url = "http://localhost.:8529";
 
-            sharedSetting.SystemDatabaseCredential = new System.Net.NetworkCredential(
-                ConfigurationManager.AppSettings["dbSystemUser"],
-                ConfigurationManager.AppSettings["dbSystemPass"]);
-            sharedSetting.Credential = new System.Net.NetworkCredential(
-                ConfigurationManager.AppSettings["dbExampleUser"],
-                ConfigurationManager.AppSettings["dbExamplePass"]);
+            var credential = GetCredential();
+
+            sharedSetting.SystemDatabaseCredential = new NetworkCredential(
+                credential.UserName,
+                credential.Password);
+            sharedSetting.Credential = new NetworkCredential(
+                credential.UserName,
+                credential.Password);
 
             sharedSetting.Collection.ChangeIdentifierDefaultName(IdentifierType.Key, "Key");
 
@@ -38,8 +45,8 @@ namespace ArangoDB.Client.Examples
                     {
                         new DatabaseUser
                         {
-                            Username = ConfigurationManager.AppSettings["dbExampleUser"],
-                            Passwd = ConfigurationManager.AppSettings["dbExamplePass"]
+                            Username = credential.UserName,
+                            Passwd = credential.Password
                         }
                     });
 

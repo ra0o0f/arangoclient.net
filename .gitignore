@@ -8,6 +8,10 @@
 
 # Build results
 
+*.lock.json
+*.nuget.props
+*.nuget.targets
+
 docs/_book
 node_modules
 

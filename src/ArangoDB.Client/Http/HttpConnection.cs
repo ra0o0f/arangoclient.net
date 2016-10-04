@@ -61,7 +61,7 @@ namespace ArangoDB.Client.Http
 
         internal static void ConfigureServicePoint(string url)
         {
-#if !PORTABLE
+#if NET45
             Uri baseUri = new Uri(url);
             var servicePoint = ArangoDatabase.ClientSetting.Proxy != null ? ServicePointManager.FindServicePoint(baseUri
                 , ArangoDatabase.ClientSetting.Proxy)

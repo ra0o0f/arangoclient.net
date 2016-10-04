@@ -25,8 +25,8 @@ namespace ArangoDB.Client.Examples.Databases
         {
             var dbs = db.ListAccessibleDatabases();
 
-            Assert.Equal(dbs.Count, 1);
-            Assert.Equal(dbs.Except(new string[] { db.SharedSetting.Database }).Count(), 0);
+            Assert.True(dbs.Count >= 2);
+            Assert.Equal(dbs.Except(new string[] { "_system", db.SharedSetting.Database }).Count(), dbs.Count - 2);
         }
 
         [Fact]

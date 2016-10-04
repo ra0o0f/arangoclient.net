@@ -7,10 +7,12 @@ using System;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-#if PORTABLE
-[assembly: AssemblyTitle("ArangoDB.Client Portable")]
+#if NETSTANDARD1_1
+[assembly: AssemblyTitle("ArangoDB.Client Netstandard_1.1")]
+#elif PORTABLE
+[assembly: AssemblyTitle("ArangoDB.Client Portable_111")]
 #else
-[assembly: AssemblyTitle("ArangoDB.Client .NET45")]
+[assembly: AssemblyTitle("ArangoDB.Client NET_4.5")]
 #endif
 
 [assembly: AssemblyDescription("ArangoDB .Net Client")]

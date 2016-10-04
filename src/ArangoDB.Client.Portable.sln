@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client", "ArangoDB.Client\ArangoDB.Client.csproj", "{BF30BB46-FFCA-4725-AF2F-806326770244}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Portable", "ArangoDB.Client\ArangoDB.Client.Portable.csproj", "{BF30BB46-FFCA-4725-AF2F-806326770244}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Test", "ArangoDB.Client.Test\ArangoDB.Client.Test.csproj", "{BBD66B39-78B8-477E-8ABC-C73CC3C17106}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Test.Portable", "ArangoDB.Client.Test\ArangoDB.Client.Test.Portable.csproj", "{BBD66B39-78B8-477E-8ABC-C73CC3C17106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Examples", "ArangoDB.Client.Examples\ArangoDB.Client.Examples.csproj", "{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArangoDB.Client.Examples.Portable", "ArangoDB.Client.Examples\ArangoDB.Client.Examples.Portable.csproj", "{9ADB3CD7-8E87-4B28-A045-0EEBC5ECECC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
