@@ -47,6 +47,6 @@ using System;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.7.42")]
-[assembly: AssemblyFileVersion("0.7.42")]
+[assembly: AssemblyVersion("0.7.50")]
+[assembly: AssemblyFileVersion("0.7.50")]
 [assembly: CLSCompliant(true)]

@@ -24,15 +24,17 @@
     <DefineConstants>DEBUG;TRACE;PORTABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\portable45-net45+win8+wpa81_standalone\ArangoDB.Client.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\Portable</OutputPath>
+    <OutputPath>bin\Release\portable45-net45+win8+wpa81_standalone\</OutputPath>
     <DefineConstants>TRACE;PORTABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\portable45-net45+win8+wpa81_standalone\ArangoDB.Client.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Advanced\AdvancedOperation.cs" />

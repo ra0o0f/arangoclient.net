@@ -14,10 +14,10 @@
       "url": "git://github.com/ra0o0f/arangoclient.net"
     }
   },
-
   "frameworks": {
     "netstandard1.1": {
       "buildOptions": {
+        "xmlDoc": true,
         "define": [
           "NETSTANDARD1_1",
           "PORTABLE"
@@ -35,6 +35,7 @@
     },
     ".NETPortable,Version=v4.5,Profile=Profile111": {
       "buildOptions": {
+        "xmlDoc": true,
         "define": [
           "PORTABLE"
         ]
@@ -74,6 +75,7 @@
     },
     "net45": {
       "buildOptions": {
+        "xmlDoc": true,
         "define": [
           "NET45"
         ]
