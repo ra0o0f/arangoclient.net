@@ -284,6 +284,11 @@ namespace ArangoDB.Client.Query
             GetAqlExpression(skipTakeClause.TakeCount, queryModel);
         }
 
+        public void VisitTraversalClause(ITraversalClause traversalClause, QueryModel queryModel, int index)
+        {
+
+        }
+
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
             QueryText.Append(" filter ");

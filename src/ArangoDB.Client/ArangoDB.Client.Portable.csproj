@@ -52,6 +52,8 @@
     <Compile Include="Data\DropGraphData.cs" />
     <Compile Include="Data\EnsureIndexData.cs" />
     <Compile Include="Data\EnsureIndexResult.cs" />
+    <Compile Include="Data\TraversalData.cs" />
+    <Compile Include="Data\TraversalPathData.cs" />
     <Compile Include="Data\TraversalResult.cs" />
     <Compile Include="Graph\ArangoGraph.cs" />
     <Compile Include="Graph\ArangoGraphEdge.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Interface\IDocumentIdentifierResult.cs" />
     <Compile Include="Interface\IDocumentPropertySetting.cs" />
     <Compile Include="Interface\IEdgeCollection.cs" />
+    <Compile Include="Interface\ITraversalQueryable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property\DatabaseCollectionSetting.cs" />
     <Compile Include="Property\DocumentIdentifierModifier.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="Query\ArangoQueryProvider.cs" />
     <Compile Include="Query\Clause\FilterClause.cs" />
     <Compile Include="Query\Clause\FilterExpressionNode.cs" />
+    <Compile Include="Query\Clause\GraphClause.cs" />
     <Compile Include="Query\Clause\GroupByClause.cs" />
     <Compile Include="Query\Clause\GroupByExpressionNode.cs" />
     <Compile Include="Query\Clause\IgnoreModificationSelectExpressionNode.cs" />
@@ -154,6 +158,7 @@
     <Compile Include="Query\Clause\InModificationExpressionNode.cs" />
     <Compile Include="Query\Clause\InsertClause.cs" />
     <Compile Include="Query\Clause\InsertExpressionNode.cs" />
+    <Compile Include="Query\Clause\ITraversalClause.cs" />
     <Compile Include="Query\Clause\LetLambdaExpressionNode.cs" />
     <Compile Include="Query\Clause\LetSelectExpressionNode.cs" />
     <Compile Include="Query\Clause\RemoveClause.cs" />
