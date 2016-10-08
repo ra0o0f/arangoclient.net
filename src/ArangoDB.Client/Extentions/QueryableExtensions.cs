@@ -1,6 +1,5 @@
 ﻿using ArangoDB.Client.Data;
 using ArangoDB.Client.Query;
-using ArangoDB.Client.Query;
 using ArangoDB.Client.Query.Clause;
 using System;
 using System.Collections.Concurrent;
@@ -253,7 +252,7 @@ namespace ArangoDB.Client
                     Expression.Constant(updateType)
                     )) as IAqlModifiable<TSource>;
         }
-        
+
         public static IAqlModifiable<TSource> Insert<TSource>(this IQueryable<TSource> source)
         {
             return Insert(source, null);
@@ -391,6 +390,74 @@ namespace ArangoDB.Client
                     FindExtention("Filter", typeof(TSource)),
                     source.Expression,
                     Expression.Quote(predicate)));
+        }
+
+        [ExtentionIdentifier("Graph")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Graph<TVertex, TEdge>(this IQueryable source, string graphName)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("Graph", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(graphName))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("Edges")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Edges<TVertex, TEdge>(this IQueryable source, params string[] collectionNames)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("Edges", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(collectionNames))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("Depth")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Depth<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, int min, int max)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("Depth", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(min),
+                    Expression.Constant(max))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("InBound")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> InBound<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("InBound", typeof(TVertex), typeof(TEdge)),
+                    source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("OutBound")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> OutBound<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("OutBound", typeof(TVertex), typeof(TEdge)),
+                    source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("AnyDirection")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> AnyDirection<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("AnyDirection", typeof(TVertex), typeof(TEdge)),
+                    source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("StartVertex")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> StartVertex<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, string vertex)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("StartVertex", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(vertex))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
     }
 }
