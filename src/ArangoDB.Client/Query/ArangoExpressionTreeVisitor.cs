@@ -44,7 +44,7 @@ namespace ArangoDB.Client.Query
                 methodExists = aqlMethods.TryGetValue(expression.Method.Name, out methodName);
 
             if (!methodExists)
-                throw new InvalidOperationException($"Method {expression.Method.Name} is not supported in AqlLinqProvider");
+                throw new InvalidOperationException($"Method {expression.Method.Name} is not supported in ArangoLinqProvider");
 
             string argumentSeprator = null;
             bool noParenthesis = methodsWithNoParenthesis.TryGetValue(methodName, out argumentSeprator);
@@ -82,15 +82,7 @@ namespace ArangoDB.Client.Query
 
             return expression;
         }
-
-        // Called when a LINQ expression type is not handled above.
-        //protected override Exception CreateUnhandledItemException<T>(T unhandledItem, string visitMethod)
-        //{
-        //    string itemText = FormatUnhandledItem(unhandledItem);
-        //    var message = string.Format("The expression '{0}' (type: {1}) is not supported by ArangoDB LINQ provider.", itemText, typeof(T));
-        //    return new NotSupportedException(message);
-        //}
-
+        
         protected override Expression VisitParameter(ParameterExpression expression)
         {
             ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(expression.Name));
@@ -103,6 +95,7 @@ namespace ArangoDB.Client.Query
             ModelVisitor.QueryText.AppendFormat(" {0}", LinqUtility.ResolvePropertyName(expression.ReferencedQuerySource.ItemName));
 
             var mainFromClause = expression.ReferencedQuerySource as MainFromClause;
+            //  .Select(g => g.Select(gList => gList.Age)) subquery select, handle prior groupby source parameter names
             if (mainFromClause != null && mainFromClause.FromExpression.Type.Name == "IGrouping`2")
             {
                 var groupByClauses = LinqUtility.PriorGroupBy(ModelVisitor);
@@ -171,6 +164,7 @@ namespace ArangoDB.Client.Query
             {
                 ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(expression.Member.Name));
             }
+            // Select(g=>g.Key)
             else if (expression.Expression.Type.Name == "IGrouping`2")
             {
                 var groupByClause = LinqUtility.PriorGroupBy(ModelVisitor)[0];
@@ -194,6 +188,14 @@ namespace ArangoDB.Client.Query
 
                 if (groupByClause.Selector.NodeType != ExpressionType.New)
                     ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(groupByClause.CollectVariableName));
+            }
+            else if (expression.Expression.Type.Name == "TraversalData`2")
+            {
+                var parameterExpression = expression.Expression as ParameterExpression;
+                if (parameterExpression == null)
+                    throw new InvalidOperationException("TraversalData`2 VisitMember, expected a ParameterExpression");
+
+                ModelVisitor.QueryText.AppendFormat(LinqUtility.ResolvePropertyName($"{parameterExpression.Name}{expression.Member.Name}"));
             }
             else
             {
@@ -349,6 +351,7 @@ namespace ArangoDB.Client.Query
 
         protected override Expression VisitNew(NewExpression expression)
         {
+            // Select(g=>g)
             if (expression.Type.Name == "Grouping`2")
             {
                 var groupByClause = LinqUtility.PriorGroupBy(ModelVisitor)[0];
@@ -398,12 +401,5 @@ namespace ArangoDB.Client.Query
             ModelVisitor.QueryText.AppendFormat(" `{0}` {1} ", expression.Name, TreatNewWithoutBracket ? "= " : ": ");
             return Visit(expression.Expression);
         }
-
-        //private string FormatUnhandledItem<T>(T unhandledItem)
-        //{
-        //    var itemAsExpression = unhandledItem as Expression;
-        //    return itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
-        //}
-
     }
 }

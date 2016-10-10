@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public sealed class FilterExpressionNode : MethodCallExpressionNodeBase
+    public class FilterExpressionNode : MethodCallExpressionNodeBase
     {
         private const int c_indexSelectorParameterPosition = 1;
 

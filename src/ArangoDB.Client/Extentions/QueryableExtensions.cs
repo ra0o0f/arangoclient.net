@@ -391,15 +391,23 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Quote(predicate)));
         }
+        
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Graph<TVertex, TEdge>(this IQueryable source, string graphName)
+        {
+            return Graph<TVertex, TEdge>(source, graphName, typeof(TVertex), typeof(TEdge));
+        }
 
         [ExtentionIdentifier("Graph")]
-        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Graph<TVertex, TEdge>(this IQueryable source, string graphName)
+        internal static ITraversalQueryable<TraversalData<TVertex, TEdge>> Graph<TVertex, TEdge>(this IQueryable source, string graphName, Type vertexType, Type edgeType)
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
                     FindExtention("Graph", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
-                    Expression.Constant(graphName))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+                    Expression.Constant(graphName),
+                    Expression.Constant(vertexType),
+                    Expression.Constant(edgeType)
+                    )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
 
         [ExtentionIdentifier("Edges")]

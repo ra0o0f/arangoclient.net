@@ -84,19 +84,7 @@ namespace ArangoDB.Client.Query
                 queryModel.MainFromClause.Accept(this, queryModel);
 
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
-
-            //if (CrudState.ModelVisitorHaveCrudOperation)
-            //{
-            //    QueryText.AppendFormat(" in {0} ", CrudState.Collection);
-            //    if (CrudState.ReturnResult)
-            //        QueryText.AppendFormat(" let crudResult = {0} return crudResult ", CrudState.ReturnResultKind);
-            //}
-            //else if (!DontReturn)
-            //    queryModel.SelectClause.Accept(this, queryModel);
-
-            //DontReturn = queryModel.BodyClauses.NextBodyClause<IModificationClause>(0) == null
-            //    && queryModel
-
+            
             var modificationClause = queryModel.BodyClauses.NextBodyClause<IModificationClause>();
 
             if (modificationClause != null && modificationClause.IgnoreSelect)
@@ -147,6 +135,7 @@ namespace ArangoDB.Client.Query
 
             string fromName = LinqUtility.ResolveCollectionName(this.Db, fromClause.ItemType);
 
+            //  .Select(g => g.Select(gList => gList.Age)) subquery select, changes the fromName to group name (C1 for example)
             if (fromClause.FromExpression.Type.Name == "IGrouping`2")
             {
                 var groupByClause = LinqUtility.PriorGroupBy(ParnetModelVisitor);
@@ -159,6 +148,7 @@ namespace ArangoDB.Client.Query
                 fromName = LinqUtility.ResolvePropertyName(fromName);
             }
 
+            //  == "IGrouping`2" => .Select(g => g.Select(gList => gList.Age)) subquery select
             if (fromClause.FromExpression.NodeType == ExpressionType.Constant
                 || fromClause.FromExpression.Type.Name == "IGrouping`2")
             {
@@ -286,7 +276,12 @@ namespace ArangoDB.Client.Query
 
         public void VisitTraversalClause(ITraversalClause traversalClause, QueryModel queryModel, int index)
         {
+            QueryText.AppendFormat(" for {0}, {1}, {2} in ",
+                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Vertex"),
+                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Edge"),
+                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Path"));
 
+            QueryText.AppendFormat("  graph {0} " , LinqUtility.ResolvePropertyName(traversalClause.GraphName.Value.ToString()));
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)

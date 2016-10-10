@@ -151,6 +151,7 @@
     <Compile Include="Query\Clause\FilterClause.cs" />
     <Compile Include="Query\Clause\FilterExpressionNode.cs" />
     <Compile Include="Query\Clause\GraphClause.cs" />
+    <Compile Include="Query\Clause\GraphExpressionNode.cs" />
     <Compile Include="Query\Clause\GroupByClause.cs" />
     <Compile Include="Query\Clause\GroupByExpressionNode.cs" />
     <Compile Include="Query\Clause\IgnoreModificationSelectExpressionNode.cs" />

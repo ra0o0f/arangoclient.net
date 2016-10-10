@@ -49,7 +49,6 @@ namespace ArangoDB.Client.Query.Clause
             clauseGenerationContext.AddContextInfo(this, groupByClause);
 
             queryModel.SelectClause.Selector = GetResolvedAdaptedSelector(clauseGenerationContext);
-            
         }
 
         public Expression GetResolvedAdaptedSelector(ClauseGenerationContext clauseGenerationContext)
