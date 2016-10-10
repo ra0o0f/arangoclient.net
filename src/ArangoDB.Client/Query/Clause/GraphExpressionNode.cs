@@ -17,7 +17,8 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null, null, null, null))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null, null, null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null,null))
                                                            };
 
         public ConstantExpression GraphName { get; private set; }
@@ -32,9 +33,20 @@ namespace ArangoDB.Client.Query.Clause
             ConstantExpression edgeType)
             : base(parseInfo)
         {
+            
+
             GraphName = graphName;
-            VertextType = vertexType;
-            EdgeType = edgeType;
+            if(vertexType != null && edgeType != null)
+            {
+                VertextType = vertexType;
+                EdgeType = edgeType;
+            }
+            else
+            {
+                var genericTypes = parseInfo.ParsedExpression.Type.GenericTypeArguments[0].GenericTypeArguments;
+                VertextType = Expression.Constant(genericTypes[0]);
+                EdgeType = Expression.Constant(genericTypes[1]);
+            }
 
             associatedIdentifier = parseInfo.AssociatedIdentifier;
 

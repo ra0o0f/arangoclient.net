@@ -1,4 +1,5 @@
-﻿using Remotion.Linq;
+﻿using ArangoDB.Client.Utility;
+using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,10 @@ namespace ArangoDB.Client.Query.Clause
                                                            {
                                                                 LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InBound<object,object>(null, null)),
                                                                 LinqUtility.GetSupportedMethod(()=>QueryableExtensions.OutBound<object,object>(null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.AnyDirection<object,object>(null, null))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.AnyDirection<object,object>(null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.OutBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.AnyDirection<object,object>(null))
                                                            };
 
         public ConstantExpression Direction { get; private set; }
@@ -25,7 +29,23 @@ namespace ArangoDB.Client.Query.Clause
             ConstantExpression direction)
             : base(parseInfo)
         {
-            Direction = direction;
+            if(direction!=null)
+                Direction = direction;
+            else
+            {
+                switch(parseInfo.ParsedExpression.Method.Name)
+                {
+                    case "InBound":
+                        Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Inbound));
+                        break;
+                    case "OutBound":
+                        Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Outbound));
+                        break;
+                    case "AnyDirection":
+                        Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Any));
+                        break;
+                }
+            }
         }
         
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)

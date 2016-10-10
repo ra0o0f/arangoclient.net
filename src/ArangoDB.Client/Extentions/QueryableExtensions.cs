@@ -392,7 +392,7 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Quote(predicate)));
         }
-        
+
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Graph<TVertex, TEdge>(this IQueryable source, string graphName)
         {
             return Graph<TVertex, TEdge>(source, graphName, typeof(TVertex), typeof(TEdge));
@@ -478,7 +478,7 @@ namespace ArangoDB.Client
         }
         
         [ExtentionIdentifier("StartVertex_Selector")]
-        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> StartVertex<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, Expression<Func<object>> selector)
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> StartVertex<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, Expression<Func<string>> selector)
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(

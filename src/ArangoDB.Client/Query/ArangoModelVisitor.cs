@@ -291,7 +291,7 @@ namespace ArangoDB.Client.Query
 
             GetAqlExpression(traversalClause.StartVertex, queryModel);
 
-            QueryText.AppendFormat("  graph {0} ", LinqUtility.ResolvePropertyName(traversalClause.GraphName.Value.ToString()));
+            QueryText.AppendFormat("  graph \"{0}\" ", traversalClause.GraphName.Value.ToString());
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
