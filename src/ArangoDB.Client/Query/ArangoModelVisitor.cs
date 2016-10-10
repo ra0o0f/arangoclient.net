@@ -1,6 +1,7 @@
 ﻿using ArangoDB.Client.Data;
 using ArangoDB.Client.Query;
 using ArangoDB.Client.Query.Clause;
+using ArangoDB.Client.Utility;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
@@ -84,7 +85,7 @@ namespace ArangoDB.Client.Query
                 queryModel.MainFromClause.Accept(this, queryModel);
 
             VisitBodyClauses(queryModel.BodyClauses, queryModel);
-            
+
             var modificationClause = queryModel.BodyClauses.NextBodyClause<IModificationClause>();
 
             if (modificationClause != null && modificationClause.IgnoreSelect)
@@ -281,7 +282,16 @@ namespace ArangoDB.Client.Query
                 LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Edge"),
                 LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Path"));
 
-            QueryText.AppendFormat("  graph {0} " , LinqUtility.ResolvePropertyName(traversalClause.GraphName.Value.ToString()));
+            if (traversalClause.Min != null && traversalClause.Max != null)
+                QueryText.AppendFormat(" {0}..{1} ", traversalClause.Min.Value, traversalClause.Max);
+
+            QueryText.AppendFormat(" {0} ", traversalClause.Direction != null
+                ? traversalClause.Direction.Value
+                : Utils.EdgeDirectionToString(EdgeDirection.Any));
+
+            GetAqlExpression(traversalClause.StartVertex, queryModel);
+
+            QueryText.AppendFormat("  graph {0} ", LinqUtility.ResolvePropertyName(traversalClause.GraphName.Value.ToString()));
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)

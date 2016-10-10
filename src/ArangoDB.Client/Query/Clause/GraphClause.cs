@@ -15,6 +15,14 @@ namespace ArangoDB.Client.Query.Clause
 
         public string AssociatedIdentifier { get; set; }
 
+        public ConstantExpression Min { get; set; }
+
+        public ConstantExpression Max { get; set; }
+
+        public ConstantExpression Direction { get; set; }
+
+        public Expression StartVertex { get; set; }
+
         public GraphClause(ConstantExpression graphName, string associatedIdentifier)
         {
             LinqUtility.CheckNotNull("graphName", graphName);
