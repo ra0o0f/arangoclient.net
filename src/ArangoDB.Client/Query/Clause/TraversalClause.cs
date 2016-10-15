@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public class GraphClause : IBodyClause, ITraversalClause
+    public class TraversalClause : IBodyClause, ITraversalClause
     {
-        public ConstantExpression GraphName { get; set; }
+        public ConstantExpression TraversalContext { get; set; }
 
         public string Identifier { get; set; }
 
@@ -23,12 +23,12 @@ namespace ArangoDB.Client.Query.Clause
 
         public Expression StartVertex { get; set; }
 
-        public GraphClause(ConstantExpression graphName, string identifier)
+        public TraversalClause(ConstantExpression traversalContext, string identifier)
         {
-            LinqUtility.CheckNotNull("graphName", graphName);
+            LinqUtility.CheckNotNull("traversalContext", traversalContext);
             LinqUtility.CheckNotNull("identifier", identifier);
 
-            GraphName = graphName;
+            TraversalContext = traversalContext;
             Identifier = identifier;
         }
 
@@ -45,11 +45,11 @@ namespace ArangoDB.Client.Query.Clause
             arangoVisotor.VisitTraversalClause(this, queryModel, index);
         }
 
-        public virtual GraphClause Clone(CloneContext cloneContext)
+        public virtual TraversalClause Clone(CloneContext cloneContext)
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);
 
-            var clone = new GraphClause(GraphName, Identifier);
+            var clone = new TraversalClause(TraversalContext, Identifier);
             return clone;
         }
 
@@ -61,7 +61,7 @@ namespace ArangoDB.Client.Query.Clause
         public void TransformExpressions(Func<Expression, Expression> transformation)
         {
             LinqUtility.CheckNotNull("transformation", transformation);
-            GraphName = transformation(GraphName) as ConstantExpression;
+            TraversalContext = transformation(TraversalContext) as ConstantExpression;
         }
     }
 }

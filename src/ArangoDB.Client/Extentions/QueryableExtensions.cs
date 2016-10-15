@@ -411,14 +411,22 @@ namespace ArangoDB.Client
                     )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
 
-        [ExtentionIdentifier("Edges")]
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Edges<TVertex, TEdge>(this IQueryable source, params string[] collectionNames)
+        {
+            return InternalEdges<TVertex, TEdge>(source, collectionNames, typeof(TVertex), typeof(TEdge));
+        }
+
+        [ExtentionIdentifier("Edges")]
+        internal static ITraversalQueryable<TraversalData<TVertex, TEdge>> InternalEdges<TVertex, TEdge>(this IQueryable source, string[] collectionNames, Type vertexType, Type edgeType)
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
                     FindExtention("Edges", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
-                    Expression.Constant(collectionNames))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+                    Expression.Constant(collectionNames),
+                    Expression.Constant(vertexType),
+                    Expression.Constant(edgeType)
+                    )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
 
         [ExtentionIdentifier("Depth")]
@@ -431,7 +439,7 @@ namespace ArangoDB.Client
                     Expression.Constant(min),
                     Expression.Constant(max))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
-        
+
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> InBound<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
         {
             return InBound(source, Utils.EdgeDirectionToString(EdgeDirection.Inbound));
@@ -446,7 +454,7 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Constant(direction))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
-        
+
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> OutBound<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
         {
             return OutBound(source, Utils.EdgeDirectionToString(EdgeDirection.Outbound));
@@ -461,7 +469,7 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Constant(direction))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
-        
+
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> AnyDirection<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source)
         {
             return AnyDirection(source, Utils.EdgeDirectionToString(EdgeDirection.Any));
@@ -476,7 +484,7 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Constant(direction))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
-        
+
         [ExtentionIdentifier("StartVertex_Selector")]
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> StartVertex<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, Expression<Func<string>> selector)
         {

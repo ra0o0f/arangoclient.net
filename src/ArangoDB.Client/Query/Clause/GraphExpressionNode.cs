@@ -13,27 +13,29 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public class GraphExpressionNode : MethodCallExpressionNodeBase, IQuerySourceExpressionNode
+    public class TraversalExpressionNode : MethodCallExpressionNodeBase, IQuerySourceExpressionNode
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
                                                                 LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null, null, null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null,null))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null,null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, null, null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null,null))
                                                            };
 
-        public ConstantExpression GraphName { get; private set; }
+        public ConstantExpression TraversalContext { get; private set; }
         public ConstantExpression VertextType { get; private set; }
         public ConstantExpression EdgeType { get; private set; }
 
         string identifier;
 
-        public GraphExpressionNode(MethodCallExpressionParseInfo parseInfo, 
-            ConstantExpression graphName,
+        public TraversalExpressionNode(MethodCallExpressionParseInfo parseInfo, 
+            ConstantExpression traversalContext,
             ConstantExpression vertexType,
             ConstantExpression edgeType)
             : base(parseInfo)
         {
-            GraphName = graphName;
+            TraversalContext = traversalContext;
             if(vertexType != null && edgeType != null)
             {
                 VertextType = vertexType;
@@ -65,11 +67,11 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("queryModel", queryModel);
 
-            var graphClause = new GraphClause(GraphName, identifier);
+            var traversalClause = new TraversalClause(TraversalContext, identifier);
 
-            queryModel.BodyClauses.Add(graphClause);
+            queryModel.BodyClauses.Add(traversalClause);
 
-            clauseGenerationContext.AddContextInfo(this, graphClause);
+            clauseGenerationContext.AddContextInfo(this, traversalClause);
 
             //queryModel.SelectClause.Selector = GetResolvedAdaptedSelector(clauseGenerationContext);
         }

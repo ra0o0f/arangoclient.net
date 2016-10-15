@@ -150,7 +150,7 @@
     <Compile Include="Query\ArangoQueryProvider.cs" />
     <Compile Include="Query\Clause\FilterClause.cs" />
     <Compile Include="Query\Clause\FilterExpressionNode.cs" />
-    <Compile Include="Query\Clause\GraphClause.cs" />
+    <Compile Include="Query\Clause\TraversalClause.cs" />
     <Compile Include="Query\Clause\GraphDepthExpressionNode.cs" />
     <Compile Include="Query\Clause\GraphDirectionExpressionNode.cs" />
     <Compile Include="Query\Clause\GraphExpressionNode.cs" />

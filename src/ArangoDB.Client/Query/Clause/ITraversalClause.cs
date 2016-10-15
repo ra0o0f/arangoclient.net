@@ -4,8 +4,8 @@ namespace ArangoDB.Client.Query.Clause
 {
     public interface ITraversalClause
     {
-        ConstantExpression GraphName { get; set; }
-
+        ConstantExpression TraversalContext { get; set; }
+        
         string Identifier { get; set; }
 
         ConstantExpression Min { get; set; }

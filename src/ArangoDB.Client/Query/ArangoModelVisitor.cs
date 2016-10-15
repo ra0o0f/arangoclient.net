@@ -292,7 +292,17 @@ namespace ArangoDB.Client.Query
 
             GetAqlExpression(traversalClause.StartVertex, queryModel);
 
-            QueryText.AppendFormat("  graph \"{0}\" ", traversalClause.GraphName.Value.ToString());
+            if(traversalClause.TraversalContext.Type == typeof(string))
+            {
+                QueryText.AppendFormat("  graph \"{0}\" ", traversalClause.TraversalContext.Value.ToString());
+            }
+            else if (traversalClause.TraversalContext.Type == typeof(string[]))
+            {
+                string[] collections = traversalClause.TraversalContext.Value as string[];
+                QueryText.Append(string.Join(", ", collections.Select(c => LinqUtility.ResolvePropertyName(c))));
+            }
+
+            
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
