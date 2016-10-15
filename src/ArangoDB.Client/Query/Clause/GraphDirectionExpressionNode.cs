@@ -35,13 +35,13 @@ namespace ArangoDB.Client.Query.Clause
             {
                 switch(parseInfo.ParsedExpression.Method.Name)
                 {
-                    case "InBound":
+                    case nameof(QueryableExtensions.InBound):
                         Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Inbound));
                         break;
-                    case "OutBound":
+                    case nameof(QueryableExtensions.OutBound):
                         Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Outbound));
                         break;
-                    case "AnyDirection":
+                    case nameof(QueryableExtensions.AnyDirection):
                         Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Any));
                         break;
                 }

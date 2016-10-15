@@ -33,9 +33,6 @@ namespace ArangoDB.Client.Query
 
         public int GroupByNameCounter { get; set; }
 
-        //public VisitorCrudState CrudState { get; set; }
-        //public VisitorModificationData ModificationData { get; set; }
-
         public bool DontReturn { get; set; }
 
         public bool IgnoreFromClause { get; set; }
@@ -63,13 +60,13 @@ namespace ArangoDB.Client.Query
                 {typeof(AverageResultOperator),"average"}
             };
         }
-
+        
         public override void VisitQueryModel(QueryModel queryModel)
         {
             if (DefaultAssociatedIdentifier != null)
                 queryModel.MainFromClause.ItemName = DefaultAssociatedIdentifier;
 
-            this.QueryModel = queryModel;
+            QueryModel = queryModel;
 
             var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
             var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())

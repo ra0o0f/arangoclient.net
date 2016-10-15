@@ -78,7 +78,7 @@ namespace ArangoDB.Client.Query
             return AddBacktickToName(ResolvePropertyNameRaw(name));
         }
 
-        public static string AddBacktickToName(string name)
+        private static string AddBacktickToName(string name)
         {
             return string.Format("`{0}`", name);
         }

@@ -384,8 +384,8 @@ namespace ArangoDB.Client.Query
             if (HandleLet)
                 visitor.DefaultAssociatedIdentifier = QueryModel.MainFromClause.ItemName;
 
-            visitor.QueryText = this.ModelVisitor.QueryText;
-            visitor.ParnetModelVisitor = this.ModelVisitor;
+            visitor.QueryText = ModelVisitor.QueryText;
+            visitor.ParnetModelVisitor = ModelVisitor;
             visitor.IgnoreFromClause = HandleLet;
 
             visitor.VisitQueryModel(expression.QueryModel);

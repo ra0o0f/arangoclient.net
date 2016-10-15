@@ -33,8 +33,6 @@ namespace ArangoDB.Client.Query.Clause
             ConstantExpression edgeType)
             : base(parseInfo)
         {
-            
-
             GraphName = graphName;
             if(vertexType != null && edgeType != null)
             {

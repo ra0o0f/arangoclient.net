@@ -184,7 +184,6 @@
     <Compile Include="Query\LinqUtility.cs" />
     <Compile Include="Query\NamedExpression.cs" />
     <Compile Include="Query\SupportedMethodSpecifications.cs" />
-    <Compile Include="Query\VisitorModificationData.cs" />
     <Compile Include="Serialization\Converters\DateTimeConverter.cs" />
     <Compile Include="Serialization\Converters\QueryParameterConverter.cs" />
     <Compile Include="Serialization\Converters\EnumValueConverter.cs" />
