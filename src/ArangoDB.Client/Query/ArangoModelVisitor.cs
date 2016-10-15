@@ -19,6 +19,8 @@ namespace ArangoDB.Client.Query
     {
         static Dictionary<Type, string> aggregateResultOperatorFunctions;
 
+        public Dictionary<string, string> MemberNamesMapping = new Dictionary<string, string>();
+
         public IArangoDatabase Db;
 
         public StringBuilder QueryText { get; set; }
@@ -274,10 +276,12 @@ namespace ArangoDB.Client.Query
 
         public void VisitTraversalClause(ITraversalClause traversalClause, QueryModel queryModel, int index)
         {
+            string prefix = LinqUtility.MemberNameFromMap(traversalClause.Identifier, "graph", this);
+
             QueryText.AppendFormat(" for {0}, {1}, {2} in ",
-                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Vertex"),
-                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Edge"),
-                LinqUtility.ResolvePropertyName($"{traversalClause.AssociatedIdentifier}Path"));
+                LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Edge"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Path"));
 
             if (traversalClause.Min != null && traversalClause.Max != null)
                 QueryText.AppendFormat(" {0}..{1} ", traversalClause.Min.Value, traversalClause.Max);

@@ -96,6 +96,19 @@ namespace ArangoDB.Client.Query
             while (true);
         }
 
+        public static string MemberNameFromMap(string guid, string prefix, ArangoModelVisitor modelVisitor)
+        {
+            var mappings = FindParentModelVisitor(modelVisitor).MemberNamesMapping;
+
+            if (mappings.ContainsKey(guid))
+                return mappings[guid];
+
+            string memberName = $"{prefix}_{mappings.Count}";
+            mappings[guid] = memberName;
+
+            return memberName;
+        }
+
         public static T CheckNotNull<T>(string argumentName, T actualValue)
         {
             if (actualValue == null)

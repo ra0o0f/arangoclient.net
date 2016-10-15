@@ -195,7 +195,9 @@ namespace ArangoDB.Client.Query
                 if (parameterExpression == null)
                     throw new InvalidOperationException("TraversalData`2 VisitMember, expected a ParameterExpression");
 
-                ModelVisitor.QueryText.AppendFormat(LinqUtility.ResolvePropertyName($"{parameterExpression.Name}{expression.Member.Name}"));
+                string prefix = LinqUtility.MemberNameFromMap(parameterExpression.Name, "graph", ModelVisitor);
+
+                ModelVisitor.QueryText.AppendFormat(LinqUtility.ResolvePropertyName($"{prefix}_{expression.Member.Name}"));
             }
             else
             {

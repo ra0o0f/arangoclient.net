@@ -13,7 +13,7 @@ namespace ArangoDB.Client.Query.Clause
     {
         public ConstantExpression GraphName { get; set; }
 
-        public string AssociatedIdentifier { get; set; }
+        public string Identifier { get; set; }
 
         public ConstantExpression Min { get; set; }
 
@@ -23,13 +23,13 @@ namespace ArangoDB.Client.Query.Clause
 
         public Expression StartVertex { get; set; }
 
-        public GraphClause(ConstantExpression graphName, string associatedIdentifier)
+        public GraphClause(ConstantExpression graphName, string identifier)
         {
             LinqUtility.CheckNotNull("graphName", graphName);
-            LinqUtility.CheckNotNull("associatedIdentifier", associatedIdentifier);
+            LinqUtility.CheckNotNull("identifier", identifier);
 
             GraphName = graphName;
-            AssociatedIdentifier = associatedIdentifier;
+            Identifier = identifier;
         }
 
         public virtual void Accept(IQueryModelVisitor visitor, QueryModel queryModel, int index)
@@ -49,7 +49,7 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);
 
-            var clone = new GraphClause(GraphName, AssociatedIdentifier);
+            var clone = new GraphClause(GraphName, Identifier);
             return clone;
         }
 

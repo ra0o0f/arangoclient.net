@@ -25,7 +25,7 @@ namespace ArangoDB.Client.Query.Clause
         public ConstantExpression VertextType { get; private set; }
         public ConstantExpression EdgeType { get; private set; }
 
-        string associatedIdentifier;
+        string identifier;
 
         public GraphExpressionNode(MethodCallExpressionParseInfo parseInfo, 
             ConstantExpression graphName,
@@ -46,7 +46,7 @@ namespace ArangoDB.Client.Query.Clause
                 EdgeType = Expression.Constant(genericTypes[1]);
             }
 
-            associatedIdentifier = parseInfo.AssociatedIdentifier;
+            identifier = Guid.NewGuid().ToString("N");
 
             _resolvedAdaptedSelector = new ResolvedExpressionCache<Expression>(this);
         }
@@ -57,7 +57,7 @@ namespace ArangoDB.Client.Query.Clause
             LinqUtility.CheckNotNull("expressionToBeResolved", expressionToBeResolved);
 
             var resolvedSelector = GetResolvedAdaptedSelector(clauseGenerationContext);
-            var resolved = ReplacingExpressionVisitor.Replace(inputParameter, Expression.Parameter(resolvedSelector.Type, associatedIdentifier), expressionToBeResolved);
+            var resolved = ReplacingExpressionVisitor.Replace(inputParameter, Expression.Parameter(resolvedSelector.Type, identifier), expressionToBeResolved);
             return resolved;
         }
 
@@ -65,13 +65,13 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("queryModel", queryModel);
 
-            var graphClause = new GraphClause(GraphName, associatedIdentifier);
+            var graphClause = new GraphClause(GraphName, identifier);
 
             queryModel.BodyClauses.Add(graphClause);
 
             clauseGenerationContext.AddContextInfo(this, graphClause);
 
-            queryModel.SelectClause.Selector = GetResolvedAdaptedSelector(clauseGenerationContext);
+            //queryModel.SelectClause.Selector = GetResolvedAdaptedSelector(clauseGenerationContext);
         }
 
         private readonly ResolvedExpressionCache<Expression> _resolvedAdaptedSelector;

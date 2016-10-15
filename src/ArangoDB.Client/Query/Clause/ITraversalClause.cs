@@ -6,7 +6,7 @@ namespace ArangoDB.Client.Query.Clause
     {
         ConstantExpression GraphName { get; set; }
 
-        string AssociatedIdentifier { get; set; }
+        string Identifier { get; set; }
 
         ConstantExpression Min { get; set; }
 
