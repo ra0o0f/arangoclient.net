@@ -62,7 +62,7 @@ namespace ArangoDB.Client.Query
                 {typeof(AverageResultOperator),"average"}
             };
         }
-        
+
         public override void VisitQueryModel(QueryModel queryModel)
         {
             if (DefaultAssociatedIdentifier != null)
@@ -292,7 +292,7 @@ namespace ArangoDB.Client.Query
 
             GetAqlExpression(traversalClause.StartVertex, queryModel);
 
-            if(traversalClause.TraversalContext.Type == typeof(string))
+            if (traversalClause.TraversalContext.Type == typeof(string))
             {
                 QueryText.AppendFormat("  graph \"{0}\" ", traversalClause.TraversalContext.Value.ToString());
             }
@@ -301,8 +301,30 @@ namespace ArangoDB.Client.Query
                 string[] collections = traversalClause.TraversalContext.Value as string[];
                 QueryText.Append(string.Join(", ", collections.Select(c => LinqUtility.ResolvePropertyName(c))));
             }
+            else if (traversalClause.TraversalContext.Type == typeof(TraversalEdgeDefinition))
+            {
+                var edgeDefinition = traversalClause.TraversalContext.Value as TraversalEdgeDefinition;
+                StringBuilder edges = new StringBuilder();
 
-            
+                for (int i = 0; i < edgeDefinition.Edges.Count; i++)
+                {
+                    var e = edgeDefinition.Edges[i];
+
+                    if (i != 0)
+                        edges.Append(", ");
+
+                    if (e.Direction.HasValue)
+                        edges.AppendFormat("{0} ", Utils.EdgeDirectionToString(e.Direction.Value));
+
+                    if (e.GetCollection().GetType() == typeof(string))
+                        edges.Append(LinqUtility.ResolvePropertyName(e.GetCollection() as string));
+                    else
+                        edges.Append(LinqUtility.ResolveCollectionName(Db, e.GetCollection() as Type));
+                }
+
+                QueryText.Append(edges);
+            }
+
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)

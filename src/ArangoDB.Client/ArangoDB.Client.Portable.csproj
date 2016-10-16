@@ -55,6 +55,7 @@
     <Compile Include="Data\TraversalData.cs" />
     <Compile Include="Data\TraversalPathData.cs" />
     <Compile Include="Data\TraversalResult.cs" />
+    <Compile Include="Data\TraverseEdge.cs" />
     <Compile Include="Graph\ArangoGraph.cs" />
     <Compile Include="Graph\ArangoGraphEdge.cs" />
     <Compile Include="Graph\ArangoGraphVertex.cs" />

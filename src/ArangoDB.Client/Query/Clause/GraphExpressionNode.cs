@@ -19,8 +19,10 @@ namespace ArangoDB.Client.Query.Clause
                                                            {
                                                                 LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null, null, null, null)),
                                                                 LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null,null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, null, null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null,null))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, new string[] { }, null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null,string.Empty)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, TraverseEdge.Collection(""), null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null, TraverseEdge.Collection("")))
                                                            };
 
         public ConstantExpression TraversalContext { get; private set; }
@@ -29,14 +31,14 @@ namespace ArangoDB.Client.Query.Clause
 
         string identifier;
 
-        public TraversalExpressionNode(MethodCallExpressionParseInfo parseInfo, 
+        public TraversalExpressionNode(MethodCallExpressionParseInfo parseInfo,
             ConstantExpression traversalContext,
             ConstantExpression vertexType,
             ConstantExpression edgeType)
             : base(parseInfo)
         {
             TraversalContext = traversalContext;
-            if(vertexType != null && edgeType != null)
+            if (vertexType != null && edgeType != null)
             {
                 VertextType = vertexType;
                 EdgeType = edgeType;
@@ -84,14 +86,14 @@ namespace ArangoDB.Client.Query.Clause
                 r =>
                 {
                     var traversalDataType = typeof(TraversalData<,>).MakeGenericType(new Type[] { VertextType.Value as Type, EdgeType.Value as Type });
-                    
+
                     var constr = ReflectionUtils.GetConstructors(traversalDataType).ToList()[0];
                     var newExpression =
                         Expression.Convert(
                         Expression.New(constr), traversalDataType)
                         ;
 
-                    return r.GetResolvedExpression(newExpression, Expression.Parameter(traversalDataType,"dummy"), clauseGenerationContext);
+                    return r.GetResolvedExpression(newExpression, Expression.Parameter(traversalDataType, "dummy"), clauseGenerationContext);
                 });
         }
     }

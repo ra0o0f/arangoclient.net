@@ -428,6 +428,24 @@ namespace ArangoDB.Client
                     Expression.Constant(edgeType)
                     )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
+        
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Edges<TVertex, TEdge>(this IQueryable source, TraversalEdgeDefinition traverseEdge)
+        {
+            return InternalEdges<TVertex, TEdge>(source, traverseEdge, typeof(TVertex), typeof(TEdge));
+        }
+
+        [ExtentionIdentifier("TraverseEdges")]
+        internal static ITraversalQueryable<TraversalData<TVertex, TEdge>> InternalEdges<TVertex, TEdge>(this IQueryable source, TraversalEdgeDefinition traverseEdge, Type vertexType, Type edgeType)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    FindExtention("TraverseEdges", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(traverseEdge),
+                    Expression.Constant(vertexType),
+                    Expression.Constant(edgeType)
+                    )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
 
         [ExtentionIdentifier("Depth")]
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Depth<TVertex, TEdge>(this ITraversalQueryable<TraversalData<TVertex, TEdge>> source, int min, int max)
