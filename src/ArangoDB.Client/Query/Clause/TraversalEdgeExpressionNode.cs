@@ -1,4 +1,7 @@
-﻿using Remotion.Linq;
+﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Query;
+using ArangoDB.Client.Query.Clause;
+using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using System;
 using System.Collections.Generic;
@@ -10,28 +13,26 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public class GraphDepthExpressionNode : MethodCallExpressionNodeBase
+    public class TraversalEdgeExpressionNode : MethodCallExpressionNodeBase, IQuerySourceExpressionNode
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Depth<object,object>(null, 0, 0))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edge<object,object>(null,null)),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edge<object,object>(null,null,null))
                                                            };
 
-        public ConstantExpression Min { get; private set; }
+        public ConstantExpression CollectionName { get; private set; }
 
-        public ConstantExpression Max { get; private set; }
+        public ConstantExpression Direction { get; private set; }
 
-        public GraphDepthExpressionNode(MethodCallExpressionParseInfo parseInfo, 
-            ConstantExpression min,
-            ConstantExpression max)
+        public TraversalEdgeExpressionNode(MethodCallExpressionParseInfo parseInfo
+            , ConstantExpression collectionName
+            , ConstantExpression direction)
             : base(parseInfo)
         {
-            Min = min;
-            Max = max;
+            CollectionName = collectionName;
+            Direction = direction;
         }
-
-        public Expression Count { get; private set; }
-
 
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
         {
@@ -47,8 +48,11 @@ namespace ArangoDB.Client.Query.Clause
 
             var traversalClause = queryModel.BodyClauses.Last(b => b is ITraversalClause) as ITraversalClause;
 
-            traversalClause.Min = Min;
-            traversalClause.Max = Max;
+            traversalClause.EdgeCollections.Add(new TraversalEdgeDefinition
+            {
+                CollectionName = CollectionName.Value.ToString(),
+                Direction = Direction != null ? Direction.Value as EdgeDirection? : null
+            });
         }
     }
 }

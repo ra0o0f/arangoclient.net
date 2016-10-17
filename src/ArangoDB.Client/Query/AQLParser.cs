@@ -71,9 +71,10 @@ namespace ArangoDB.Client.Query
             customNodeTypeRegistry.Register(InModificationExpressionNode.SupportedMethods, typeof(InModificationExpressionNode));
             customNodeTypeRegistry.Register(IgnoreModificationSelectExpressionNode.SupportedMethods, typeof(IgnoreModificationSelectExpressionNode));
             customNodeTypeRegistry.Register(TraversalExpressionNode.SupportedMethods, typeof(TraversalExpressionNode));
-            customNodeTypeRegistry.Register(GraphDepthExpressionNode.SupportedMethods, typeof(GraphDepthExpressionNode));
-            customNodeTypeRegistry.Register(GraphDirectionExpressionNode.SupportedMethods, typeof(GraphDirectionExpressionNode));
-            customNodeTypeRegistry.Register(GraphStartVertexExpressionNode.SupportedMethods, typeof(GraphStartVertexExpressionNode));
+            customNodeTypeRegistry.Register(TraversalDepthExpressionNode.SupportedMethods, typeof(TraversalDepthExpressionNode));
+            customNodeTypeRegistry.Register(TraversalDirectionExpressionNode.SupportedMethods, typeof(TraversalDirectionExpressionNode));
+            customNodeTypeRegistry.Register(TraversalGraphNameExpressionNode.SupportedMethods, typeof(TraversalGraphNameExpressionNode));
+            customNodeTypeRegistry.Register(TraversalEdgeExpressionNode.SupportedMethods, typeof(TraversalEdgeExpressionNode));
 
             var nodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
             nodeTypeProvider.InnerProviders.Insert(0, customNodeTypeRegistry);

@@ -17,40 +17,29 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null, null, null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Graph<object,object>(null,null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, new string[] { }, null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null,string.Empty)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InternalEdges<object,object>(null, TraverseEdge.Collection(""), null, null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edges<object,object>(null, TraverseEdge.Collection("")))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Traversal<object,object>(null, "")),
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Traversal<object,object>(null, ()=>""))
                                                            };
 
-        public ConstantExpression TraversalContext { get; private set; }
+        public Expression StartVertex { get; private set; }
+
         public ConstantExpression VertextType { get; private set; }
         public ConstantExpression EdgeType { get; private set; }
 
         string identifier;
 
-        public TraversalExpressionNode(MethodCallExpressionParseInfo parseInfo,
-            ConstantExpression traversalContext,
-            ConstantExpression vertexType,
-            ConstantExpression edgeType)
+        private readonly ResolvedExpressionCache<Expression> _resolvedAdaptedSelector;
+
+        public TraversalExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression startVertex)
             : base(parseInfo)
         {
-            TraversalContext = traversalContext;
-            if (vertexType != null && edgeType != null)
-            {
-                VertextType = vertexType;
-                EdgeType = edgeType;
-            }
-            else
-            {
-                var genericTypes = parseInfo.ParsedExpression.Type.GenericTypeArguments[0].GenericTypeArguments;
-                VertextType = Expression.Constant(genericTypes[0]);
-                EdgeType = Expression.Constant(genericTypes[1]);
-            }
+            StartVertex = startVertex;
 
             identifier = Guid.NewGuid().ToString("N");
+
+            var genericTypes = parseInfo.ParsedExpression.Type.GenericTypeArguments[0].GenericTypeArguments;
+            VertextType = Expression.Constant(genericTypes[0]);
+            EdgeType = Expression.Constant(genericTypes[1]);
 
             _resolvedAdaptedSelector = new ResolvedExpressionCache<Expression>(this);
         }
@@ -69,7 +58,7 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("queryModel", queryModel);
 
-            var traversalClause = new TraversalClause(TraversalContext, identifier);
+            var traversalClause = new TraversalClause(StartVertex, identifier);
 
             queryModel.BodyClauses.Add(traversalClause);
 
@@ -77,8 +66,6 @@ namespace ArangoDB.Client.Query.Clause
 
             //queryModel.SelectClause.Selector = GetResolvedAdaptedSelector(clauseGenerationContext);
         }
-
-        private readonly ResolvedExpressionCache<Expression> _resolvedAdaptedSelector;
 
         public Expression GetResolvedAdaptedSelector(ClauseGenerationContext clauseGenerationContext)
         {

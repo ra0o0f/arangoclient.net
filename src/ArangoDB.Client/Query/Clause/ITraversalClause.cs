@@ -1,10 +1,14 @@
-﻿using System.Linq.Expressions;
+﻿using ArangoDB.Client.Data;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace ArangoDB.Client.Query.Clause
 {
     public interface ITraversalClause
     {
-        ConstantExpression TraversalContext { get; set; }
+        string GraphName { get; set; }
+
+        List<TraversalEdgeDefinition> EdgeCollections { get; set; }
         
         string Identifier { get; set; }
 

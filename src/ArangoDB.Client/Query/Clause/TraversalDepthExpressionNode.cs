@@ -10,22 +10,28 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public class GraphStartVertexExpressionNode : MethodCallExpressionNodeBase
+    public class TraversalDepthExpressionNode : MethodCallExpressionNodeBase
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.StartVertex<object,object>(null, "")),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.StartVertex<object,object>(null, ()=>""))
+                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Depth<object,object>(null, 0, 0))
                                                            };
 
-        public Expression StartVertex { get; private set; }
+        public ConstantExpression Min { get; private set; }
 
-        public GraphStartVertexExpressionNode(MethodCallExpressionParseInfo parseInfo,
-            Expression startVertex)
+        public ConstantExpression Max { get; private set; }
+
+        public TraversalDepthExpressionNode(MethodCallExpressionParseInfo parseInfo, 
+            ConstantExpression min,
+            ConstantExpression max)
             : base(parseInfo)
         {
-            StartVertex = startVertex;
+            Min = min;
+            Max = max;
         }
+
+        public Expression Count { get; private set; }
+
 
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
         {
@@ -41,7 +47,8 @@ namespace ArangoDB.Client.Query.Clause
 
             var traversalClause = queryModel.BodyClauses.Last(b => b is ITraversalClause) as ITraversalClause;
 
-            traversalClause.StartVertex = StartVertex;
+            traversalClause.Min = Min;
+            traversalClause.Max = Max;
         }
     }
 }

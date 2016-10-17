@@ -6,13 +6,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using ArangoDB.Client.Data;
 
 namespace ArangoDB.Client.Query.Clause
 {
     public class TraversalClause : IBodyClause, ITraversalClause
     {
-        public ConstantExpression TraversalContext { get; set; }
-
         public string Identifier { get; set; }
 
         public ConstantExpression Min { get; set; }
@@ -23,12 +22,18 @@ namespace ArangoDB.Client.Query.Clause
 
         public Expression StartVertex { get; set; }
 
-        public TraversalClause(ConstantExpression traversalContext, string identifier)
+        public string GraphName { get; set; }
+
+        public List<TraversalEdgeDefinition> EdgeCollections { get; set; }
+
+        public TraversalClause(Expression startVertex, string identifier)
         {
-            LinqUtility.CheckNotNull("traversalContext", traversalContext);
+            LinqUtility.CheckNotNull("startVertex", startVertex);
             LinqUtility.CheckNotNull("identifier", identifier);
 
-            TraversalContext = traversalContext;
+            EdgeCollections = new List<TraversalEdgeDefinition>();
+
+            StartVertex = startVertex;
             Identifier = identifier;
         }
 
@@ -49,7 +54,7 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);
 
-            var clone = new TraversalClause(TraversalContext, Identifier);
+            var clone = new TraversalClause(StartVertex, Identifier);
             return clone;
         }
 
@@ -61,7 +66,7 @@ namespace ArangoDB.Client.Query.Clause
         public void TransformExpressions(Func<Expression, Expression> transformation)
         {
             LinqUtility.CheckNotNull("transformation", transformation);
-            TraversalContext = transformation(TraversalContext) as ConstantExpression;
+            StartVertex = transformation(StartVertex);
         }
     }
 }
