@@ -93,15 +93,7 @@ namespace ArangoDB.Client.Serialization
         {
             get
             {
-                var convertes = new List<JsonConverter>
-                {
-                    new DateTimeConverter(),
-                    new QueryParameterConverter(),
-                    new EnumValueConverter()
-                }.Concat(db.Setting.Serialization.Converters).ToList();
-
-                if (db.Setting.Serialization.SerializeEnumAsInteger == false)
-                    convertes.Add(new StringEnumConverter());
+                List<JsonConverter> convertes = GetConverters();
 
                 return new JsonSerializerSettings
                 {
@@ -111,6 +103,20 @@ namespace ArangoDB.Client.Serialization
                     MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling
                 };
             }
+        }
+
+        private List<JsonConverter> GetConverters()
+        {
+            var convertes = new List<JsonConverter>
+                {
+                    new DateTimeConverter(),
+                    new QueryParameterConverter(),
+                    new EnumValueConverter()
+                }.Concat(db.Setting.Serialization.Converters).ToList();
+
+            if (db.Setting.Serialization.SerializeEnumAsInteger == false)
+                convertes.Add(new StringEnumConverter());
+            return convertes;
         }
 
         public JObject FromObject(object document)
