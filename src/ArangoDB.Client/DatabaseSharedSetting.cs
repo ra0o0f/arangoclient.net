@@ -1,17 +1,10 @@
-﻿using Newtonsoft.Json;
-using ArangoDB.Client.Http;
-using ArangoDB.Client.Query;
+﻿using ArangoDB.Client.Http;
 using ArangoDB.Client.Property;
-using ArangoDB.Client.Utility;
+using ArangoDB.Client.Query;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
@@ -39,7 +32,7 @@ namespace ArangoDB.Client
                 HttpHeaders = false
             };
         }
-        
+
         private string _url;
 
         public string Url
@@ -61,14 +54,14 @@ namespace ArangoDB.Client
         public bool WaitForSync { get; set; }
 
         public bool ThrowForServerErrors { get; set; }
-        
+
         public NetworkCredential SystemDatabaseCredential { get; set; }
 
         public bool ClusterMode { get; set; }
 
         public bool DisableChangeTracking { get; set; }
 
-        public DatabaseLogSharedSetting Logger{ get; set; }
+        public DatabaseLogSharedSetting Logger { get; set; }
 
         public DatabaseCursorSharedSetting Cursor { get; set; }
 
@@ -83,6 +76,8 @@ namespace ArangoDB.Client
         internal DocumentIdentifierModifier IdentifierModifier;
 
         internal AqlFunctionCache AqlFunctions { get; set; }
+
+        public Func<IArangoDatabase, List<JsonConverter>, JsonSerializer> CustomJsonSerializer;
     }
 
     public class DatabaseSerializationSharedSetting
@@ -118,7 +113,7 @@ namespace ArangoDB.Client
 
     public class DatabaseLinqSharedSetting
     {
-        public Func<string,string> TranslateGroupByIntoName { get; set; }
+        public Func<string, string> TranslateGroupByIntoName { get; set; }
     }
 
     public class DatabaseDocumentSharedSetting

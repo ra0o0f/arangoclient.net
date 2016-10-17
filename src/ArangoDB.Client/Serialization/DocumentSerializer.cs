@@ -3,20 +3,15 @@ using ArangoDB.Client.Serialization.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Serialization
 {
     public class DocumentSerializer
     {
         private IArangoDatabase db;
-
-        public static Func<IArangoDatabase, JsonSerializer> CustomJsonSerializer;
 
         public DocumentSerializer(IArangoDatabase db)
         {
@@ -79,33 +74,31 @@ namespace ArangoDB.Client.Serialization
 
         public JsonSerializer CreateJsonSerializer()
         {
-            if (CustomJsonSerializer == null)
+            if (db.Setting.SharedSetting.CustomJsonSerializer == null)
             {
                 var jsonSerializer = JsonSerializer.Create(SerializerSetting);
 
                 return jsonSerializer;
             }
-
-            return CustomJsonSerializer(db);
+            return db.Setting.SharedSetting.CustomJsonSerializer(db, GetJsonConverters());
         }
 
         public JsonSerializerSettings SerializerSetting
         {
             get
             {
-                List<JsonConverter> convertes = GetConverters();
+                List<JsonConverter> convertes = GetJsonConverters();
 
                 return new JsonSerializerSettings
                 {
                     ContractResolver = DocumentContractResolver.GetContractResolver(db),
                     Converters = convertes,
-                    DateParseHandling = DateParseHandling.None,
-                    MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling
+                    DateParseHandling = DateParseHandling.None
                 };
             }
         }
 
-        private List<JsonConverter> GetConverters()
+        private List<JsonConverter> GetJsonConverters()
         {
             var convertes = new List<JsonConverter>
                 {
