@@ -17,8 +17,8 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edge<object,object>(null,null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Edge<object,object>(null,null,null))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Edge<object,object>(null,null)),
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Edge<object,object>(null,null,null))
                                                            };
 
         public ConstantExpression CollectionName { get; private set; }

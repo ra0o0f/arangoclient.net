@@ -8,8 +8,8 @@ namespace ArangoDB.Client.Data
 {
     public class TraversalPathData<TVertex, TEdge>
     {
-        public TVertex Vertices { get; set; }
+        public IList<TVertex> Vertices { get; set; }
 
-        public TEdge Edges { get; set; }
+        public IList<TEdge> Edges { get; set; }
     }
 }

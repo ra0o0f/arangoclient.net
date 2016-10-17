@@ -15,9 +15,9 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.InBound<object,object>(null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.OutBound<object,object>(null)),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.AnyDirection<object,object>(null))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.InBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.OutBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.AnyDirection<object,object>(null))
                                                            };
 
         public ConstantExpression Direction { get; private set; }
@@ -28,13 +28,13 @@ namespace ArangoDB.Client.Query.Clause
         {
             switch (parseInfo.ParsedExpression.Method.Name)
             {
-                case nameof(QueryableExtensions.InBound):
+                case nameof(TraversalQueryableExtensions.InBound):
                     Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Inbound));
                     break;
-                case nameof(QueryableExtensions.OutBound):
+                case nameof(TraversalQueryableExtensions.OutBound):
                     Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Outbound));
                     break;
-                case nameof(QueryableExtensions.AnyDirection):
+                case nameof(TraversalQueryableExtensions.AnyDirection):
                     Direction = Expression.Constant(Utils.EdgeDirectionToString(EdgeDirection.Any));
                     break;
             }

@@ -17,8 +17,8 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Traversal<object,object>(null, "")),
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Traversal<object,object>(null, ()=>""))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Traversal<object,object>(null, "")),
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Traversal<object,object>(null, ()=>""))
                                                            };
 
         public Expression StartVertex { get; private set; }

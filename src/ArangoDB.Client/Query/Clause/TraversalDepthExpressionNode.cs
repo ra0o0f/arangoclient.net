@@ -14,7 +14,7 @@ namespace ArangoDB.Client.Query.Clause
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>QueryableExtensions.Depth<object,object>(null, 0, 0))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Depth<object,object>(null, 0, 0))
                                                            };
 
         public ConstantExpression Min { get; private set; }

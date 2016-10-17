@@ -18,8 +18,8 @@ namespace ArangoDB.Client
     {
         static QueryableExtensions()
         {
-            var extention = typeof(QueryableExtensions)
-                .GetRuntimeMethods()
+            var extention = typeof(QueryableExtensions).GetRuntimeMethods()
+                .Union(typeof(TraversalQueryableExtensions).GetRuntimeMethods())
                 .Where(x => x.GetCustomAttribute<ExtentionIdentifierAttribute>() != null)
                 .GroupBy(x => x.GetCustomAttribute<ExtentionIdentifierAttribute>().Identifier)
                 .Select(g => new { g.Key, Count = g.Count() })
@@ -135,7 +135,7 @@ namespace ArangoDB.Client
 
         private static ConcurrentDictionary<string, MethodInfo> cachedExtentions = new ConcurrentDictionary<string, MethodInfo>();
 
-        private static MethodInfo FindExtention(string identifier, params Type[] arguments)
+        internal static MethodInfo FindExtention(string identifier, params Type[] arguments)
         {
             string key = $"{identifier}_{string.Join("_", arguments.Select(x => x.FullName))}";
 
@@ -392,13 +392,38 @@ namespace ArangoDB.Client
                     source.Expression,
                     Expression.Quote(predicate)));
         }
-        
+    }
+    
+    public static class TraversalQueryableExtensions
+    {
+        [ExtentionIdentifier("ShortestPath_Selector")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> ShortestPath<TVertex, TEdge>(this IQueryable source, Expression<Func<string>> startVertex, Expression<Func<string>> targetVertex)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    QueryableExtensions.FindExtention("ShortestPath_Selector", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Quote(startVertex),
+                    Expression.Quote(targetVertex)
+                    )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
+        [ExtentionIdentifier("ShortestPath_Constant")]
+        public static ITraversalQueryable<TraversalData<TVertex, TEdge>> ShortestPath<TVertex, TEdge>(this IQueryable source, string startVertex)
+        {
+            return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
+                Expression.Call(
+                    QueryableExtensions.FindExtention("ShortestPath_Constant", typeof(TVertex), typeof(TEdge)),
+                    source.Expression,
+                    Expression.Constant(startVertex))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
+        }
+
         [ExtentionIdentifier("Traversal_Selector")]
         public static ITraversalQueryable<TraversalData<TVertex, TEdge>> Traversal<TVertex, TEdge>(this IQueryable source, Expression<Func<string>> startVertex)
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("Traversal_Selector", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("Traversal_Selector", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
                     Expression.Quote(startVertex))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
@@ -408,7 +433,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("Traversal_Constant", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("Traversal_Constant", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
                     Expression.Constant(startVertex))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
@@ -418,7 +443,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("Graph", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("Graph", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
                     Expression.Constant(graphName)
                     )) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
@@ -434,7 +459,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("Edge", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("Edge", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
                     Expression.Constant(collectionName),
                     direction.HasValue ? Expression.Constant(direction.Value) : null
@@ -446,7 +471,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("Depth", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("Depth", typeof(TVertex), typeof(TEdge)),
                     source.Expression,
                     Expression.Constant(min),
                     Expression.Constant(max))) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
@@ -457,7 +482,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("InBound", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("InBound", typeof(TVertex), typeof(TEdge)),
                     source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
 
@@ -466,7 +491,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("OutBound", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("OutBound", typeof(TVertex), typeof(TEdge)),
                     source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
 
@@ -475,7 +500,7 @@ namespace ArangoDB.Client
         {
             return source.Provider.CreateQuery<TraversalData<TVertex, TEdge>>(
                 Expression.Call(
-                    FindExtention("AnyDirection", typeof(TVertex), typeof(TEdge)),
+                    QueryableExtensions.FindExtention("AnyDirection", typeof(TVertex), typeof(TEdge)),
                     source.Expression)) as ITraversalQueryable<TraversalData<TVertex, TEdge>>;
         }
     }

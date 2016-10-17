@@ -12,6 +12,6 @@ namespace ArangoDB.Client.Data
 
         public TEdge Edge { get; set; }
 
-        public IList<TraversalPathData<TVertex, TEdge>> Path { get; set; }
+        public TraversalPathData<TVertex, TEdge> Path { get; set; }
     }
 }
