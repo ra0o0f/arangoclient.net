@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
@@ -15,7 +12,7 @@ namespace ArangoDB.Client
 
         private bool? _disableChangeTracking;
 
-        public DatabaseSharedSetting SharedSetting { get; set; }
+        public DatabaseSharedSetting SharedSetting { get; private set; }
 
         public DatabaseSetting(DatabaseSharedSetting sharedSetting)
         {
