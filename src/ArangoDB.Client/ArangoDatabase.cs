@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -151,19 +152,6 @@ namespace ArangoDB.Client
         {
             return Query<AQL>();
         }
-
-        //public AqlQueryable<T> Query<T>()
-        //{
-        //    var queryParser = Linq.LinqUtility.CreateQueryParser();
-        //    var executer = new AqlQueryExecuter(this);
-
-        //    return new AqlQueryable<T>(queryParser, executer, this);
-        //}
-
-        //public AqlQueryable<AQL> Query()
-        //{
-        //    return Query<AQL>();
-        //}
 
         public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null,
            bool ? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
