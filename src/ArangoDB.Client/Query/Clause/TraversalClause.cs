@@ -28,6 +28,8 @@ namespace ArangoDB.Client.Query.Clause
 
         public List<TraversalEdgeDefinition> EdgeCollections { get; set; }
 
+        public ConstantExpression Options { get; set; }
+
         public TraversalClause(Expression startVertex, string identifier)
         {
             LinqUtility.CheckNotNull("startVertex", startVertex);

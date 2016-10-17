@@ -10,26 +10,22 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query.Clause
 {
-    public class TraversalDepthExpressionNode : MethodCallExpressionNodeBase
+    public class TraversalOptionsExpressionNode : MethodCallExpressionNodeBase
     {
         public static readonly MethodInfo[] SupportedMethods = new[]
                                                            {
-                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Depth<object,object>(null, 0, 0))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.Options<object,object>(null, null)),
+                                                                LinqUtility.GetSupportedMethod(()=>ShortestPathQueryableExtensions.Options<object,object>(null, null))
                                                            };
 
-        public ConstantExpression Min { get; private set; }
+        public ConstantExpression Options { get; private set; }
 
-        public ConstantExpression Max { get; private set; }
-
-        public TraversalDepthExpressionNode(MethodCallExpressionParseInfo parseInfo, 
-            ConstantExpression min,
-            ConstantExpression max)
+        public TraversalOptionsExpressionNode(MethodCallExpressionParseInfo parseInfo, ConstantExpression options)
             : base(parseInfo)
         {
-            Min = min;
-            Max = max;
+            Options = options;
         }
-        
+
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
         {
             LinqUtility.CheckNotNull("inputParameter", inputParameter);
@@ -44,8 +40,7 @@ namespace ArangoDB.Client.Query.Clause
 
             var traversalClause = queryModel.BodyClauses.Last(b => b is ITraversalClause) as ITraversalClause;
 
-            traversalClause.Min = Min;
-            traversalClause.Max = Max;
+            traversalClause.Options = Options;
         }
     }
 }

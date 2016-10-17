@@ -204,7 +204,7 @@ namespace ArangoDB.Client
                     Log("parsed query with variables replaced:");
                     Log(data.QueryReplacedWithVariables(this));
                     Log("");
-                }   
+                }
             }
 
             return command.CreateCursor<T>(data);

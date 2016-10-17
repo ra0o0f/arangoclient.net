@@ -1,6 +1,7 @@
 ﻿using ArangoDB.Client.Data;
 using ArangoDB.Client.Query;
 using ArangoDB.Client.Query.Clause;
+using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Utility;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -333,6 +334,10 @@ namespace ArangoDB.Client.Query
                 QueryText.Append(edges);
             }
 
+            if(traversalClause.Options != null)
+            {
+                QueryText.AppendFormat(" options {0} ", new DocumentSerializer(Db).SerializeWithoutReader(traversalClause.Options.Value));
+            }
         }
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)

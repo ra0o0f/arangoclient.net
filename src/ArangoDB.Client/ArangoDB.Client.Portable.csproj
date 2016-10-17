@@ -178,6 +178,7 @@
     <Compile Include="Query\Clause\SkipTakeClause.cs" />
     <Compile Include="Query\Clause\TakeExpressionNode.cs" />
     <Compile Include="Query\Clause\TraversalExpressionNode.cs" />
+    <Compile Include="Query\Clause\TraversalOptionsExpressionNode.cs" />
     <Compile Include="Query\Clause\UpdateReplaceClause.cs" />
     <Compile Include="Query\Clause\UpdateReplaceExpressionNode.cs" />
     <Compile Include="Query\Clause\UpsertClause.cs" />

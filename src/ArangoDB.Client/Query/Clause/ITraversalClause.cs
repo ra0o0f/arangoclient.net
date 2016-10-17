@@ -12,6 +12,8 @@ namespace ArangoDB.Client.Query.Clause
         
         string Identifier { get; set; }
 
+        ConstantExpression Options { get; set; }
+
         ConstantExpression Min { get; set; }
 
         ConstantExpression Max { get; set; }
