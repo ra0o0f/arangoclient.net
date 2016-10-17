@@ -19,5 +19,7 @@ namespace ArangoDB.Client.Query.Clause
         ConstantExpression Direction { get; set; }
 
         Expression StartVertex { get; set; }
+
+        Expression TargetVertex { get; set; }
     }
 }

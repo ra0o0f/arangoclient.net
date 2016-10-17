@@ -17,7 +17,10 @@ namespace ArangoDB.Client.Query.Clause
                                                            {
                                                                 LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.InBound<object,object>(null)),
                                                                 LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.OutBound<object,object>(null)),
-                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.AnyDirection<object,object>(null))
+                                                                LinqUtility.GetSupportedMethod(()=>TraversalQueryableExtensions.AnyDirection<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>ShortestPathQueryableExtensions.InBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>ShortestPathQueryableExtensions.OutBound<object,object>(null)),
+                                                                LinqUtility.GetSupportedMethod(()=>ShortestPathQueryableExtensions.AnyDirection<object,object>(null))
                                                            };
 
         public ConstantExpression Direction { get; private set; }

@@ -52,7 +52,10 @@
     <Compile Include="Data\DropGraphData.cs" />
     <Compile Include="Data\EnsureIndexData.cs" />
     <Compile Include="Data\EnsureIndexResult.cs" />
+    <Compile Include="Data\ShortestPathData.cs" />
     <Compile Include="Data\TraversalData.cs" />
+    <Compile Include="Interface\IShortestPathQueryable.cs" />
+    <Compile Include="Query\Clause\ShortestPathExpressionNode.cs" />
     <Compile Include="Query\Clause\TraversalEdgeExpressionNode.cs" />
     <Compile Include="Data\TraversalPathData.cs" />
     <Compile Include="Data\TraversalResult.cs" />

@@ -278,10 +278,19 @@ namespace ArangoDB.Client.Query
         {
             string prefix = LinqUtility.MemberNameFromMap(traversalClause.Identifier, "graph", this);
 
-            QueryText.AppendFormat(" for {0}, {1}, {2} in ",
+            if (traversalClause.TargetVertex != null)
+            {
+                QueryText.AppendFormat(" for {0}, {1} in ",
+                LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Edge"));
+            }
+            else
+            {
+                QueryText.AppendFormat(" for {0}, {1}, {2} in ",
                 LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Edge"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Path"));
+            }
 
             if (traversalClause.Min != null && traversalClause.Max != null)
                 QueryText.AppendFormat(" {0}..{1} ", traversalClause.Min.Value, traversalClause.Max);
@@ -290,7 +299,15 @@ namespace ArangoDB.Client.Query
                 ? traversalClause.Direction.Value
                 : Utils.EdgeDirectionToString(EdgeDirection.Any));
 
-            GetAqlExpression(traversalClause.StartVertex, queryModel);
+            if(traversalClause.TargetVertex != null)
+            {
+                QueryText.Append(" shortest_path ");
+                GetAqlExpression(traversalClause.StartVertex, queryModel);
+                QueryText.Append(" to ");
+                GetAqlExpression(traversalClause.TargetVertex, queryModel);
+            }
+            else
+                GetAqlExpression(traversalClause.StartVertex, queryModel);
             
             if (string.IsNullOrEmpty(traversalClause.GraphName) == false)
             {

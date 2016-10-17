@@ -22,6 +22,8 @@ namespace ArangoDB.Client.Query.Clause
 
         public Expression StartVertex { get; set; }
 
+        public Expression TargetVertex { get; set; }
+
         public string GraphName { get; set; }
 
         public List<TraversalEdgeDefinition> EdgeCollections { get; set; }
@@ -35,6 +37,14 @@ namespace ArangoDB.Client.Query.Clause
 
             StartVertex = startVertex;
             Identifier = identifier;
+        }
+
+        public TraversalClause(Expression startVertex, Expression targetVertex, string identifier)
+            : this(startVertex, identifier)
+        {
+            LinqUtility.CheckNotNull("tagetVertex", targetVertex);
+
+            TargetVertex = targetVertex;
         }
 
         public virtual void Accept(IQueryModelVisitor visitor, QueryModel queryModel, int index)
@@ -67,6 +77,8 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("transformation", transformation);
             StartVertex = transformation(StartVertex);
+            if (TargetVertex != null)
+                TargetVertex = transformation(TargetVertex);
         }
     }
 }

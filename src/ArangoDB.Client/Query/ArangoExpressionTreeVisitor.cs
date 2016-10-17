@@ -189,11 +189,12 @@ namespace ArangoDB.Client.Query
                 if (groupByClause.Selector.NodeType != ExpressionType.New)
                     ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(groupByClause.CollectVariableName));
             }
-            else if (expression.Expression.Type.Name == "TraversalData`2")
+            else if (expression.Expression.Type.Name == "TraversalData`2"
+                || expression.Expression.Type.Name == "ShortestPathData`2")
             {
                 var parameterExpression = expression.Expression as ParameterExpression;
                 if (parameterExpression == null)
-                    throw new InvalidOperationException("TraversalData`2 VisitMember, expected a ParameterExpression");
+                    throw new InvalidOperationException("[TraversalData`2|ShortestPathData`2] VisitMember, expected a ParameterExpression");
 
                 string prefix = LinqUtility.MemberNameFromMap(parameterExpression.Name, "graph", ModelVisitor);
 
