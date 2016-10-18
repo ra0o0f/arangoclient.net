@@ -85,7 +85,37 @@ namespace ArangoDB.Client.Query
         
         protected override Expression VisitParameter(ParameterExpression expression)
         {
-            ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(expression.Name));
+            string name = expression.Name;
+
+            if(expression.Type.Name == "TraversalData`2")
+            {
+                string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
+
+                ModelVisitor.QueryText.AppendFormat(" {{ {0} : {1}, {2} : {3}, {4} : {5} }} ",
+                LinqUtility.ResolvePropertyName($"Vertex"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
+                LinqUtility.ResolvePropertyName($"Edge"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Edge"),
+                LinqUtility.ResolvePropertyName($"Path"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Path"));
+
+                return expression;
+            }
+
+            if(expression.Type.Name == "ShortestPathData`2")
+            {
+                string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
+
+                ModelVisitor.QueryText.AppendFormat(" {{ {0} : {1}, {2} : {3} }} ",
+                LinqUtility.ResolvePropertyName($"Vertex"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
+                LinqUtility.ResolvePropertyName($"Edge"),
+                LinqUtility.ResolvePropertyName($"{prefix}_Edge"));
+
+                return expression;
+            }
+
+            ModelVisitor.QueryText.AppendFormat(" {0} ", LinqUtility.ResolvePropertyName(name));
 
             return expression;
         }

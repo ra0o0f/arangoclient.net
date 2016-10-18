@@ -17,5 +17,7 @@ namespace ArangoDB.Client.Examples.Models
         public string Followee { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public string Label { get; set; }
     }
 }

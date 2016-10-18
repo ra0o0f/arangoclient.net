@@ -50,6 +50,7 @@
     <Compile Include="Database\DatabaseGenerator.cs" />
     <Compile Include="Linq\CustomQuery.cs" />
     <Compile Include="Linq\SimpleQuery.cs" />
+    <Compile Include="Linq\TraversalQuery.cs" />
     <Compile Include="Mock\ArangoDatabaseMock.cs" />
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\Friend.cs" />
