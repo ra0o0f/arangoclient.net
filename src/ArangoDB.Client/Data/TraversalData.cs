@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class TraversalData<TVertex, TEdge>
     {
         public TVertex Vertex { get; set; }

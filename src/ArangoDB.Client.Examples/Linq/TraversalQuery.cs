@@ -108,7 +108,127 @@ namespace ArangoDB.Client.Examples.Linq
                 .Graph(graphName)
                 .Select(g => g)
                 .ToList();
-            
+
+            Assert.Equal(result.Count, 4);
+            Assert.Equal(result[0].Vertex.Key, bob.Key);
+            Assert.Equal(result[1].Vertex.Key, charlie.Key);
+            Assert.Equal(result[2].Vertex.Key, eve.Key);
+            Assert.Equal(result[3].Vertex.Key, dave.Key);
+
+            Assert.Equal(result[0].Edge.Key, aliceBob.Key);
+            Assert.Equal(result[1].Edge.Key, bobCharlie.Key);
+            Assert.Equal(result[2].Edge.Key, charlieEve.Key);
+            Assert.Equal(result[3].Edge.Key, bobDave.Key);
+
+            Assert.Equal(result[0].Path.Vertices.Count, 2);
+            Assert.Equal(result[0].Path.Edges.Count, 1);
+
+            Assert.Equal(result[0].Path.Vertices[1].Key, bob.Key);
+            Assert.Equal(result[0].Path.Edges[0].Key, aliceBob.Key);
+
+            Assert.Equal(result[2].Path.Vertices.Count, 4);
+            Assert.Equal(result[2].Path.Edges.Count, 3);
+
+            Assert.Equal(result[2].Path.Vertices[2].Key, charlie.Key);
+            Assert.Equal(result[2].Path.Edges[1].Key, bobCharlie.Key);
+        }
+
+        [Fact]
+        public void TraversalDepth()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 2)
+                .OutBound()
+                .Graph(graphName)
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 3);
+        }
+
+        [Fact]
+        public void TraversalWithoutDepth()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .OutBound()
+                .Graph(graphName)
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 1);
+        }
+
+        [Fact]
+        public void TraversalInbound()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(eve.Id)
+                .Depth(1, 5)
+                .InBound()
+                .Graph(graphName)
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 3);
+        }
+
+        [Fact]
+        public void TraversalInvalidGraphName()
+        {
+            InitiateGraph();
+
+            var query = db.Query()
+                .Traversal<Person, Follow>(eve.Id)
+                .Depth(1, 5)
+                .InBound()
+                .Graph("InvalidGraphName")
+                .Select(g => g);
+
+            Assert.Throws<ArangoServerException>(() => query.ToList());
+        }
+
+        [Fact]
+        public void TraversalSelectVertices()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 6)
+                .Graph(graphName)
+                .Select(g => g.Vertex.Key)
+                .ToList();
+
+            Assert.Equal(result.Count, 4);
+            Assert.True(result.All(x => string.IsNullOrEmpty(x) == false));
+        }
+
+        [Fact]
+        public void TraversalFilter()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 6)
+                .Graph(graphName)
+                .Where(g => AQL.Length(
+                    db.Query().For(_ => g.Path.Vertices)
+                    .Where(v => v.Id == charlie.Id)
+                    .Select(v => v)) 
+                    == 0)
+                .Select(g => g.Vertex)
+                .ToList();
+
+            Assert.Equal(result.Count, 2);
         }
     }
 }

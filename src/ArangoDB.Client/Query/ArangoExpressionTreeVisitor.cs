@@ -35,6 +35,15 @@ namespace ArangoDB.Client.Query
                 return expression;
             }
 
+            if(expression.Method.Name == "get_Item" && expression.Method.DeclaringType.Name == "IList`1")
+            {
+                Visit(expression.Object);
+                ModelVisitor.QueryText.Append(" [ ");
+                Visit(expression.Arguments[0]);
+                ModelVisitor.QueryText.Append(" ] ");
+                return expression;
+            }
+
             string methodName;
             var userFunction = ModelVisitor.Db.SharedSetting.AqlFunctions.FindFunctionAttribute(expression.Method);
             bool methodExists = userFunction != null;
@@ -92,11 +101,11 @@ namespace ArangoDB.Client.Query
                 string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
 
                 ModelVisitor.QueryText.AppendFormat(" {{ {0} : {1}, {2} : {3}, {4} : {5} }} ",
-                LinqUtility.ResolvePropertyName($"Vertex"),
+                LinqUtility.ResolvePropertyName($"vertex"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
-                LinqUtility.ResolvePropertyName($"Edge"),
+                LinqUtility.ResolvePropertyName($"edge"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Edge"),
-                LinqUtility.ResolvePropertyName($"Path"),
+                LinqUtility.ResolvePropertyName($"path"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Path"));
 
                 return expression;
@@ -107,9 +116,9 @@ namespace ArangoDB.Client.Query
                 string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
 
                 ModelVisitor.QueryText.AppendFormat(" {{ {0} : {1}, {2} : {3} }} ",
-                LinqUtility.ResolvePropertyName($"Vertex"),
+                LinqUtility.ResolvePropertyName($"vertex"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Vertex"),
-                LinqUtility.ResolvePropertyName($"Edge"),
+                LinqUtility.ResolvePropertyName($"edge"),
                 LinqUtility.ResolvePropertyName($"{prefix}_Edge"));
 
                 return expression;
