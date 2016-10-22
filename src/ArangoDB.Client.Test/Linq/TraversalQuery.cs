@@ -192,5 +192,49 @@ for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path`
 in 1..5 outbound @P1 graph ""SocialGraph""  options {""bfs"":true}
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
         }
+
+        [Fact]
+        public void TraversalInEdges()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .Traversal<Person, Friend>("Person/1234")
+                .Depth(1, 5)
+                .OutBound()
+                .Edge(db.NameOf<Friend>())
+                .Edge(db.NameOf<Flight>())
+                .Select(g => g)
+                .GetQueryData();
+
+            Assert.Equal(query.Query.RemoveSpaces(), @"
+for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path` 
+in 1..5 outbound @P1 `Friend`, `Flight`
+return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
+
+            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+        }
+
+        [Fact]
+        public void TraversalInEdgesWithDirection()
+        {
+            var db = DatabaseGenerator.Get();
+
+            var query = db.Query()
+                .Traversal<Person, Friend>("Person/1234")
+                .Depth(1, 5)
+                .OutBound()
+                .Edge(db.NameOf<Friend>(), EdgeDirection.Inbound)
+                .Edge(db.NameOf<Flight>())
+                .Select(g => g)
+                .GetQueryData();
+
+            Assert.Equal(query.Query.RemoveSpaces(), @"
+for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path` 
+in 1..5 outbound @P1 inbound `Friend`, `Flight`
+return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
+
+            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+        }
     }
 }

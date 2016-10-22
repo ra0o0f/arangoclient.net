@@ -223,12 +223,61 @@ namespace ArangoDB.Client.Examples.Linq
                 .Where(g => AQL.Length(
                     db.Query().For(_ => g.Path.Vertices)
                     .Where(v => v.Id == charlie.Id)
-                    .Select(v => v)) 
+                    .Select(v => v))
                     == 0)
                 .Select(g => g.Vertex)
                 .ToList();
 
             Assert.Equal(result.Count, 2);
+        }
+
+        [Fact]
+        public void TraversalInEdges()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 4)
+                .OutBound()
+                .Edge(db.NameOf<Follow>())
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 4);
+        }
+
+
+        [Fact]
+        public void TraversalInEdgesInBound()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 4)
+                .OutBound()
+                .Edge(db.NameOf<Follow>(), EdgeDirection.Inbound)
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 0);
+        }
+
+        [Fact]
+        public void TraversalInEdgesAnyDirection()
+        {
+            InitiateGraph();
+
+            var result = db.Query()
+                .Traversal<Person, Follow>(alice.Id)
+                .Depth(1, 4)
+                .OutBound()
+                .Edge(db.NameOf<Follow>(), EdgeDirection.Any)
+                .Select(g => g)
+                .ToList();
+
+            Assert.Equal(result.Count, 4);
         }
     }
 }
