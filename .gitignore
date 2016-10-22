@@ -12,7 +12,7 @@
 *.nuget.props
 *.nuget.targets
 
-docs/_book
+docs/book/_book
 node_modules
 
 [Dd]ebug/
