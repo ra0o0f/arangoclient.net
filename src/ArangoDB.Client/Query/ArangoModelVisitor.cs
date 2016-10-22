@@ -71,14 +71,22 @@ namespace ArangoDB.Client.Query
 
             QueryModel = queryModel;
 
-            var resultOperator = queryModel.ResultOperators.Count != 0 ? queryModel.ResultOperators[0] : null;
-            var aggregateFunction = resultOperator != null && aggregateResultOperatorFunctions.ContainsKey(resultOperator.GetType())
-                ? aggregateResultOperatorFunctions[resultOperator.GetType()] : null;
+            string aggregateFunction = null;
 
-            if (resultOperator is FirstResultOperator)
+            // get the first aggregateResultOperatorFunction, because only one of them can be used at a time
+            foreach (var r in queryModel.ResultOperators)
+            {
+                if (aggregateResultOperatorFunctions.ContainsKey(r.GetType()))
+                {
+                    aggregateFunction = aggregateResultOperatorFunctions[r.GetType()];
+                    break;
+                }
+            }
+
+            if (queryModel.ResultOperators.Count(x => x is FirstResultOperator) != 0)
                 queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
 
-            if (aggregateFunction != null)
+            if (string.IsNullOrEmpty(aggregateFunction) == false)
                 QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
             if (!IgnoreFromClause && queryModel.MainFromClause.ItemType != typeof(AQL))
@@ -300,7 +308,7 @@ namespace ArangoDB.Client.Query
                 ? traversalClause.Direction.Value
                 : Utils.EdgeDirectionToString(EdgeDirection.Any));
 
-            if(traversalClause.TargetVertex != null)
+            if (traversalClause.TargetVertex != null)
             {
                 QueryText.Append(" shortest_path ");
                 GetAqlExpression(traversalClause.StartVertex, queryModel);
@@ -309,7 +317,7 @@ namespace ArangoDB.Client.Query
             }
             else
                 GetAqlExpression(traversalClause.StartVertex, queryModel);
-            
+
             if (string.IsNullOrEmpty(traversalClause.GraphName) == false)
             {
                 QueryText.AppendFormat("  graph \"{0}\" ", traversalClause.GraphName);
@@ -327,14 +335,14 @@ namespace ArangoDB.Client.Query
 
                     if (e.Direction.HasValue)
                         edges.AppendFormat("{0} ", Utils.EdgeDirectionToString(e.Direction.Value));
-                    
+
                     edges.Append(LinqUtility.ResolvePropertyName(e.CollectionName));
                 }
 
                 QueryText.Append(edges);
             }
 
-            if(traversalClause.Options != null)
+            if (traversalClause.Options != null)
             {
                 QueryText.AppendFormat(" options {0} ", new DocumentSerializer(Db).SerializeWithoutReader(traversalClause.Options.Value));
             }
