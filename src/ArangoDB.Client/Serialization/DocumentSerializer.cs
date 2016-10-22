@@ -1,20 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using ArangoDB.Client.Data;
+using ArangoDB.Client.Serialization.Converters;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using ArangoDB.Client.Data;
-using ArangoDB.Client.Serialization.Converters;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Serialization
 {
     public class DocumentSerializer
     {
-        IArangoDatabase db;
+        private IArangoDatabase db;
+
         public DocumentSerializer(IArangoDatabase db)
         {
             this.db = db;
@@ -58,13 +56,13 @@ namespace ArangoDB.Client.Serialization
             }
         }
 
-        public T DeserializeSingleResult<T>(Stream stream,out JObject jObject)
+        public T DeserializeSingleResult<T>(Stream stream, out JObject jObject)
         {
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
-                return new DocumentParser(db).ParseSingleResult<T>(jsonReader,out jObject,true);
+                return new DocumentParser(db).ParseSingleResult<T>(jsonReader, out jObject, true);
             }
         }
 
@@ -76,33 +74,42 @@ namespace ArangoDB.Client.Serialization
 
         public JsonSerializer CreateJsonSerializer()
         {
-            var jsonSerializer = JsonSerializer.Create(SerializerSetting);
-            
-            return jsonSerializer;
+            if (db.Setting.SharedSetting.CustomJsonSerializer == null)
+            {
+                var jsonSerializer = JsonSerializer.Create(SerializerSetting);
+
+                return jsonSerializer;
+            }
+            return db.Setting.SharedSetting.CustomJsonSerializer(db, GetJsonConverters());
         }
 
         public JsonSerializerSettings SerializerSetting
         {
             get
             {
-                var convertes = new List<JsonConverter>
+                List<JsonConverter> convertes = GetJsonConverters();
+
+                return new JsonSerializerSettings
+                {
+                    ContractResolver = DocumentContractResolver.GetContractResolver(db),
+                    Converters = convertes,
+                    DateParseHandling = DateParseHandling.None
+                };
+            }
+        }
+
+        private List<JsonConverter> GetJsonConverters()
+        {
+            var convertes = new List<JsonConverter>
                 {
                     new DateTimeConverter(),
                     new QueryParameterConverter(),
                     new EnumValueConverter()
                 }.Concat(db.Setting.Serialization.Converters).ToList();
 
-                if (db.Setting.Serialization.SerializeEnumAsInteger == false)
-                    convertes.Add(new StringEnumConverter());
-
-                return new JsonSerializerSettings
-                {
-                    ContractResolver = DocumentContractResolver.GetContractResolver(db),
-                    Converters = convertes,
-                    DateParseHandling = DateParseHandling.None,
-                    MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling
-                };
-            }
+            if (db.Setting.Serialization.SerializeEnumAsInteger == false)
+                convertes.Add(new StringEnumConverter());
+            return convertes;
         }
 
         public JObject FromObject(object document)

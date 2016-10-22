@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client
 {
@@ -15,11 +12,11 @@ namespace ArangoDB.Client
 
         private bool? _disableChangeTracking;
 
-        DatabaseSharedSetting sharedSetting;
+        public DatabaseSharedSetting SharedSetting { get; private set; }
 
         public DatabaseSetting(DatabaseSharedSetting sharedSetting)
         {
-            this.sharedSetting = sharedSetting;
+            this.SharedSetting = sharedSetting;
             this.Cursor = new DatabaseCursorSetting(sharedSetting);
             this.Document = new DatabaseDocumentSetting(sharedSetting);
             this.Linq = new DatabaseLinqSetting(sharedSetting);
@@ -34,7 +31,7 @@ namespace ArangoDB.Client
                 if (_waitForSync.HasValue)
                     return _waitForSync.Value;
 
-                return sharedSetting.WaitForSync;
+                return SharedSetting.WaitForSync;
             }
             set { _waitForSync = value; }
         }
@@ -46,7 +43,7 @@ namespace ArangoDB.Client
                 if (_throwForServerErrors.HasValue)
                     return _throwForServerErrors.Value;
 
-                return sharedSetting.ThrowForServerErrors;
+                return SharedSetting.ThrowForServerErrors;
             }
             set { _throwForServerErrors = value; }
         }
@@ -58,7 +55,7 @@ namespace ArangoDB.Client
                 if (_disableChangeTracking.HasValue)
                     return _disableChangeTracking.Value;
 
-                return sharedSetting.DisableChangeTracking;
+                return SharedSetting.DisableChangeTracking;
             }
             set { _disableChangeTracking = value; }
         }
@@ -83,7 +80,7 @@ namespace ArangoDB.Client
         private bool? _httpResponse;
         private bool? _httpHeaders;
 
-        DatabaseSharedSetting sharedSetting;
+        private DatabaseSharedSetting sharedSetting;
 
         public DatabaseLogSetting(DatabaseSharedSetting sharedSetting)
         {
@@ -101,8 +98,6 @@ namespace ArangoDB.Client
             }
             set { _log = value; }
         }
-
-
 
         public bool LogOnlyLightOperations
         {
@@ -167,7 +162,7 @@ namespace ArangoDB.Client
 
     public class DatabaseSerializationSetting
     {
-        DatabaseSharedSetting sharedSetting;
+        private DatabaseSharedSetting sharedSetting;
 
         private IList<JsonConverter> _converters;
 
@@ -221,7 +216,7 @@ namespace ArangoDB.Client
 
     public class DatabaseLinqSetting
     {
-        DatabaseSharedSetting sharedSetting;
+        private DatabaseSharedSetting sharedSetting;
 
         private Func<string, string> _translateGroupByIntoName;
 
@@ -245,7 +240,7 @@ namespace ArangoDB.Client
 
     public class DatabaseCursorSetting
     {
-        DatabaseSharedSetting sharedSetting;
+        private DatabaseSharedSetting sharedSetting;
 
         private int? _batchSize;
 
@@ -326,7 +321,7 @@ namespace ArangoDB.Client
 
     public class DatabaseDocumentSetting
     {
-        DatabaseSharedSetting sharedSetting;
+        private DatabaseSharedSetting sharedSetting;
 
         private ReplacePolicy? _replacePolicy;
 
