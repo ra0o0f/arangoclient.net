@@ -20,9 +20,12 @@ Install-Package ArangoDB.Client
 
 Supported runtimes are .NET 4.5, .NET Core 1.0, Mono/Xamarin, UAP 10.0, WPA 8.1, WIN 8 ...(Except Silverlight)
 
-<hr/>
+### Tutorial
 
-Client now supports database, collections, documents, edges, general graphs, traversal, simple queries, aql queries & methods and transaction operations.
+[C# client in 10 minutes](https://github.com/ra0o0f/arangoclient.net/blob/next/docs/tutorial/csharp-in-10-minutes.md)
+will give you a quick tutorial on how client works.
+
+<hr />
 
 Please open an issue if you need an api that doesnt implemented yet.
 
