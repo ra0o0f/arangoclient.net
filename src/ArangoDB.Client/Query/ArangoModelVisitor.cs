@@ -38,6 +38,8 @@ namespace ArangoDB.Client.Query
 
         public bool DontReturn { get; set; }
 
+        public bool DistinctResult { get; set; }
+
         public bool IgnoreFromClause { get; set; }
 
         public string DefaultAssociatedIdentifier { get; set; }
@@ -86,6 +88,10 @@ namespace ArangoDB.Client.Query
             if (queryModel.ResultOperators.Count(x => x is FirstResultOperator) != 0)
                 queryModel.BodyClauses.Add(new SkipTakeClause(Expression.Constant(0), Expression.Constant(1)));
 
+            if (queryModel.ResultOperators.Count(x => x is DistinctResultOperator) != 0)
+                DistinctResult = true;
+
+            // do not need to apply distinct since it has a single result
             if (string.IsNullOrEmpty(aggregateFunction) == false)
                 QueryText.AppendFormat(" return {0} (( ", aggregateFunction);
 
@@ -193,7 +199,7 @@ namespace ArangoDB.Client.Query
 
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            QueryText.Append(" return ");
+            QueryText.AppendFormat(" return {0} ", DistinctResult ? "distinct" : string.Empty);
             GetAqlExpression(selectClause.Selector, queryModel);
         }
 
