@@ -9,6 +9,11 @@ namespace ArangoDB.Client.Utility
     {
         public static MemberInfo GetMemberInfo<T>(Expression<Func<T, object>> attribute)
         {
+            return GetMemberExpression(attribute).Member;
+        }
+
+        public static MemberExpression GetMemberExpression<T>(Expression<Func<T, object>> attribute)
+        {
             var memberExpression = attribute.Body as MemberExpression;
             var unaryExpression = attribute.Body as UnaryExpression;
             if (unaryExpression != null)
@@ -19,7 +24,7 @@ namespace ArangoDB.Client.Utility
                 throw new InvalidOperationException("attribute should be value type");
             }
 
-            return memberExpression.Member;
+            return memberExpression;
         }
 
         public static T CheckNotNull<T>(string argumentName, T actualValue)

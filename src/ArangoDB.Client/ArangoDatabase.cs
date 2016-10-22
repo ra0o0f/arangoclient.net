@@ -107,6 +107,21 @@ namespace ArangoDB.Client
             return new ArangoDatabase(FindSetting(identifier, true));
         }
 
+        public string NameOf<T>()
+        {
+            return SharedSetting.Collection.ResolveCollectionName<T>();
+        }
+
+        public string NameOf(Type type)
+        {
+            return SharedSetting.Collection.ResolveCollectionName(type);
+        }
+
+        public string NameOf<T>(Expression<Func<T, object>> member)
+        {
+            return SharedSetting.Collection.ResolveNestedPropertyName(member);
+        }
+
         public void Log(string message)
         {
             Setting.Logger.Log?.Invoke(message);

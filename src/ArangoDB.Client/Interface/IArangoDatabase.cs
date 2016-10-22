@@ -41,6 +41,12 @@ namespace ArangoDB.Client
 
         ArangoQueryable<AQL> Query();
 
+        string NameOf<T>();
+
+        string NameOf(Type type);
+
+        string NameOf<T>(Expression<Func<T, object>> member);
+
         void Log(string message);
 
         bool LoggerAvailable { get; }
