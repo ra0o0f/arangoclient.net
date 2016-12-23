@@ -28,7 +28,11 @@ namespace ArangoDB.Client.Http
             }
             else
             {
-                connectionHandler.InnerHandler = new HttpClientHandler();
+                connectionHandler.InnerHandler = new HttpClientHandler()
+                {
+                    UseProxy = false,
+                    Proxy = null
+                };
             }
 
             var httpClient = new HttpClient(connectionHandler, true);
