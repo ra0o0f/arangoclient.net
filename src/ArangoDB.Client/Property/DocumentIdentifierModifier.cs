@@ -47,7 +47,7 @@ namespace ArangoDB.Client.Property
             methods.TryRemove(type, out identifierMethod);
         }
 
-        public void Modify(object document,IDocumentIdentifierResult identifiers)
+        public void Modify(object document, IDocumentIdentifierResult identifiers)
         {
             if (identifiers.Id != null && identifiers.Key != null && identifiers.Rev != null)
             {
@@ -58,7 +58,7 @@ namespace ArangoDB.Client.Property
             }
         }
 
-        public void Modify(object document, IDocumentIdentifierResult identifiers,string from,string to)
+        public void Modify(object document, IDocumentIdentifierResult identifiers, string from, string to)
         {
             if (identifiers.Id != null && identifiers.Key != null && identifiers.Rev != null)
             {
@@ -74,18 +74,18 @@ namespace ArangoDB.Client.Property
         public IdentifierMethod FindIdentifierMethodFor(Type type)
         {
             IdentifierMethod identifierMethod = null;
-            if(!methods.TryGetValue(type, out identifierMethod))
+            if (!methods.TryGetValue(type, out identifierMethod))
             {
-                identifierMethod=new IdentifierMethod();
+                identifierMethod = new IdentifierMethod();
                 var typeMemberInfos = ReflectionUtils.GetFieldsAndProperties_PublicInstance(type);
                 foreach (var m in typeMemberInfos)
                 {
                     string resolvedName = setting.Collection.ResolvePropertyName(type, m.Name);
 
-                    switch(resolvedName)
+                    switch (resolvedName)
                     {
                         case "_key":
-                            identifierMethod.SetKey = BuildSetAccessor(type,m.Name);
+                            identifierMethod.SetKey = BuildSetAccessor(type, m.Name);
                             break;
                         case "_id":
                             identifierMethod.SetHandle = BuildSetAccessor(type, m.Name);
@@ -120,7 +120,7 @@ namespace ArangoDB.Client.Property
             }
 
             var memberInfo = ReflectionUtils.GetField(type, memberName);
-            if(memberInfo!=null)
+            if (memberInfo != null)
             {
                 var fieldInfo = memberInfo as FieldInfo;
                 return (x, y) => { fieldInfo.SetValue(x, y); };

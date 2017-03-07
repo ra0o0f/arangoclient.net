@@ -19,7 +19,7 @@ namespace ArangoDB.Client.Graph
         string graphName;
         string collection;
 
-        public ArangoGraphVertex(IArangoDatabase db, string graphName,string collection)
+        public ArangoGraphVertex(IArangoDatabase db, string graphName, string collection)
         {
             this.db = db;
             this.graphName = graphName;
@@ -710,7 +710,7 @@ namespace ArangoDB.Client.Graph
         {
             return await collectionMethods.RemoveByIdAsync(id, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Deletes the vertex
         /// </summary>

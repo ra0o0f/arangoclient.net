@@ -57,7 +57,7 @@ namespace ArangoDB.Client.Test.Mock
         public ArangoDatabaseMock SendCommand(string json, HttpStatusCode? statusCode = HttpStatusCode.OK)
         {
             mockDB.Setup(x => x.Connection
-                .SendCommandAsync(It.IsAny<HttpMethod>(), It.IsAny<Uri>(), It.IsAny<object>(),It.IsAny<Func<StreamWriter,Task>>(), It.IsAny<NetworkCredential>(), null))
+                .SendCommandAsync(It.IsAny<HttpMethod>(), It.IsAny<Uri>(), It.IsAny<object>(), It.IsAny<Func<StreamWriter, Task>>(), It.IsAny<NetworkCredential>(), null))
                 .ReturnsAsync(new HttpResponseMessage() { StatusCode = statusCode.Value, Content = new StringContent(json) });
 
             return this;
@@ -69,7 +69,7 @@ namespace ArangoDB.Client.Test.Mock
                 .SendCommandAsync(It.IsAny<HttpMethod>(), It.IsAny<Uri>(), It.IsAny<object>(), It.IsAny<Func<StreamWriter, Task>>(), It.IsAny<NetworkCredential>(), null));
 
 
-            foreach(var j in json)
+            foreach (var j in json)
                 setup.Returns(Task.FromResult(new HttpResponseMessage() { StatusCode = statusCode.Value, Content = new StringContent(j) }));
 
             return this;

@@ -48,7 +48,7 @@ namespace ArangoDB.Client.Http
                 await streamWriter.FlushAsync().ConfigureAwait(false);
             }
         }
-        
+
         protected override bool TryComputeLength(out long length)
         {
             length = -1;

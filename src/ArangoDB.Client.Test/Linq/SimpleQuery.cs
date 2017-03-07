@@ -351,7 +351,7 @@ return { `byAgebyHeight` :
             var db = DatabaseGenerator.Get();
 
             var query = db.Query()
-                .Update(_ => new { Outfit = new { Color = "red" } }, _=> "123456")
+                .Update(_ => new { Outfit = new { Color = "red" } }, _ => "123456")
                 .In<Person>()
                 .IgnoreModificationSelect();
 
@@ -407,7 +407,7 @@ return { `byAgebyHeight` :
             var db = DatabaseGenerator.Get();
 
             var query = db.Query<Person>().Update(p => new { Outfit = new { Color = "red" } })
-                .Select((n,o)=>new { n.Outfit, o.Height });
+                .Select((n, o) => new { n.Outfit, o.Height });
 
             var queryData = query.GetQueryData();
 
@@ -560,7 +560,7 @@ return { `byAgebyHeight` :
                 Age = 21
             };
 
-            var query = db.Query().Insert(_=> person).In<Person>().IgnoreModificationSelect();
+            var query = db.Query().Insert(_ => person).In<Person>().IgnoreModificationSelect();
 
             var queryData = query.GetQueryData();
 
@@ -741,7 +741,7 @@ return { `byAgebyHeight` :
             dynamic parameter = queryData.BindVars[0].Value;
             Assert.Equal(parameter.Airline, "lufthansa");
         }
-        
+
         [Fact]
         public void Replace_ToAnotherCollection()
         {
@@ -865,7 +865,7 @@ in `Category`
                                   _ => new { ip = "192.168.173.13", name = "flittard" },
                                  (_, o) => new { })
                                  .In<Category>()
-                                 .Select((n,o)=>o.Tags);
+                                 .Select((n, o) => o.Tags);
 
             var queryData = query.GetQueryData();
 

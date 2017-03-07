@@ -28,7 +28,7 @@ namespace ArangoDB.Client.ChangeTracking
             containerById.Remove(container.Id);
         }
 
-        public DocumentContainer TrackChanges(object document,JObject jObject)
+        public DocumentContainer TrackChanges(object document, JObject jObject)
         {
             var container = CreateContainer(jObject);
 
@@ -74,7 +74,7 @@ namespace ArangoDB.Client.ChangeTracking
             {
                 return containerByInstance[document];
             }
-            catch(KeyNotFoundException e)
+            catch (KeyNotFoundException e)
             {
                 throw new Exception("No tracked document found", e);
             }
@@ -87,11 +87,11 @@ namespace ArangoDB.Client.ChangeTracking
             return GetChanges(document, out container, out jObject);
         }
 
-        public JObject GetChanges(object document,out DocumentContainer container,out JObject jObject)
+        public JObject GetChanges(object document, out DocumentContainer container, out JObject jObject)
         {
             container = containerByInstance[document];
 
-            jObject = JObject.FromObject(document,new DocumentSerializer(db).CreateJsonSerializer());
+            jObject = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
 
             JObject changedObject = new JObject();
             CreateChangedDocument(container.Document, jObject, ref changedObject);
@@ -150,11 +150,11 @@ namespace ArangoDB.Client.ChangeTracking
             foreach (var n in newObject)
             {
                 if (!handleInnerObjects && (n.Key == "_id" || n.Key == "_key" || n.Key == "_rev" || n.Key == "_from" || n.Key == "_to"))
-                    continue;                    
+                    continue;
 
                 JToken newValue = n.Value;
                 JToken oldValue = oldObject[n.Key];
-                
+
                 if (newValue.Type == JTokenType.Object)
                 {
                     JObject subChangeObject = new JObject();

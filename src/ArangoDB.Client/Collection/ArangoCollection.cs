@@ -163,7 +163,7 @@ namespace ArangoDB.Client.Collection
         public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             string apiCommand = Utils.ResolveId(id, collectionName);
-            
+
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(db)
@@ -333,7 +333,7 @@ namespace ArangoDB.Client.Collection
             DocumentContainer container = null;
             JObject jObject = null;
             var changed = db.ChangeTracker.GetChanges(document, out container, out jObject);
-            
+
             if (changed.Count != 0)
             {
                 BaseResult bResult = null;
@@ -974,7 +974,7 @@ namespace ArangoDB.Client.Collection
         {
             return await collectionMethods.InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Completely updates the document with no change tracking
         /// </summary>

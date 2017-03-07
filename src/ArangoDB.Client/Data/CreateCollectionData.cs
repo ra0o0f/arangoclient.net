@@ -41,7 +41,7 @@ namespace ArangoDB.Client.Data
         public CreateCollectionKeyOption KeyOptions { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool? WaitForSync { get;set; }
+        public bool? WaitForSync { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool? DoCompact { get; set; }

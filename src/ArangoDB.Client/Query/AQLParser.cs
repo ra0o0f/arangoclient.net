@@ -86,7 +86,7 @@ namespace ArangoDB.Client.Query
             var expressionTreeParser = new ExpressionTreeParser(nodeTypeProvider, processor);
             return new QueryParser(expressionTreeParser);
         }
-        
+
         private IQueryExecutor CreateQueryExecuter()
         {
             return new ArangoQueryExecuter(db);

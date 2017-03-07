@@ -47,7 +47,7 @@ namespace ArangoDB.Client.Query.Clause
 
             arangoVisitor.VisitUpsertClause(this, queryModel);
         }
-        
+
         public UpsertClause Clone(CloneContext cloneContext)
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);

@@ -22,7 +22,7 @@ namespace ArangoDB.Client.Property
 
         public IdentifierType Identifier { get; set; }
 
-        internal static IDocumentPropertySetting FindDocumentAttributeForType(Type type,string memberName)
+        internal static IDocumentPropertySetting FindDocumentAttributeForType(Type type, string memberName)
         {
             ConcurrentDictionary<string, IDocumentPropertySetting> typeSetting = null;
             if (!cachedAttributeProperties.TryGetValue(type, out typeSetting))

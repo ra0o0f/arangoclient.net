@@ -16,7 +16,7 @@ namespace ArangoDB.Client.Query.Clause
                                                                 {
                                                                     LinqUtility.GetSupportedMethod(() => QueryableExtensions.IgnoreModificationSelect<object>(null))
                                                                 };
-        
+
         public IgnoreModificationSelectExpressionNode(MethodCallExpressionParseInfo parseInfo)
             : base(parseInfo)
         {

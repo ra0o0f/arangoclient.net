@@ -50,7 +50,7 @@ namespace ArangoDB.Client.Query.Clause
 
             arangoVisitor.VisitUpdateReplaceClause(this, queryModel);
         }
-        
+
         public UpdateReplaceClause Clone(CloneContext cloneContext)
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);
@@ -58,7 +58,7 @@ namespace ArangoDB.Client.Query.Clause
             var result = new UpdateReplaceClause(WithSelector, ItemName, CollectionType, KeySelector, Command);
             return result;
         }
-        
+
         public virtual void TransformExpressions(Func<Expression, Expression> transformation)
         {
             LinqUtility.CheckNotNull("transformation", transformation);

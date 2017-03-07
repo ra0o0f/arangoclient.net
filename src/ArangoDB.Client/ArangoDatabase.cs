@@ -31,9 +31,9 @@ namespace ArangoDB.Client
         public DatabaseSetting Setting { get; set; }
 
         public IAdvancedOperation Advanced { get; set; }
-        
+
         public static ClientSetting ClientSetting { get; private set; }
-        
+
         static ArangoDatabase()
         {
             ClientSetting = new ClientSetting();
@@ -70,7 +70,7 @@ namespace ArangoDB.Client
         {
             action(FindSetting(identifier));
         }
-        
+
         /// <summary>
         /// Change Default Setting
         /// </summary>
@@ -169,7 +169,7 @@ namespace ArangoDB.Client
         }
 
         public ICursor<T> CreateStatement<T>(string query, IList<QueryParameter> bindVars = null,
-           bool ? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
+           bool? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
         {
             QueryData data = new QueryData();
 

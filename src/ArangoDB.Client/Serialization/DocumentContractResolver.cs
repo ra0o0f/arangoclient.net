@@ -17,14 +17,14 @@ namespace ArangoDB.Client.Serialization
 
         DatabaseSharedSetting sharedSetting;
 
-        private DocumentContractResolver() : base() 
+        private DocumentContractResolver() : base()
         {
         }
-        
+
         public static DocumentContractResolver GetContractResolver(IArangoDatabase db)
         {
             DocumentContractResolver contractResolver = null;
-            if(_cachedContractResolvers.TryGetValue(db.SharedSetting, out contractResolver) == false)
+            if (_cachedContractResolvers.TryGetValue(db.SharedSetting, out contractResolver) == false)
             {
                 contractResolver = new DocumentContractResolver() { sharedSetting = db.SharedSetting };
                 _cachedContractResolvers.TryAdd(db.SharedSetting, contractResolver);

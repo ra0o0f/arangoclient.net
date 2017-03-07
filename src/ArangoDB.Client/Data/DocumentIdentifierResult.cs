@@ -8,7 +8,7 @@ namespace ArangoDB.Client.Data
 {
     public class DocumentIdentifierBaseResult : BaseResult, IDocumentIdentifierResult
     {
-        [DocumentProperty(Identifier=IdentifierType.Handle)]
+        [DocumentProperty(Identifier = IdentifierType.Handle)]
         public string Id { get; set; }
 
         [DocumentProperty(Identifier = IdentifierType.Revision)]

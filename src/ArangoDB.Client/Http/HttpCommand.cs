@@ -21,13 +21,13 @@ namespace ArangoDB.Client.Http
         Edge = 2,
         Cursor = 3,
         Simple = 4,
-        AllEdges=5,
-        Collection=6,
-        Graph=7,
+        AllEdges = 5,
+        Collection = 6,
+        Graph = 7,
         Transaction = 8,
         Traversal = 9,
-        Import=10,
-        Index=11
+        Import = 10,
+        Index = 11
     }
 
     public class HttpCommand
@@ -68,7 +68,7 @@ namespace ArangoDB.Client.Http
 
         public CommandApi Api { get; set; }
 
-        public Dictionary<string,string> Query { get; set; }
+        public Dictionary<string, string> Query { get; set; }
 
         public Dictionary<string, string> Headers { get; set; }
 
@@ -178,13 +178,13 @@ namespace ArangoDB.Client.Http
                     results.Add(distinctResult);
                 }
             }
-            
+
             return results;
         }
 
         // T can be any type that derived from BaseResult and results are not change tracked
         // method could be used if we dont want to change track T here
-        public async Task<ICommandResult<T>> RequestMergedResult<T>(object data=null)
+        public async Task<ICommandResult<T>> RequestMergedResult<T>(object data = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
             var response = await SendCommandAsync(data).ConfigureAwait(false);
@@ -192,7 +192,7 @@ namespace ArangoDB.Client.Http
             using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
                 var serializer = new DocumentSerializer(db);
-                
+
                 result.Result = serializer.Deserialize<T>(stream);
                 result.BaseResult = result.Result as BaseResult;
             }
@@ -232,11 +232,11 @@ namespace ArangoDB.Client.Http
 
                 // response has not BaseResult if If-None-Match point to a match revision (status: HttpStatusCode.NotModified)
                 result.BaseResult = response.IsSuccessStatusCode == false && response.StatusCode != HttpStatusCode.NotModified
-                    ? serializer.Deserialize<BaseResult>(stream) 
+                    ? serializer.Deserialize<BaseResult>(stream)
                     : new BaseResult();
             }
 
-            if(throwForServerErrors.HasValue == false || throwForServerErrors.Value == true)
+            if (throwForServerErrors.HasValue == false || throwForServerErrors.Value == true)
                 new BaseResultAnalyzer(db).ThrowIfNeeded(result.BaseResult);
 
             return result;
@@ -248,13 +248,13 @@ namespace ArangoDB.Client.Http
             return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential, Headers).ConfigureAwait(false);
         }
 
-        public async Task<HttpResponseMessage> SendStreamCommandAsync(Func<StreamWriter,Task> onStreamReady)
+        public async Task<HttpResponseMessage> SendStreamCommandAsync(Func<StreamWriter, Task> onStreamReady)
         {
             NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
             return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential, Headers).ConfigureAwait(false);
         }
 
-        public ICursor<T> CreateCursor<T>(object data=null)
+        public ICursor<T> CreateCursor<T>(object data = null)
         {
             var asyncEnumerator = new CursorAsyncEnumerator<T>(db, this, data);
             return new Data.Cursor<T>(asyncEnumerator);

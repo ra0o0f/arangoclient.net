@@ -26,7 +26,7 @@ namespace ArangoDB.Client.Property
             this.setting = setting;
         }
 
-        public void ChangeIdentifierDefaultName(IdentifierType identifier, Func<Type,string> func)
+        public void ChangeIdentifierDefaultName(IdentifierType identifier, Func<Type, string> func)
         {
             if (IdentifierType.None == identifier)
                 throw new InvalidOperationException("Can not set default name for [IdentifierType.None]");
@@ -36,7 +36,7 @@ namespace ArangoDB.Client.Property
             setting.IdentifierModifier.ClearMethodCache();
         }
 
-        internal bool FindIdentifierDefaultNameForType(Type type, IdentifierType identifier , string memberName)
+        internal bool FindIdentifierDefaultNameForType(Type type, IdentifierType identifier, string memberName)
         {
             ConcurrentDictionary<IdentifierType, string> identifierNames = null;
             if (defaultIdentifierNamesForType.TryGetValue(type, out identifierNames))
@@ -55,7 +55,7 @@ namespace ArangoDB.Client.Property
             if (!defaultIdentifierFuncs.TryGetValue(identifier, out f))
                 return false;
 
-            if(memberName == f(type))
+            if (memberName == f(type))
             {
                 identifierNames[identifier] = memberName;
                 return true;
@@ -74,7 +74,7 @@ namespace ArangoDB.Client.Property
             setting.IdentifierModifier.ClearMethodCache();
         }
 
-        internal void ChangeCollectionPropertyForType(Type type,Action<ICollectionPropertySetting> action)
+        internal void ChangeCollectionPropertyForType(Type type, Action<ICollectionPropertySetting> action)
         {
             action(collectionProperties.GetOrAdd(type, new CollectionPropertySetting()));
 
@@ -86,7 +86,7 @@ namespace ArangoDB.Client.Property
             ChangeCollectionPropertyForType(typeof(T), action);
         }
 
-        internal void ChangeDocumentPropertyForType(Type type,string memberName, Action<IDocumentPropertySetting> action)
+        internal void ChangeDocumentPropertyForType(Type type, string memberName, Action<IDocumentPropertySetting> action)
         {
             ChangeCollectionPropertyForType(type, collection =>
             {
@@ -116,7 +116,7 @@ namespace ArangoDB.Client.Property
 
             ICollectionPropertySetting collectionAttribute = CollectionPropertySetting.FindCollectionAttributeForType(type);
 
-            if (collectionAttribute!=null && collectionAttribute.CollectionName != null)
+            if (collectionAttribute != null && collectionAttribute.CollectionName != null)
                 return collectionAttribute.CollectionName;
 
             return type.Name;
@@ -127,7 +127,7 @@ namespace ArangoDB.Client.Property
             return ResolveCollectionName(typeof(T));
         }
 
-        internal string ResolvePropertyName(Type type,string memberName)
+        internal string ResolvePropertyName(Type type, string memberName)
         {
             IDocumentPropertySetting documentProperty = null;
             ChangeDocumentPropertyForType(type, memberName, x => documentProperty = x);
@@ -162,7 +162,7 @@ namespace ArangoDB.Client.Property
 
             /*************   attribute setting   **************/
 
-            var attributeProperty = DocumentPropertySetting.FindDocumentAttributeForType(type,memberName);
+            var attributeProperty = DocumentPropertySetting.FindDocumentAttributeForType(type, memberName);
 
             if (attributeProperty != null)
             {
@@ -261,7 +261,7 @@ namespace ArangoDB.Client.Property
         internal string ResolveNestedPropertyName<T>(Expression<Func<T, object>> attribute)
         {
             var memberExpression = Utils.GetMemberExpression<T>(attribute);
-            
+
             return ResolvePropertyName(memberExpression.Expression.Type, memberExpression.Member.Name);
         }
     }

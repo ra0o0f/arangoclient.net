@@ -183,7 +183,7 @@ namespace ArangoDB.Client.Graph
                 Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(collection)}",
                 Query = new Dictionary<string, string>()
             };
-            
+
             command.Query.Add("waitForSync", waitForSync.ToString());
 
             var result = await command.RequestMergedResult<InsertEdgeResult>(document).ConfigureAwait(false);
@@ -239,7 +239,7 @@ namespace ArangoDB.Client.Graph
                 command.Headers.Add("If-Match", ifMatchRev);
 
             var result = await command.RequestGenericSingleResult<T, EdgeInheritedCommandResult<T>>(throwForServerErrors: false).ConfigureAwait(false);
-            
+
             if (db.Setting.Document.ThrowIfDocumentDoesNotExists ||
                 (result.BaseResult.HasError() && result.BaseResult.ErrorNum != 1202))
                 new BaseResultAnalyzer(db).Throw(result.BaseResult);

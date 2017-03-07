@@ -15,7 +15,7 @@ namespace ArangoDB.Client.Data
             set { SetProperties(value); }
         }
 
-        [DocumentProperty(PropertyName="edges")]
+        [DocumentProperty(PropertyName = "edges")]
         public T Result { get; set; }
     }
 }

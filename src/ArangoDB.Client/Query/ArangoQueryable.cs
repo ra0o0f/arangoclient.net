@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Query
 {
-    public class ArangoQueryable<T> : QueryableBase<T>, IAqlModifiable<T>, IAqlModifiable, 
-        ITraversalQueryable<T>, ITraversalQueryable, 
+    public class ArangoQueryable<T> : QueryableBase<T>, IAqlModifiable<T>, IAqlModifiable,
+        ITraversalQueryable<T>, ITraversalQueryable,
         IShortestPathQueryable<T>, IShortestPathQueryable
     {
         IArangoDatabase db;

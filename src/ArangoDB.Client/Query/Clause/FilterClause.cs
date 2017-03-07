@@ -12,13 +12,13 @@ namespace ArangoDB.Client.Query.Clause
     public sealed class FilterClause : IBodyClause
     {
         private Expression _predicate;
-        
+
         public FilterClause(Expression predicate)
         {
             LinqUtility.CheckNotNull("predicate", predicate);
             _predicate = predicate;
         }
-        
+
         public Expression Predicate
         {
             get { return _predicate; }
@@ -29,7 +29,7 @@ namespace ArangoDB.Client.Query.Clause
         {
             LinqUtility.CheckNotNull("visitor", visitor);
             LinqUtility.CheckNotNull("queryModel", queryModel);
-            
+
             var visotor = visitor as ArangoModelVisitor;
 
             if (visotor == null)

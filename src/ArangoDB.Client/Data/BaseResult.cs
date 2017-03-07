@@ -15,7 +15,7 @@ namespace ArangoDB.Client.Data
 
         public string ErrorMessage { get; set; }
 
-        public int? ErrorNum { get; set; } 
+        public int? ErrorNum { get; set; }
 
         public bool HasError()
         {
@@ -29,7 +29,7 @@ namespace ArangoDB.Client.Data
             ErrorMessage = baseResult.ErrorMessage;
             ErrorNum = baseResult.ErrorNum;
         }
-     
+
         internal virtual void SetFromJsonTextReader(string name, JsonToken token, object value)
         {
             if (name == "code" && token == JsonToken.Integer)

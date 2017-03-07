@@ -22,7 +22,7 @@ namespace ArangoDB.Client.Serialization
         /// Parse Merge and Distinct Results
         /// </summary>
         /// <returns></returns>
-        public T ParseSingleResult<T>(JsonTextReader reader,out JObject jObject,bool readForObjectStart=false)
+        public T ParseSingleResult<T>(JsonTextReader reader, out JObject jObject, bool readForObjectStart = false)
         {
             if (readForObjectStart == true)
                 reader.Read();
@@ -36,7 +36,7 @@ namespace ArangoDB.Client.Serialization
             return jObject.ToObject<T>(serializer);
         }
 
-        public List<T> ParseBatchResult<T>(JsonTextReader jsonTextReader,out BaseResult baseResult)
+        public List<T> ParseBatchResult<T>(JsonTextReader jsonTextReader, out BaseResult baseResult)
         {
             var readerState = new ReaderState();
             baseResult = new BaseResult();
@@ -108,7 +108,7 @@ namespace ArangoDB.Client.Serialization
 
                 PropertyName = reader.Value.ToString();
 
-                if (PropertyName == "result" || PropertyName == "edges" || PropertyName== "document" || PropertyName == "vertex"
+                if (PropertyName == "result" || PropertyName == "edges" || PropertyName == "document" || PropertyName == "vertex"
                      || PropertyName == "edge")
                 {
                     reader.Read();

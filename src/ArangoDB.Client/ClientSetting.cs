@@ -25,7 +25,7 @@ namespace ArangoDB.Client
             }
         }
 
-        public IWebProxy Proxy 
+        public IWebProxy Proxy
         {
             get { return _proxy; }
             set

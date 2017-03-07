@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    [CollectionProperty(Naming=NamingConvention.ToCamelCase)]
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class CreateDatabaseData
     {
         public string Name { get; set; }
@@ -26,7 +26,7 @@ namespace ArangoDB.Client.Data
         /// <summary>
         /// The user password as a string. If not specified, then it defaults to an empty string
         /// </summary>
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Passwd { get; set; }
 
         /// <summary>

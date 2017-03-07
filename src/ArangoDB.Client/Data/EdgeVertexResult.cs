@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Data
 {
-    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]   
+    [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class EdgeVertexResult<TVertex, TEdge>
     {
         public TEdge Edge { get; set; }

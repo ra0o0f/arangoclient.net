@@ -174,7 +174,7 @@ namespace ArangoDB.Client.Examples.Documents
             Assert.Equal(person.Name, loadedPerson.Name);
             Assert.Equal(person.Key, loadedPerson.Key);
         }
-        
+
         [Fact]
         public void Replace()
         {
@@ -183,7 +183,7 @@ namespace ArangoDB.Client.Examples.Documents
             person.Age = 20;
 
             db.Replace<Person>(person);
-                
+
             Assert.Equal(db.Document<Person>(person.Key).Age, 20);
         }
 
@@ -217,7 +217,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             var personInfo = db.FindDocumentInfo(person);
 
-            Assert.Throws<ArangoServerException>(() => db.ReplaceById<Person>(person.Key, new { Age = 20 }, ifMatchRev:$"{personInfo.Rev}1"));
+            Assert.Throws<ArangoServerException>(() => db.ReplaceById<Person>(person.Key, new { Age = 20 }, ifMatchRev: $"{personInfo.Rev}1"));
         }
 
         [Fact]
@@ -284,7 +284,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             Assert.Null(db.Document<Person>(person.Key));
         }
-        
+
         [Fact]
         public void RemoveIfMatchFailed()
         {

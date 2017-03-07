@@ -35,7 +35,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         GraphIdentifierResult EditDefinition(string newCollection, IList<string> from, IList<string> to, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Replace an existing edge definition
         /// </summary>

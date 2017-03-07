@@ -36,7 +36,7 @@ namespace ArangoDB.Client.Query.Clause
         protected override void ApplyNodeSpecificSemantics(QueryModel queryModel, ClauseGenerationContext clauseGenerationContext)
         {
             LinqUtility.CheckNotNull("queryModel", queryModel);
-            
+
             var modificationClause = queryModel.BodyClauses.NextBodyClause<IModificationClause>(0);
             modificationClause.CollectionType = CollectionToModify;
         }

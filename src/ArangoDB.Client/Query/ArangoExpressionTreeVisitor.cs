@@ -35,7 +35,7 @@ namespace ArangoDB.Client.Query
                 return expression;
             }
 
-            if(expression.Method.Name == "get_Item" && expression.Method.DeclaringType.Name == "IList`1")
+            if (expression.Method.Name == "get_Item" && expression.Method.DeclaringType.Name == "IList`1")
             {
                 Visit(expression.Object);
                 ModelVisitor.QueryText.Append(" [ ");
@@ -91,12 +91,12 @@ namespace ArangoDB.Client.Query
 
             return expression;
         }
-        
+
         protected override Expression VisitParameter(ParameterExpression expression)
         {
             string name = expression.Name;
 
-            if(expression.Type.Name == "TraversalData`2")
+            if (expression.Type.Name == "TraversalData`2")
             {
                 string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
 
@@ -111,7 +111,7 @@ namespace ArangoDB.Client.Query
                 return expression;
             }
 
-            if(expression.Type.Name == "ShortestPathData`2")
+            if (expression.Type.Name == "ShortestPathData`2")
             {
                 string prefix = LinqUtility.MemberNameFromMap(name, "graph", ModelVisitor);
 

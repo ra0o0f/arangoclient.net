@@ -27,15 +27,15 @@ namespace ArangoDB.Client.Test.Serialization
             return new JsonTextReader(streamReader);
         }
 
-        
+
 
         [Fact]
         public void ParseSingle()
         {
-            using(var reader = GenerateReader(JsonSample.SingleResult))
+            using (var reader = GenerateReader(JsonSample.SingleResult))
             {
                 var documentParser = new DocumentParser(new ArangoDatabase());
-                JObject jObject=null;
+                JObject jObject = null;
                 var person = documentParser.ParseSingleResult<Person>(reader, out jObject, true);
 
                 Assert.Equal(person.Age, 27);

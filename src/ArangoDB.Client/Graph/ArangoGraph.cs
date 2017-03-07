@@ -236,7 +236,7 @@ namespace ArangoDB.Client.Graph
         {
             return AddVertexCollectionAsync<T>(baseResult).ResultSynchronizer();
         }
-        
+
         /// <summary>
         /// Add an additional vertex collection to the graph
         /// </summary>
@@ -246,7 +246,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Vertex<T>().AddCollectionAsync(baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Remove a vertex collection form the graph
         /// </summary>
@@ -268,7 +268,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Vertex<T>().RemoveCollectionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Lists all edge definitions
         /// </summary>
@@ -300,7 +300,7 @@ namespace ArangoDB.Client.Graph
 
             return result.Result.Collections;
         }
-        
+
         /// <summary>
         /// Add a new edge definition to the graph
         /// </summary>
@@ -324,7 +324,7 @@ namespace ArangoDB.Client.Graph
         {
             return ExtendEdgeDefinitionsAsync<T>(from, to, baseResult).ResultSynchronizer();
         }
-        
+
         /// <summary>
         /// Replace an existing edge definition
         /// </summary>
@@ -332,7 +332,7 @@ namespace ArangoDB.Client.Graph
         /// <param name="to">One or many edge collections that can contain target vertices</param>
         /// <param name="baseResult"></param>
         /// <returns></returns>
-        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync<T,TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
+        public async Task<GraphIdentifierResult> EditEdgeDefinitionAsync<T, TCollection>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null)
         {
             return await Edge<T>().EditDefinitionAsync<TCollection>(from, to, baseResult).ConfigureAwait(false);
         }
@@ -371,7 +371,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Edge<T>().DeleteDefinitionAsync(dropCollection, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Creates a new vertex
         /// </summary>
@@ -395,7 +395,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Vertex<T>().InsertAsync(document, waitForSync, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Fetches an existing vertex
         /// </summary>
@@ -419,7 +419,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Vertex<T>().GetAsync(id, ifMatchRev, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Partially updates the vertex with no change tracking
         /// </summary>
@@ -475,7 +475,7 @@ namespace ArangoDB.Client.Graph
         {
             return await Vertex<T>().UpdateAsync(document, waitForSync, keepNull, ifMatchRev, baseResult).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Completely updates the vertex with no change tracking
         /// </summary>
@@ -769,6 +769,6 @@ namespace ArangoDB.Client.Graph
         {
             return await Edge<T>().RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
         }
-        
+
     }
 }

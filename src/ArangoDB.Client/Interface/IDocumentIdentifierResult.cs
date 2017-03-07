@@ -9,9 +9,9 @@ namespace ArangoDB.Client
     public interface IDocumentIdentifierResult
     {
         string Id { get; set; }
-        
+
         string Rev { get; set; }
-        
+
         string Key { get; set; }
     }
 }

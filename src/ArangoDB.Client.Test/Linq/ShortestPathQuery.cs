@@ -137,7 +137,7 @@ for `graph_0_Vertex`, `graph_0_Edge`
 in any shortest_path @P1 to @P2 graph ""SocialGraph""
 return `graph_0_Edge`.`_key`".RemoveSpaces());
         }
-        
+
         [Fact]
         public void ShortestPathOptions()
         {

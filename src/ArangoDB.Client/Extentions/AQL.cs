@@ -150,12 +150,12 @@ namespace ArangoDB.Client
         public static int DateDaysInMonth(DateTime date) { throw e; }
         public static int DateDaysInMonth(DateTimeOffset date) { throw e; }
 
-        public static string DateAdd(string date,string duration) { throw e; }
+        public static string DateAdd(string date, string duration) { throw e; }
         public static string DateAdd(double date, string duration) { throw e; }
         public static string DateAdd(DateTime date, string duration) { throw e; }
         public static string DateAdd(DateTimeOffset date, string duration) { throw e; }
-        public static string DateAdd(string date,int amount, string unit) { throw e; }
-        public static string DateAdd(double date,int amount, string unit) { throw e; }
+        public static string DateAdd(string date, int amount, string unit) { throw e; }
+        public static string DateAdd(double date, int amount, string unit) { throw e; }
         public static string DateAdd(DateTime date, int amount, string unit) { throw e; }
         public static string DateAdd(DateTimeOffset date, int amount, string unit) { throw e; }
 
@@ -168,7 +168,7 @@ namespace ArangoDB.Client
         public static string DateSubtract(DateTime date, int amount, string unit) { throw e; }
         public static string DateSubtract(DateTimeOffset date, int amount, string unit) { throw e; }
 
-        public static double DateDiff(string date1,string date2,string unit) { throw e; }
+        public static double DateDiff(string date1, string date2, string unit) { throw e; }
         public static double DateDiff(double date1, double date2, string unit) { throw e; }
         public static double DateDiff(DateTime date1, DateTime date2, string unit) { throw e; }
         public static double DateDiff(DateTimeOffset date1, DateTimeOffset date2, string unit) { throw e; }
@@ -186,7 +186,7 @@ namespace ArangoDB.Client
         public static bool DateCompare(DateTime date1, DateTime date2, string unitRangeStart) { throw e; }
         public static bool DateCompare(DateTimeOffset date1, DateTimeOffset date2, string unitRangeStart) { throw e; }
 
-        public static string DateFormat(string date,string format) { throw e; }
+        public static string DateFormat(string date, string format) { throw e; }
         public static string DateFormat(double date, string format) { throw e; }
         public static string DateFormat(DateTime date, string format) { throw e; }
         public static string DateFormat(DateTimeOffset date, string format) { throw e; }

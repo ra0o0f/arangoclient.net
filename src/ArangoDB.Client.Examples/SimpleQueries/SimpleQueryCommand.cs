@@ -98,7 +98,7 @@ namespace ArangoDB.Client.Examples.SimpleQueries
             var persons = InsertSomePerson();
 
             var loadedPerson = db.Range<Person>(x => x.Age, 25, 28, closed: true).ToList();
-            
+
             Assert.Equal(loadedPerson.Count, 2);
         }
     }

@@ -384,7 +384,7 @@ namespace ArangoDB.Client.Test.Command
 
             mockDB.SendCommand(JsonSample.MergeResult);
 
-            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking};
+            HttpCommand command = new HttpCommand(mockDB.Db) { EnableChangeTracking = !mockDB.Db.Setting.DisableChangeTracking };
 
             var result = await command.RequestMergedResult<Flight>();
 

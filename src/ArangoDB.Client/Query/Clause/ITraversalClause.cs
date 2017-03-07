@@ -9,7 +9,7 @@ namespace ArangoDB.Client.Query.Clause
         string GraphName { get; set; }
 
         List<TraversalEdgeDefinition> EdgeCollections { get; set; }
-        
+
         string Identifier { get; set; }
 
         ConstantExpression Options { get; set; }

@@ -16,12 +16,12 @@ namespace ArangoDB.Client
         IArangoGraphEdge Edge(string collection);
 
         IArangoGraphEdge<T> Edge<T>();
-        
+
         /// <summary>
         /// Name of the graph
         /// </summary>
         string Name { get; }
-        
+
         /// <summary>
         /// Create graph
         /// </summary>
@@ -79,7 +79,7 @@ namespace ArangoDB.Client
         /// </summary>
         /// <returns>GraphIdentifierResult</returns>
         Task<GraphIdentifierResult> InfoAsync(Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Lists all vertex collections used in graph
         /// </summary>
@@ -93,7 +93,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         List<string> ListVertexCollections(Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Add an additional vertex collection to the graph
         /// </summary>
@@ -107,7 +107,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         GraphIdentifierResult AddVertexCollection<T>(Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Remove a vertex collection form the graph
         /// </summary>
@@ -137,7 +137,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         List<string> ListEdgeDefinitions(Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Add a new edge definition to the graph
         /// </summary>
@@ -155,7 +155,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         GraphIdentifierResult ExtendEdgeDefinitions<T>(IList<Type> from, IList<Type> to, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Replace an existing edge definition
         /// </summary>
@@ -189,7 +189,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         Task<GraphIdentifierResult> DeleteEdgeDefinitionAsync<T>(bool? dropCollection = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Creates a new vertex
         /// </summary>
@@ -271,7 +271,7 @@ namespace ArangoDB.Client
         Task<IDocumentIdentifierResult> UpdateVertexAsync<T>(object document,
            bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
-        
+
         /// <summary>
         /// Completely updates the vertex with no change tracking
         /// </summary>

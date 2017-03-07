@@ -27,7 +27,7 @@ namespace ArangoDB.Client.Data
     [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class TransactionCollection
     {
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IList<string> Read { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

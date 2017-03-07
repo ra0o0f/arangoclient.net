@@ -27,7 +27,7 @@ namespace ArangoDB.Client.Query.Clause
 
             CollectionType = collectionType;
         }
-        
+
         public virtual void Accept(IQueryModelVisitor visitor, QueryModel queryModel, int index)
         {
             LinqUtility.CheckNotNull("visitor", visitor);
@@ -40,7 +40,7 @@ namespace ArangoDB.Client.Query.Clause
 
             arangoVisitor.VisitInsertClause(this, queryModel);
         }
-        
+
         public InsertClause Clone(CloneContext cloneContext)
         {
             LinqUtility.CheckNotNull("cloneContext", cloneContext);
@@ -48,7 +48,7 @@ namespace ArangoDB.Client.Query.Clause
             var result = new InsertClause(WithSelector, ItemName, CollectionType);
             return result;
         }
-        
+
         public virtual void TransformExpressions(Func<Expression, Expression> transformation)
         {
             LinqUtility.CheckNotNull("transformation", transformation);

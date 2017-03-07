@@ -23,7 +23,7 @@ namespace ArangoDB.Client.Query
 
             return clause == null ? null : clause as T;
         }
-           
+
         private static MethodInfo GetMethod<T>(Expression<Func<T>> wrappedCall)
         {
             Utils.CheckNotNull("wrappedCall", wrappedCall);

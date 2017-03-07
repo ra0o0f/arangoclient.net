@@ -12,10 +12,10 @@ namespace ArangoDB.Client.Data
     {
         public string Collection { get; set; }
 
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? BatchSize { get; set; }
 
-        [JsonProperty(NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? Skip { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

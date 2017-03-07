@@ -39,7 +39,8 @@ namespace ArangoDB.Client.Query.Clause
         }
 
         public Expression GetResolvedSelector(ClauseGenerationContext clauseGenerationContext)
-        {   return _cachedSelector.GetOrCreate(r =>
+        {
+            return _cachedSelector.GetOrCreate(r =>
             {
                 return r.GetResolvedExpression(Selector.Body, Expression.Parameter(typeof(int), ""), clauseGenerationContext);
                 //return r.GetResolvedExpression(Selector.Body, Selector.Parameters[0], clauseGenerationContext);

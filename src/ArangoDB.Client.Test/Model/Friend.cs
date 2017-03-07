@@ -17,7 +17,7 @@ namespace ArangoDB.Client.Test.Model
         [DocumentProperty(Identifier = IdentifierType.Revision)]
         public string Rev { get; set; }
 
-        [DocumentProperty(Identifier=IdentifierType.EdgeFrom)]
+        [DocumentProperty(Identifier = IdentifierType.EdgeFrom)]
         public string Follower { get; set; }
 
         [DocumentProperty(Identifier = IdentifierType.EdgeTo)]

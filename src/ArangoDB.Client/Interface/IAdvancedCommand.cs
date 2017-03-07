@@ -45,7 +45,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns>EnsureIndexResult</returns>
         Task<EnsureIndexResult> EnsureIndexAsync(string collection, EnsureIndexData data, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Imports documents
         /// </summary>

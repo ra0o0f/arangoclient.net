@@ -21,7 +21,7 @@ namespace ArangoDB.Client.Query.Clause
 
         public ConstantExpression Max { get; private set; }
 
-        public TraversalDepthExpressionNode(MethodCallExpressionParseInfo parseInfo, 
+        public TraversalDepthExpressionNode(MethodCallExpressionParseInfo parseInfo,
             ConstantExpression min,
             ConstantExpression max)
             : base(parseInfo)
@@ -29,7 +29,7 @@ namespace ArangoDB.Client.Query.Clause
             Min = min;
             Max = max;
         }
-        
+
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
         {
             LinqUtility.CheckNotNull("inputParameter", inputParameter);

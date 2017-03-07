@@ -11,7 +11,7 @@ namespace ArangoDB.Client.Test.Utility
 {
     public class ObjectUtility
     {
-        public static JObject CreateJObject(object document,IArangoDatabase db)
+        public static JObject CreateJObject(object document, IArangoDatabase db)
         {
             return JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
         }
@@ -21,9 +21,9 @@ namespace ArangoDB.Client.Test.Utility
             return new DocumentSerializer(db).SerializeWithoutReader(document);
         }
 
-        public static void AssertSerialize(object document1,object document2, IArangoDatabase db)
+        public static void AssertSerialize(object document1, object document2, IArangoDatabase db)
         {
-            Assert.Equal(Serialize(document1,db), Serialize(document2,db));
+            Assert.Equal(Serialize(document1, db), Serialize(document2, db));
         }
     }
 }

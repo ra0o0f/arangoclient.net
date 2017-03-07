@@ -11,7 +11,7 @@ namespace ArangoDB.Client.Test.Model
         Available = 0,
         SoldOut = 1
     }
-    
+
     public class Product
     {
         public Product()
@@ -56,6 +56,6 @@ namespace ArangoDB.Client.Test.Model
     {
         public int TotalSells { get; set; }
 
-        public Dictionary<string, int>  ProductSells { get; set; }
+        public Dictionary<string, int> ProductSells { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace ArangoDB.Client.Query.Clause
 
             Collection = collection;
         }
-        
+
         public Expression GetResolvedKeyPredicate(ClauseGenerationContext clauseGenerationContext)
         {
             return _cachedKeySelector.GetOrCreate(r => r.GetResolvedExpression(KeySelector.Body, KeySelector.Parameters[0], clauseGenerationContext));

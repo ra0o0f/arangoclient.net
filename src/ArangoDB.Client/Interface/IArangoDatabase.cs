@@ -50,7 +50,7 @@ namespace ArangoDB.Client
         void Log(string message);
 
         bool LoggerAvailable { get; }
-        
+
         /// <summary>
         /// Get Document JsonObject and Identifiers
         /// </summary>
@@ -128,7 +128,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         IDocumentIdentifierResult ReplaceById<T>(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Completely updates the document with no change tracking
         /// </summary>
@@ -139,7 +139,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns>Document identifiers</returns>
         Task<IDocumentIdentifierResult> ReplaceByIdAsync<T>(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
-        
+
         ///<summary>
         ///Partially updates the document without change tracking
         ///</summary>
@@ -152,7 +152,7 @@ namespace ArangoDB.Client
         ///<param name="waitForSync">Wait until document has been synced to disk</param>
         ///<returns>Document identifiers</returns>
         IDocumentIdentifierResult UpdateById<T>(string id, object document, bool? keepNull = null, bool? mergeObjects = null, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
-        
+
         ///<summary>
         ///Partially updates the document without change tracking
         ///</summary>
@@ -225,7 +225,7 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> RemoveAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Reads a single document
         /// </summary>
@@ -498,7 +498,7 @@ namespace ArangoDB.Client
         /// <returns>Returns a cursor</returns>
         ICursor<T> Within<T>(double latitude, double longitude, double radius, Expression<Func<T, object>> distance = null, string geo = null
             , int? skip = null, int? limit = null, int? batchSize = null);
-        
+
         /// <summary>
         /// Finds all documents from the collection that match the fulltext query
         /// </summary>
@@ -525,7 +525,7 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the database</param>
         /// <returns></returns>
         Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
-        
+
         Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
         Task ExecuteTransactionAsync(TransactionData data, Action<BaseResult> baseResult = null);
 

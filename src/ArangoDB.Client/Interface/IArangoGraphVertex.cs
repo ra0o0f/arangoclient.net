@@ -223,7 +223,7 @@ namespace ArangoDB.Client
         /// <param name="baseResult"></param>
         /// <returns></returns>
         GraphIdentifierResult RemoveCollection(bool? dropCollection = null, Action<BaseResult> baseResult = null);
-        
+
         /// <summary>
         /// Creates a new vertex
         /// </summary>

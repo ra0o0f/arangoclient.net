@@ -11,7 +11,7 @@ namespace ArangoDB.Client.Data
         public TraversalResult<TVertex, TEdge> Result { get; set; }
     }
 
-    public class TraversalResult<TVertex,TEdge> : BaseResult
+    public class TraversalResult<TVertex, TEdge> : BaseResult
     {
         public TraversalVisitedResult<TVertex, TEdge> Visited { get; set; }
     }

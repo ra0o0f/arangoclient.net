@@ -21,7 +21,7 @@ namespace ArangoDB.Client.Serialization.Converters
             }
 
             var date = value as DateTime?;
-            if(date.HasValue)
+            if (date.HasValue)
             {
                 writer.WriteValue(date.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffff", CultureInfo.InvariantCulture));
                 return;
@@ -44,17 +44,17 @@ namespace ArangoDB.Client.Serialization.Converters
             }
 
             if (reader.TokenType != JsonToken.String)
-                throw new Exception(string.Format("Unexpected token parsing date. Expected String, got {0}.",reader.TokenType.ToString()));
+                throw new Exception(string.Format("Unexpected token parsing date. Expected String, got {0}.", reader.TokenType.ToString()));
 
 
             var time = reader.Value as string;
 
             if (time == null)
                 return null;
-            
+
             if (objectType == typeof(DateTime) || objectType == typeof(DateTime?))
             {
-                return DateTime.Parse(time,CultureInfo.InvariantCulture,DateTimeStyles.RoundtripKind);
+                return DateTime.Parse(time, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
             }
 
             if (objectType == typeof(DateTimeOffset) || objectType == typeof(DateTimeOffset?))

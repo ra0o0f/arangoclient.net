@@ -126,7 +126,7 @@ namespace ArangoDB.Client.Utility
 
         public static string ImportDuplicatePolicyToString(ImportDuplicatePolicy policy)
         {
-            switch(policy)
+            switch (policy)
             {
                 case ImportDuplicatePolicy.Error:
                     return "error";
@@ -164,7 +164,7 @@ namespace ArangoDB.Client.Utility
 
         public static string GetAssemblyVersion()
         {
-            if(!string.IsNullOrEmpty(AssemblyVersion))
+            if (!string.IsNullOrEmpty(AssemblyVersion))
             {
                 return AssemblyVersion;
             }

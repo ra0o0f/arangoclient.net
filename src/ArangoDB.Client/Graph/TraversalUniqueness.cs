@@ -9,9 +9,9 @@ namespace ArangoDB.Client
 {
     public enum UniquenessType
     {
-        None=0,
-        Global=1,
-        Path=2
+        None = 0,
+        Global = 1,
+        Path = 2
     }
 
     [CollectionProperty(Naming = NamingConvention.ToCamelCase)]

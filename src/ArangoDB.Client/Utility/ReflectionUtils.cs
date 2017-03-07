@@ -122,7 +122,7 @@ namespace ArangoDB.Client.Utility
                 itemType = null;
                 return false;
             }
-            
+
             itemType = implementedEnumerableInterface.GenericTypeArguments[0];
             return true;
         }

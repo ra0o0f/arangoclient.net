@@ -82,8 +82,8 @@ in `hosts`
 return `NEW`
                     ".RemoveSpaces());
 
-            ObjectUtility.AssertSerialize(queryData.BindVars[0].Value, new { ip = "192.168.173.94" },db);
-            ObjectUtility.AssertSerialize(queryData.BindVars[1].Value,new { ip = "192.168.173.94", name = "chorweiler", tags = new string[] { "development" } },db);
+            ObjectUtility.AssertSerialize(queryData.BindVars[0].Value, new { ip = "192.168.173.94" }, db);
+            ObjectUtility.AssertSerialize(queryData.BindVars[1].Value, new { ip = "192.168.173.94", name = "chorweiler", tags = new string[] { "development" } }, db);
             Assert.Equal(queryData.BindVars[2].Value, "development");
             Assert.Equal(queryData.BindVars[3].Value, true);
         }

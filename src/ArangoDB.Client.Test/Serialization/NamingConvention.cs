@@ -31,7 +31,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x=>x.Name), "Name");
+            Assert.Equal(sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Name), "Name");
         }
 
         [Fact]

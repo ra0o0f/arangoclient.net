@@ -39,7 +39,7 @@ namespace ArangoDB.Client
                 HttpHeaders = false
             };
         }
-        
+
         private string _url;
 
         public string Url
@@ -61,14 +61,14 @@ namespace ArangoDB.Client
         public bool WaitForSync { get; set; }
 
         public bool ThrowForServerErrors { get; set; }
-        
+
         public NetworkCredential SystemDatabaseCredential { get; set; }
 
         public bool ClusterMode { get; set; }
 
         public bool DisableChangeTracking { get; set; }
 
-        public DatabaseLogSharedSetting Logger{ get; set; }
+        public DatabaseLogSharedSetting Logger { get; set; }
 
         public DatabaseCursorSharedSetting Cursor { get; set; }
 
@@ -118,7 +118,7 @@ namespace ArangoDB.Client
 
     public class DatabaseLinqSharedSetting
     {
-        public Func<string,string> TranslateGroupByIntoName { get; set; }
+        public Func<string, string> TranslateGroupByIntoName { get; set; }
     }
 
     public class DatabaseDocumentSharedSetting

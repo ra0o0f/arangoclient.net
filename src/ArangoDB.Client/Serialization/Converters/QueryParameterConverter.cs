@@ -32,7 +32,7 @@ namespace ArangoDB.Client.Serialization.Converters
             }
             else
                 writer.WriteNull();
-                
+
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

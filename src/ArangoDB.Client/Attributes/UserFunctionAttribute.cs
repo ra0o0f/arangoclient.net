@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ArangoDB.Client
 {
     [AttributeUsageAttribute(AttributeTargets.Method, AllowMultiple = false)]
-    public class UserFunctionAttribute:Attribute
+    public class UserFunctionAttribute : Attribute
     {
         public string Name { get; set; }
     }

@@ -11,7 +11,7 @@ namespace ArangoDB.Client.Serialization.Converters
 {
     public class EnumValueConverter : JsonConverter
     {
-        private static Dictionary<Type, Func<object,string>> enumToStrings = new Dictionary<Type, Func<object, string>>
+        private static Dictionary<Type, Func<object, string>> enumToStrings = new Dictionary<Type, Func<object, string>>
         {
             [typeof(UniquenessType?)] = (v) => { return Utils.UniquenessTypeToString((UniquenessType)v); },
             [typeof(TraversalStrategy?)] = (v) => { return Utils.TraversalStrategyToString((TraversalStrategy)v); },
@@ -38,7 +38,7 @@ namespace ArangoDB.Client.Serialization.Converters
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if(value == null)
+            if (value == null)
             {
                 writer.WriteNull();
                 return;

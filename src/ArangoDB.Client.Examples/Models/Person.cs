@@ -13,7 +13,7 @@ namespace ArangoDB.Client.Examples.Models
         public string Name { get; set; }
 
         public int Age { get; set; }
-        
+
         [DocumentProperty(Identifier = IdentifierType.Handle)]
         public string Id { get; set; }
 
