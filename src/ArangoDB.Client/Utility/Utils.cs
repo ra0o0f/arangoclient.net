@@ -7,6 +7,11 @@ namespace ArangoDB.Client.Utility
 {
     public class Utils
     {
+        public static string ResolveId(string id, string collectionName = null)
+        {
+            return id.IndexOf("/") == -1 ? $"{StringUtils.Encode(collectionName)}/{StringUtils.Encode(id)}" : StringUtils.Encode(id);
+        }
+
         public static MemberInfo GetMemberInfo<T>(Expression<Func<T, object>> attribute)
         {
             return GetMemberExpression(attribute).Member;

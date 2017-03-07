@@ -51,7 +51,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Post,
-                Command = $"{graphName}/edge"
+                Command = $"{StringUtils.Encode(graphName)}/edge"
             };
 
             EdgeDefinitionData data = new EdgeDefinitionData
@@ -96,7 +96,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Put,
-                Command = $"{graphName}/edge/{collection}"
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(collection)}"
             };
 
             EdgeDefinitionData data = new EdgeDefinitionData
@@ -138,7 +138,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
-                Command = $"{graphName}/edge/{collection}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(collection)}",
                 Query = new Dictionary<string, string>()
             };
 
@@ -180,7 +180,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Post,
-                Command = $"{graphName}/edge/{collection}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(collection)}",
                 Query = new Dictionary<string, string>()
             };
             
@@ -230,7 +230,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = $"{graphName}/edge/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(documentHandle)}",
                 EnableChangeTracking = db.Setting.DisableChangeTracking == false,
                 Headers = new Dictionary<string, string>()
             };
@@ -287,7 +287,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = new HttpMethod("PATCH"),
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/edge/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -387,7 +387,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/edge/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -478,7 +478,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/edge/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/edge/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 

@@ -48,7 +48,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Post,
-                Command = $"{graphName}/vertex"
+                Command = $"{StringUtils.Encode(graphName)}/vertex"
             };
 
             var data = new AddVertexCollectionData
@@ -89,7 +89,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
-                Command = $"{graphName}/vertex/{collection}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(collection)}",
                 Query = new Dictionary<string, string>()
             };
 
@@ -132,7 +132,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Post,
-                Command = $"{graphName}/vertex/{collection}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(collection)}",
                 Query = new Dictionary<string, string>()
             };
 
@@ -182,7 +182,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = $"{graphName}/vertex/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
                 EnableChangeTracking = db.Setting.DisableChangeTracking == false,
                 Headers = new Dictionary<string, string>()
             };
@@ -237,7 +237,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = new HttpMethod("PATCH"),
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -336,7 +336,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -427,7 +427,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
                 Query = new Dictionary<string, string>(),
-                Command = $"{graphName}/vertex/{documentHandle}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
                 Headers = new Dictionary<string, string>()
             };
 

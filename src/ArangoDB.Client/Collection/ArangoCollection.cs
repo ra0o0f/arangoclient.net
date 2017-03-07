@@ -65,7 +65,7 @@ namespace ArangoDB.Client.Collection
                 Api = CommandApi.Document,
                 Method = HttpMethod.Post,
                 Query = new Dictionary<string, string>(),
-                Command = collectionName
+                Command = StringUtils.Encode(collectionName)
             };
 
             command.Query.Add("waitForSync", waitForSync.ToString());
@@ -117,7 +117,7 @@ namespace ArangoDB.Client.Collection
                 Api = CommandApi.Document,
                 Method = HttpMethod.Post,
                 Query = new Dictionary<string, string>(),
-                Command = collectionName
+                Command = StringUtils.Encode(collectionName)
             };
 
             command.Query.Add("waitForSync", waitForSync.ToString());
@@ -162,7 +162,7 @@ namespace ArangoDB.Client.Collection
         /// <returns>Document identifiers</returns>
         public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
+            string apiCommand = Utils.ResolveId(id, collectionName);
             
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
@@ -268,7 +268,7 @@ namespace ArangoDB.Client.Collection
         public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? keepNull = null,
             bool? mergeObjects = null, bool? waitForSync = null, bool? ignoreRevs = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
+            string apiCommand = Utils.ResolveId(id, collectionName);
 
             keepNull = keepNull ?? db.Setting.Document.KeepNullAttributesOnUpdate;
             mergeObjects = mergeObjects ?? db.Setting.Document.MergeObjectsOnUpdate;
@@ -359,7 +359,7 @@ namespace ArangoDB.Client.Collection
 
         private async Task<IDocumentIdentifierResult> DocumentHeaderAsync(string id, string rev = null)
         {
-            string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
+            string apiCommand = Utils.ResolveId(id, collectionName);
 
             var command = new HttpCommand(this.db)
             {
@@ -401,8 +401,8 @@ namespace ArangoDB.Client.Collection
         public async Task<IDocumentIdentifierResult> RemoveByIdAsync(string id,
             bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
-            
+            string apiCommand = Utils.ResolveId(id, collectionName);
+
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
             var command = new HttpCommand(db)
@@ -483,7 +483,7 @@ namespace ArangoDB.Client.Collection
         /// <returns>A Document</returns>
         public async Task<T> DocumentAsync<T>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            string apiCommand = id.IndexOf("/") == -1 ? string.Format("{0}/{1}", collectionName, id) : id;
+            string apiCommand = Utils.ResolveId(id, collectionName);
 
             var command = new HttpCommand(db)
             {
@@ -602,7 +602,7 @@ namespace ArangoDB.Client.Collection
                 Api = CommandApi.AllEdges,
                 Method = HttpMethod.Get,
                 Query = new Dictionary<string, string>(),
-                Command = collectionName,
+                Command = StringUtils.Encode(collectionName),
                 EnableChangeTracking = db.Setting.DisableChangeTracking == false
             };
 

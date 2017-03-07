@@ -234,7 +234,7 @@ namespace ArangoDB.Client
             {
                 Api = CommandApi.Collection,
                 Method = HttpMethod.Delete,
-                Command = name
+                Command = StringUtils.Encode(name)
             };
 
             var result = await command.RequestMergedResult<DropCollectionResult>().ConfigureAwait(false);
@@ -303,7 +303,7 @@ namespace ArangoDB.Client
                 Api = CommandApi.Database,
                 Method = HttpMethod.Delete,
                 IsSystemCommand = true,
-                Command = name
+                Command = StringUtils.Encode(name)
             };
 
             var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);

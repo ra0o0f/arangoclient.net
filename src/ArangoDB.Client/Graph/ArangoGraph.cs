@@ -148,7 +148,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
-                Command = graphName,
+                Command = StringUtils.Encode(graphName),
                 Query = new Dictionary<string, string>()
             };
 
@@ -182,7 +182,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = graphName
+                Command = StringUtils.Encode(graphName)
             };
 
             var result = await command.RequestMergedResult<GraphResult>().ConfigureAwait(false);
@@ -216,7 +216,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = $"{graphName}/vertex"
+                Command = $"{StringUtils.Encode(graphName)}/vertex"
             };
 
             var result = await command.RequestMergedResult<GraphCollectionResult>().ConfigureAwait(false);
@@ -290,7 +290,7 @@ namespace ArangoDB.Client.Graph
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = $"{graphName}/edge"
+                Command = $"{StringUtils.Encode(graphName)}/edge"
             };
 
             var result = await command.RequestMergedResult<GraphCollectionResult>().ConfigureAwait(false);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +10,11 @@ namespace ArangoDB.Client.Utility
 {
     public static class StringUtils
     {
+        public static string Encode(string s)
+        {
+            return WebUtility.UrlEncode(s);
+        }
+
         public static string ToCamelCase(string s)
         {
             if (string.IsNullOrEmpty(s))
