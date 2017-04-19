@@ -63,6 +63,9 @@ namespace ArangoDB.Client.Data
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ShardKeys { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? ReplicationFactor { get; set; }
     }
 
 
