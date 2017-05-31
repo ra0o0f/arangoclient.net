@@ -37,7 +37,7 @@ namespace ArangoDB.Client.Serialization.Converters
 
             if (reader.TokenType == JsonToken.Date)
             {
-                if (objectType == typeof(DateTimeOffset))
+                if (objectType == typeof(DateTimeOffset) || objectType == typeof(DateTimeOffset?))
                     return reader.Value is DateTimeOffset ? reader.Value : new DateTimeOffset((DateTime)reader.Value);
 
                 return reader.Value;
