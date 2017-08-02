@@ -23,18 +23,18 @@ var sharedSetting = new DatabaseSharedSetting
 
 using (IArangoDatabase db = new ArangoDatabase(sharedSetting))
 {
+    var person = new Person { Age = 30 };
+    db.Insert<Person>(person, waitForSync: true);
 }
 ```
 
-var person = new Person { Age = 30 };
-db.Insert<Person>(person, waitForSync: true);
-Now if we want to insert multiple documents, instead of assign WaitForSync on each db.Insert API method, we can use database setting to set a default value for WaitForSync:
+Now if we want to insert multiple documents, instead of assigning `WaitForSync` on each `db.Insert` API method, we can update the current database settings to set a default value for `WaitForSync`:
 
 ```csharp
 using (IArangoDatabase db = new ArangoDatabase("http://localhost:8529", "SampleDB"))
 {
     // set default value for WaitForSync
-  db.Setting.WaitForSync = true;
+    db.Setting.WaitForSync = true;
 
     // insert will use the default WaitForSync defined by db.Setting
     db.Insert<Person>(person);
@@ -44,8 +44,9 @@ using (IArangoDatabase db = new ArangoDatabase("http://localhost:8529", "SampleD
 }
 ```
 
-However changing settings through db.Setting would just affect the ArangoDatabase object that is changing it. So for share settings among multiple ArangoDatabase objects we should create a SharedDatabaseSetting object:
+However changing settings through `db.Setting` would just affect the local `ArangoDatabase` object instance. So for shared settings among multiple `ArangoDatabase` objects we should create a `SharedDatabaseSetting` object:
 
+```csharp
 var sharedSetting = new DatabaseSharedSetting
 {
     Database = "SampleDB",
@@ -59,15 +60,16 @@ using (IArangoDatabase db = new ArangoDatabase(sharedSetting))
     db.Insert<Person>(person);
 
     // default value defined by sharedSetting can be overriden by db.Setting
-  db.Setting.WaitForSync = false;
+    db.Setting.WaitForSync = false;
     db.Update<Person>(person);
 
     // assign waitForSync would override default value
     db.Remove<Person>(person, waitForSync: true);
 }
-As you can see by last example, settings can be overridden in following manner:
+```
 
-Default settings can be set for all ArangoDatabase objects that use same DatabaseSharedSetting object.
-db.Setting can be used to override the shared setting without affecting it and provide default settings for ArangoDatabase object that is changing it.
+As you can see by the last example, settings can be overridden in following manner:
 
-If settings properties are accessible through the API method parameters, it can override the default settings.
+* Default settings can be set for all `ArangoDatabase` objects that use the same `DatabaseSharedSetting` object.
+* `db.Setting` can be used to override the default shared settings for a local instance of an `ArangoDatabase` object.
+* If the settings properties are accessible through the API method parameters, it can override the default settings.
