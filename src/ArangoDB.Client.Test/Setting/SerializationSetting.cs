@@ -22,13 +22,13 @@ namespace ArangoDB.Client.Test.Setting
 
             var stringValue = new DocumentSerializer(db).SerializeWithoutReader(ProductStatus.Available);
 
-            Assert.Equal(stringValue, "\"Available\"");
+            Assert.Equal("\"Available\"", stringValue);
 
             db.Setting.Serialization.SerializeEnumAsInteger = true;
 
             var integerValue = new DocumentSerializer(db).SerializeWithoutReader(ProductStatus.SoldOut);
 
-            Assert.Equal(integerValue, "1");
+            Assert.Equal("1", integerValue);
         }
 
         [Fact]
@@ -40,13 +40,13 @@ namespace ArangoDB.Client.Test.Setting
 
             var stringValue = new DocumentSerializer(db).SerializeWithoutReader(ProductStatus.Available);
 
-            Assert.Equal(stringValue, "\"Available\"");
+            Assert.Equal("\"Available\"", stringValue);
 
             db.Setting.Serialization.Converters.Clear();
 
             var integerValue = new DocumentSerializer(db).SerializeWithoutReader(ProductStatus.Available);
 
-            Assert.Equal(integerValue, "0");
+            Assert.Equal("0", integerValue);
         }
     }
 }

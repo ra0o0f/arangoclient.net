@@ -15,7 +15,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveCollectionName<ComplexModel>(), "ComplexModel");
+            Assert.Equal("ComplexModel", sharedSetting.Collection.ResolveCollectionName<ComplexModel>());
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveCollectionName<ComplexModel.NestedModel>(), "nested");
+            Assert.Equal("nested", sharedSetting.Collection.ResolveCollectionName<ComplexModel.NestedModel>());
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Name), "Name");
+            Assert.Equal("Name", sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Name));
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Nested.Name), "fullname");
+            Assert.Equal("fullname", sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Nested.Name));
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace ArangoDB.Client.Test.Serialization
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
 
-            Assert.Equal(sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Nested.NestedNested.Name), "name");
+            Assert.Equal("name", sharedSetting.Collection.ResolveNestedPropertyName<ComplexModel>(x => x.Nested.NestedNested.Name));
         }
     }
 }

@@ -413,7 +413,6 @@ namespace ArangoDB.Client
         /// <param name="latitude">The latitude of the coordinate</param>
         /// <param name="longitude">The longitude of the coordinate</param>
         /// <param name="distance">If True, distances are returned in meters</param>
-        /// <param name="distance">If True, distances are returned in meters</param>
         /// <param name="skip">The number of documents to skip in the query</param>
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>

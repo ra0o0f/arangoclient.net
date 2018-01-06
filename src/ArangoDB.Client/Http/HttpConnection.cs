@@ -23,7 +23,8 @@ namespace ArangoDB.Client.Http
                 connectionHandler.InnerHandler = new HttpClientHandler
                 {
                     UseProxy = true,
-                    Proxy = proxy
+                    Proxy = proxy,
+                    AutomaticDecompression = DecompressionMethods.None
                 };
             }
             else
@@ -33,6 +34,7 @@ namespace ArangoDB.Client.Http
 
             var httpClient = new HttpClient(connectionHandler, true);
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
+            httpClient.DefaultRequestHeaders.TransferEncodingChunked = false;
 
             if (ArangoDatabase.ClientSetting.HttpRequestTimeout.HasValue)
                 httpClient.Timeout = ArangoDatabase.ClientSetting.HttpRequestTimeout.Value;
@@ -78,6 +80,8 @@ namespace ArangoDB.Client.Http
 
             string encodedAuthorization = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(credential.UserName + ":" + credential.Password));
             requestMessage.Headers.Add("Authorization", "Basic " + encodedAuthorization);
+
+            requestMessage.Headers.TransferEncodingChunked = false;
 
             if (headers != null)
                 foreach (var h in headers)

@@ -32,14 +32,14 @@ namespace ArangoDB.Client.Test.Command
             Assert.Null(result.BaseResult.Code);
             Assert.False(result.BaseResult.HasError());
 
-            Assert.Equal(result.Result.Age, 27);
-            Assert.Equal(result.Result.Fullname, "raoof hojat");
-            Assert.Equal(result.Result.Height, 172);
+            Assert.Equal(27, result.Result.Age);
+            Assert.Equal("raoof hojat", result.Result.Fullname);
+            Assert.Equal(172, result.Result.Height);
 
             var info = mockDB.Db.FindDocumentInfo(result.Result);
-            Assert.Equal(info.Id, "Person/KEY");
-            Assert.Equal(info.Key, "KEY");
-            Assert.Equal(info.Rev, "REV");
+            Assert.Equal("Person/KEY", info.Id);
+            Assert.Equal("KEY", info.Key);
+            Assert.Equal("REV", info.Rev);
             Assert.True(JObject.DeepEquals(info.Document, JObject.Parse(JsonSample.SingleResult)));
         }
 
@@ -59,9 +59,9 @@ namespace ArangoDB.Client.Test.Command
             Assert.Null(result.BaseResult.Code);
             Assert.False(result.BaseResult.HasError());
 
-            Assert.Equal(result.Result.Age, 27);
-            Assert.Equal(result.Result.Fullname, "raoof hojat");
-            Assert.Equal(result.Result.Height, 172);
+            Assert.Equal(27, result.Result.Age);
+            Assert.Equal("raoof hojat", result.Result.Fullname);
+            Assert.Equal(172, result.Result.Height);
 
             Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(result.Result));
         }
@@ -106,9 +106,9 @@ namespace ArangoDB.Client.Test.Command
             var result = await command.RequestDistinctResult<Person>();
 
             Assert.Null(result.Result);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -126,9 +126,9 @@ namespace ArangoDB.Client.Test.Command
             var result = await command.RequestDistinctResult<Person>();
 
             Assert.Null(result.Result);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -142,17 +142,17 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Equal(200, result.BaseResult.Code);
+            Assert.False(result.BaseResult.Error);
 
-            Assert.Equal(result.Result.Age, 27);
-            Assert.Equal(result.Result.Fullname, "raoof hojat");
-            Assert.Equal(result.Result.Height, 172);
+            Assert.Equal(27, result.Result.Age);
+            Assert.Equal("raoof hojat", result.Result.Fullname);
+            Assert.Equal(172, result.Result.Height);
 
             var info = mockDB.Db.FindDocumentInfo(result.Result);
-            Assert.Equal(info.Id, "Person/KEY");
-            Assert.Equal(info.Key, "KEY");
-            Assert.Equal(info.Rev, "REV");
+            Assert.Equal("Person/KEY", info.Id);
+            Assert.Equal("KEY", info.Key);
+            Assert.Equal("REV", info.Rev);
             Assert.True(JObject.DeepEquals(info.Document, JObject.Parse(JsonSample.SingleResult)));
         }
 
@@ -169,12 +169,12 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Equal(200, result.BaseResult.Code);
+            Assert.False(result.BaseResult.Error);
 
-            Assert.Equal(result.Result.Age, 27);
-            Assert.Equal(result.Result.Fullname, "raoof hojat");
-            Assert.Equal(result.Result.Height, 172);
+            Assert.Equal(27, result.Result.Age);
+            Assert.Equal("raoof hojat", result.Result.Fullname);
+            Assert.Equal(172, result.Result.Height);
 
             Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(result.Result));
         }
@@ -219,9 +219,9 @@ namespace ArangoDB.Client.Test.Command
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
             Assert.Null(result.Result);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -239,9 +239,9 @@ namespace ArangoDB.Client.Test.Command
             var result = await command.RequestGenericSingleResult<Person, DocumentInheritedCommandResult<Person>>();
 
             Assert.Null(result.Result);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -255,29 +255,29 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Equal(200, result.BaseResult.Code);
+            Assert.False(result.BaseResult.Error);
 
-            Assert.Equal(result.Result.Count, 2);
+            Assert.Equal(2, result.Result.Count);
 
-            Assert.Equal(result.Result[0].Age, 27);
-            Assert.Equal(result.Result[0].Fullname, "raoof hojat");
-            Assert.Equal(result.Result[0].Height, 172);
+            Assert.Equal(27, result.Result[0].Age);
+            Assert.Equal("raoof hojat", result.Result[0].Fullname);
+            Assert.Equal(172, result.Result[0].Height);
 
             var info1 = mockDB.Db.FindDocumentInfo(result.Result[0]);
-            Assert.Equal(info1.Id, "Person/KEY1");
-            Assert.Equal(info1.Key, "KEY1");
-            Assert.Equal(info1.Rev, "REV1");
+            Assert.Equal("Person/KEY1", info1.Id);
+            Assert.Equal("KEY1", info1.Key);
+            Assert.Equal("REV1", info1.Rev);
 
-            Assert.Equal(result.Result[1].Age, 7);
-            Assert.Equal(result.Result[1].Fullname, "hojat raoof");
-            Assert.Equal(result.Result[1].Height, 721);
+            Assert.Equal(7, result.Result[1].Age);
+            Assert.Equal("hojat raoof", result.Result[1].Fullname);
+            Assert.Equal(721, result.Result[1].Height);
 
             var info2 = mockDB.Db.FindDocumentInfo(result.Result[1]);
             Assert.NotNull(info2.Document);
-            Assert.Equal(info2.Id, "Person/KEY2");
-            Assert.Equal(info2.Key, "KEY2");
-            Assert.Equal(info2.Rev, "REV2");
+            Assert.Equal("Person/KEY2", info2.Id);
+            Assert.Equal("KEY2", info2.Key);
+            Assert.Equal("REV2", info2.Rev);
         }
 
         [Fact]
@@ -293,20 +293,20 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
-            Assert.Equal(result.BaseResult.Code, 200);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Equal(200, result.BaseResult.Code);
+            Assert.False(result.BaseResult.Error);
 
-            Assert.Equal(result.Result.Count, 2);
+            Assert.Equal(2, result.Result.Count);
 
-            Assert.Equal(result.Result[0].Age, 27);
-            Assert.Equal(result.Result[0].Fullname, "raoof hojat");
-            Assert.Equal(result.Result[0].Height, 172);
+            Assert.Equal(27, result.Result[0].Age);
+            Assert.Equal("raoof hojat", result.Result[0].Fullname);
+            Assert.Equal(172, result.Result[0].Height);
 
             Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(result.Result[0]));
 
-            Assert.Equal(result.Result[1].Age, 7);
-            Assert.Equal(result.Result[1].Fullname, "hojat raoof");
-            Assert.Equal(result.Result[1].Height, 721);
+            Assert.Equal(7, result.Result[1].Age);
+            Assert.Equal("hojat raoof", result.Result[1].Fullname);
+            Assert.Equal(721, result.Result[1].Height);
 
             Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(result.Result[1]));
         }
@@ -350,10 +350,10 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
-            Assert.Equal(result.Result.Count, 0);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Empty(result.Result);
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -370,10 +370,10 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestGenericListResult<Person, DocumentInheritedCommandResult<List<Person>>>();
 
-            Assert.Equal(result.Result.Count, 0);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Empty(result.Result);
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
 
@@ -388,11 +388,11 @@ namespace ArangoDB.Client.Test.Command
 
             var result = await command.RequestMergedResult<Flight>();
 
-            Assert.Equal(result.BaseResult.Code, 202);
-            Assert.Equal(result.BaseResult.Error, false);
+            Assert.Equal(202, result.BaseResult.Code);
+            Assert.False(result.BaseResult.Error);
 
-            Assert.Equal(result.Result.Airline, "AIRLINE");
-            Assert.Equal(result.Result.FlightNumber, "10012314");
+            Assert.Equal("AIRLINE", result.Result.Airline);
+            Assert.Equal("10012314", result.Result.FlightNumber);
 
             Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(result.Result));
         }
@@ -423,9 +423,9 @@ namespace ArangoDB.Client.Test.Command
             var result = await command.RequestMergedResult<Flight>();
 
             Assert.NotNull(result.Result);
-            Assert.Equal(result.BaseResult.Code, 400);
-            Assert.Equal(result.BaseResult.Error, true);
-            Assert.Equal(result.BaseResult.ErrorMessage, "ERROR");
+            Assert.Equal(400, result.BaseResult.Code);
+            Assert.True(result.BaseResult.Error);
+            Assert.Equal("ERROR", result.BaseResult.ErrorMessage);
         }
 
         [Fact]
@@ -519,52 +519,52 @@ namespace ArangoDB.Client.Test.Command
                 else
                 {
                     var persons = cursor.ToList();
-                    Assert.Equal(persons.Count, 0);
-                    Assert.Equal(cursor.Statistics.Code, 400);
-                    Assert.Equal(cursor.Statistics.Error, true);
-                    Assert.Equal(cursor.Statistics.ErrorMessage, "ERROR");
+                    Assert.Empty(persons);
+                    Assert.Equal(400, cursor.Statistics.Code);
+                    Assert.True(cursor.Statistics.Error);
+                    Assert.Equal("ERROR", cursor.Statistics.ErrorMessage);
                 }
             }
             else
             {
                 var persons = cursor.ToList();
 
-                Assert.Equal(cursor.Statistics.Code, 201);
-                Assert.Equal(cursor.Statistics.Count, 2);
-                Assert.Equal(cursor.Statistics.Error, false);
-                Assert.Equal(cursor.Statistics.Id, "26011191");
+                Assert.Equal(201, cursor.Statistics.Code);
+                Assert.Equal(2, cursor.Statistics.Count);
+                Assert.False(cursor.Statistics.Error);
+                Assert.Equal("26011191", cursor.Statistics.Id);
                 Assert.Equal(cursor.Statistics.RequestCount, hasMore ? 2 : 1);
-                Assert.Equal(cursor.Statistics.HasMore, false);
-                Assert.Equal(cursor.Statistics.Extra.Stats.FullCount, 6);
-                Assert.Equal(cursor.Statistics.Extra.Stats.ScannedFull, 3);
-                Assert.Equal(cursor.Statistics.Extra.Stats.ScannedIndex, 4);
-                Assert.Equal(cursor.Statistics.Extra.Stats.WritesExecuted, 1);
-                Assert.Equal(cursor.Statistics.Extra.Stats.WritesIgnored, 2);
+                Assert.False(cursor.Statistics.HasMore);
+                Assert.Equal(6, cursor.Statistics.Extra.Stats.FullCount);
+                Assert.Equal(3, cursor.Statistics.Extra.Stats.ScannedFull);
+                Assert.Equal(4, cursor.Statistics.Extra.Stats.ScannedIndex);
+                Assert.Equal(1, cursor.Statistics.Extra.Stats.WritesExecuted);
+                Assert.Equal(2, cursor.Statistics.Extra.Stats.WritesIgnored);
 
                 Assert.Equal(persons.Count, hasMore ? 4 : 2);
 
                 int index = 0;
                 if (hasMore)
                 {
-                    Assert.Equal(persons[index].Age, 27);
-                    Assert.Equal(persons[index].Fullname, "raoof hojat2");
-                    Assert.Equal(persons[index].Height, 172);
+                    Assert.Equal(27, persons[index].Age);
+                    Assert.Equal("raoof hojat2", persons[index].Fullname);
+                    Assert.Equal(172, persons[index].Height);
 
                     if (disableChangeTracking.Value)
                         Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(persons[index]));
                     else
                     {
                         var info3 = mockDB.Db.FindDocumentInfo(persons[index]);
-                        Assert.Equal(info3.Id, "Person/KEY3");
-                        Assert.Equal(info3.Key, "KEY3");
-                        Assert.Equal(info3.Rev, "REV3");
+                        Assert.Equal("Person/KEY3", info3.Id);
+                        Assert.Equal("KEY3", info3.Key);
+                        Assert.Equal("REV3", info3.Rev);
                     }
 
                     index++;
 
-                    Assert.Equal(persons[index].Age, 7);
-                    Assert.Equal(persons[index].Fullname, "hojat raoof2");
-                    Assert.Equal(persons[index].Height, 721);
+                    Assert.Equal(7, persons[index].Age);
+                    Assert.Equal("hojat raoof2", persons[index].Fullname);
+                    Assert.Equal(721, persons[index].Height);
 
                     if (disableChangeTracking.Value)
                         Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(persons[index]));
@@ -572,33 +572,33 @@ namespace ArangoDB.Client.Test.Command
                     {
                         var info4 = mockDB.Db.FindDocumentInfo(persons[index]);
                         Assert.NotNull(info4.Document);
-                        Assert.Equal(info4.Id, "Person/KEY4");
-                        Assert.Equal(info4.Key, "KEY4");
-                        Assert.Equal(info4.Rev, "REV4");
+                        Assert.Equal("Person/KEY4", info4.Id);
+                        Assert.Equal("KEY4", info4.Key);
+                        Assert.Equal("REV4", info4.Rev);
                     }
 
                     index++;
                 }
 
-                Assert.Equal(persons[index].Age, 27);
-                Assert.Equal(persons[index].Fullname, "raoof hojat");
-                Assert.Equal(persons[index].Height, 172);
+                Assert.Equal(27, persons[index].Age);
+                Assert.Equal("raoof hojat", persons[index].Fullname);
+                Assert.Equal(172, persons[index].Height);
 
                 if (disableChangeTracking.Value)
                     Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(persons[index]));
                 else
                 {
                     var info1 = mockDB.Db.FindDocumentInfo(persons[index]);
-                    Assert.Equal(info1.Id, "Person/KEY1");
-                    Assert.Equal(info1.Key, "KEY1");
-                    Assert.Equal(info1.Rev, "REV1");
+                    Assert.Equal("Person/KEY1", info1.Id);
+                    Assert.Equal("KEY1", info1.Key);
+                    Assert.Equal("REV1", info1.Rev);
                 }
 
                 index++;
 
-                Assert.Equal(persons[index].Age, 7);
-                Assert.Equal(persons[index].Fullname, "hojat raoof");
-                Assert.Equal(persons[index].Height, 721);
+                Assert.Equal(7, persons[index].Age);
+                Assert.Equal("hojat raoof", persons[index].Fullname);
+                Assert.Equal(721, persons[index].Height);
 
                 if (disableChangeTracking.Value)
                     Assert.Throws<Exception>(() => mockDB.Db.FindDocumentInfo(persons[index]));
@@ -606,9 +606,9 @@ namespace ArangoDB.Client.Test.Command
                 {
                     var info2 = mockDB.Db.FindDocumentInfo(persons[index]);
                     Assert.NotNull(info2.Document);
-                    Assert.Equal(info2.Id, "Person/KEY2");
-                    Assert.Equal(info2.Key, "KEY2");
-                    Assert.Equal(info2.Rev, "REV2");
+                    Assert.Equal("Person/KEY2", info2.Id);
+                    Assert.Equal("KEY2", info2.Key);
+                    Assert.Equal("REV2", info2.Rev);
                 }
             }
         }

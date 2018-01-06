@@ -20,7 +20,7 @@ namespace ArangoDB.Client.Test.Linq
             var db = DatabaseGenerator.Get();
 
             var query = db.Query<Person>();
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `generated_0` in `Person` return `generated_0`");
+            Assert.Equal("for `generated_0` in `Person` return `generated_0`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace ArangoDB.Client.Test.Linq
 
             var query = from p in db.Query<Person>() select p;
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `p` in `Person` return `p`");
+            Assert.Equal("for `p` in `Person` return `p`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace ArangoDB.Client.Test.Linq
 
             var query = from p in db.Query<Person>() select new { p };
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `p` in `Person` return { `p` : `p` }");
+            Assert.Equal("for `p` in `Person` return { `p` : `p` }", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace ArangoDB.Client.Test.Linq
 
             var query = db.Query<Person>().Where(x => x.Fullname == x.Fullname);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` filter ( `x`.`Fullname` == `x`.`Fullname` ) return `x`");
+            Assert.Equal("for `x` in `Person` filter ( `x`.`Fullname` == `x`.`Fullname` ) return `x`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace ArangoDB.Client.Test.Linq
 
             var query = db.Query<Person>().Filter(x => x.Fullname == x.Fullname);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` filter ( `x`.`Fullname` == `x`.`Fullname` ) return `x`");
+            Assert.Equal("for `x` in `Person` filter ( `x`.`Fullname` == `x`.`Fullname` ) return `x`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -82,7 +82,7 @@ filter ( ( `x`.`Fullname` == `x`.`Fullname` ) and ( ( `x`.`Age` != `x`.`Age` ) o
 
             var query = db.Query<Person>().Where(x => !(x.Fullname == x.Fullname));
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` filter not ( `x`.`Fullname` == `x`.`Fullname` ) return `x`");
+            Assert.Equal("for `x` in `Person` filter not ( `x`.`Fullname` == `x`.`Fullname` ) return `x`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -92,7 +92,7 @@ filter ( ( `x`.`Fullname` == `x`.`Fullname` ) and ( ( `x`.`Age` != `x`.`Age` ) o
 
             var query = db.Query<Person>().OrderBy(x => x.Age).ThenByDescending(x => x.Fullname);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` sort `x`.`Age` asc , `x`.`Fullname` desc return `x`");
+            Assert.Equal("for `x` in `Person` sort `x`.`Age` asc , `x`.`Fullname` desc return `x`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -149,9 +149,9 @@ let `text` = @P2
 return { `number` : `number` , `text` : `text` }
 ".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars.Count, 2);
-            Assert.Equal(queryData.BindVars[0].Value, 4);
-            Assert.Equal(queryData.BindVars[1].Value, "Some text");
+            Assert.Equal(2, queryData.BindVars.Count);
+            Assert.Equal(4, queryData.BindVars[0].Value);
+            Assert.Equal("Some text", queryData.BindVars[1].Value);
         }
 
         [Fact]
@@ -179,7 +179,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().Take(10).Select(x => x);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `generated_1` in `Person` limit @P1 return `generated_1`");
+            Assert.Equal("for `generated_1` in `Person` limit @P1 return `generated_1`", query.GetQueryData().Query.RemoveSpaces());
         }
 
         [Fact]
@@ -189,11 +189,11 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().Take(10).Skip(20).Select(x => x);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `generated_2` in `Person` limit @P1 , @P2 return `generated_2`");
+            Assert.Equal("for `generated_2` in `Person` limit @P1 , @P2 return `generated_2`", query.GetQueryData().Query.RemoveSpaces());
 
             var query2 = db.Query<Person>().Skip(20).Take(10).Select(x => x);
 
-            Assert.Equal(query2.GetQueryData().Query.RemoveSpaces(), "for `generated_2` in `Person` limit @P1 , @P2 return `generated_2`");
+            Assert.Equal("for `generated_2` in `Person` limit @P1 , @P2 return `generated_2`", query2.GetQueryData().Query.RemoveSpaces());
 
         }
 
@@ -216,7 +216,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => x.Age).Select(byAge => byAge.Key);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `CV1` = `x`.`Age` into `byAge` return `CV1`");
+            Assert.Equal("for `x` in `Person` collect `CV1` = `x`.`Age` into `byAge` return `CV1`", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -230,7 +230,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => AQL.ToString(x.Age)).Select(byAge => byAge.Key);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `CV1` = to_string( `x`.`Age` ) into `byAge` return `CV1`");
+            Assert.Equal("for `x` in `Person` collect `CV1` = to_string( `x`.`Age` ) into `byAge` return `CV1`", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -244,7 +244,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => new { x.Age }).Select(byAge => byAge.Key);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `Age` = `x`.`Age` into `byAge` return { `Age` : `Age` }");
+            Assert.Equal("for `x` in `Person` collect `Age` = `x`.`Age` into `byAge` return { `Age` : `Age` }", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -258,7 +258,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => new { cage = AQL.ToString(x.Age) }).Select(byAge => byAge.Key);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `cage` = to_string( `x`.`Age` ) into `byAge` return { `cage` : `cage` }");
+            Assert.Equal("for `x` in `Person` collect `cage` = to_string( `x`.`Age` ) into `byAge` return { `cage` : `cage` }", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -272,7 +272,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => new { cage = AQL.ToString(x.Age) }).Select(byAge => byAge.Key.cage);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `cage` = to_string( `x`.`Age` ) into `byAge` return `cage`");
+            Assert.Equal("for `x` in `Person` collect `cage` = to_string( `x`.`Age` ) into `byAge` return `cage`", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -286,7 +286,7 @@ return { `p` : `p` , `a` : `a` , `f` : `f` }
 
             var query = db.Query<Person>().GroupBy(x => new { x.Age, x.Fullname }).Select(byAge => byAge.Key);
 
-            Assert.Equal(query.GetQueryData().Query.RemoveSpaces(), "for `x` in `Person` collect `Age` = `x`.`Age` , `Fullname` = `x`.`Fullname` into `byAge` return { `Age` : `Age` , `Fullname` : `Fullname` }");
+            Assert.Equal("for `x` in `Person` collect `Age` = `x`.`Age` , `Fullname` = `x`.`Fullname` into `byAge` return { `Age` : `Age` , `Fullname` : `Fullname` }", query.GetQueryData().Query.RemoveSpaces());
 
             db.Setting.Linq.TranslateGroupByIntoName = null;
         }
@@ -360,7 +360,7 @@ return { `byAgebyHeight` :
             Assert.Equal(queryData.Query.RemoveSpaces(), @"update 
 @P1 with @P2 in `Person`".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "123456");
+            Assert.Equal("123456", queryData.BindVars[0].Value);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
                 JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } }));
         }
@@ -380,7 +380,7 @@ return { `byAgebyHeight` :
             Assert.Equal(queryData.Query.RemoveSpaces(), @"update 
 @P1 with @P2 in `Person` return `NEW`".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "123456");
+            Assert.Equal("123456", queryData.BindVars[0].Value);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
                 JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } }));
         }
@@ -461,7 +461,7 @@ return { `byAgebyHeight` :
             var queryData = query.GetQueryData();
 
             Assert.Equal(queryData.Query.RemoveSpaces(), @"remove @P1 in `Person`".RemoveSpaces());
-            Assert.Equal(queryData.BindVars[0].Value, "12345");
+            Assert.Equal("12345", queryData.BindVars[0].Value);
         }
 
         [Fact]
@@ -667,7 +667,7 @@ return { `byAgebyHeight` :
             Assert.Equal(queryData.Query.RemoveSpaces(), @"replace 
 @P1 with @P2 in `Person`".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "123456");
+            Assert.Equal("123456", queryData.BindVars[0].Value);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
                 JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } }));
         }
@@ -687,7 +687,7 @@ return { `byAgebyHeight` :
             Assert.Equal(queryData.Query.RemoveSpaces(), @"replace 
 @P1 with @P2 in `Person` return `OLD`".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "123456");
+            Assert.Equal("123456", queryData.BindVars[0].Value);
             Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value),
                 JsonConvert.SerializeObject(new { Outfit = new { Color = "red" } }));
         }

@@ -37,7 +37,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
 
             var changed = tracker.GetChanges(product);
 
-            Assert.Equal(changed.Count, 0);
+            Assert.Empty(changed);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
 
             var changed = tracker.GetChanges(product);
 
-            Assert.Equal(changed.Count, 0);
+            Assert.Empty(changed);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Quantity':5}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Title':null}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Quantity':5,'Title':'Pen'}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Tags':['Soft','Hard']}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Tags':null}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Tags':['Soft']}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'TypeQuantities':{'Hard':2}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -190,7 +190,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'TypeQuantities':null}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'TypeQuantities':{'Soft':1}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -225,7 +225,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'TypeQuantities':{'Hard':2,'Soft':5}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -242,7 +242,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':{'Title':'Stock'}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':{'Title':'Featured','Tags':null,'Seller':null}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -276,7 +276,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':null}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -293,7 +293,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':{'Tags':['Soft','Hard']}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -319,7 +319,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':{'Seller':{'ProductSells':{'Pencil':3}}}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -345,7 +345,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             var changed = tracker.GetChanges(product);
 
             var expectedJson = JObject.Parse("{'Category':{'Seller':{'TotalSells':11000}}}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changed), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changed));
         }
 
         [Fact]
@@ -361,7 +361,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             new DocumentTracker(db).CreateChangedDocument(oldObject, newObject, ref changedObject);
 
             var expectedJson = JObject.Parse("{'Family':'hojat'}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changedObject), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changedObject));
         }
 
         [Fact]
@@ -377,7 +377,7 @@ namespace ArangoDB.Client.Test.ChangeTracking
             new DocumentTracker(db).CreateChangedDocument(oldObject, newObject, ref changedObject);
 
             var expectedJson = JObject.Parse("{}");
-            Assert.Equal(JObject.DeepEquals(expectedJson, changedObject), true);
+            Assert.True(JObject.DeepEquals(expectedJson, changedObject));
         }
     }
 }

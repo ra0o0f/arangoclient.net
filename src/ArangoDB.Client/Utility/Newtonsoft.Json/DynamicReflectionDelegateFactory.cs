@@ -23,10 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(DOTNET || PORTABLE || PORTABLE40)
+#if HAVE_REFLECTION_EMIT
 using System;
 using System.Collections.Generic;
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System.Reflection;
@@ -38,7 +38,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 {
     internal class DynamicReflectionDelegateFactory : ReflectionDelegateFactory
     {
-        public static DynamicReflectionDelegateFactory Instance = new DynamicReflectionDelegateFactory();
+        internal static DynamicReflectionDelegateFactory Instance { get; } = new DynamicReflectionDelegateFactory();
 
         private static DynamicMethod CreateDynamicMethod(string name, Type returnType, Type[] parameterTypes, Type owner)
         {
@@ -55,7 +55,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
             GenerateCreateMethodCallIL(method, generator, 0);
-
+            
             return (ObjectConstructor<object>)dynamicMethod.CreateDelegate(typeof(ObjectConstructor<object>));
         }
 
@@ -163,13 +163,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
                     // argument has value, try to convert it to parameter type
                     generator.MarkLabel(skipSettingDefault);
-
+                    
                     if (parameterType.IsPrimitive())
                     {
                         // for primitive types we need to handle type widening (e.g. short -> int)
                         MethodInfo toParameterTypeMethod = typeof(IConvertible)
                             .GetMethod("To" + parameterType.Name, new[] { typeof(IFormatProvider) });
-
+                        
                         if (toParameterTypeMethod != null)
                         {
                             Label skipConvertible = generator.DefineLabel();
@@ -202,7 +202,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                     generator.Emit(OpCodes.Ldloc_S, localObject);
 
                     generator.UnboxIfNeeded(parameterType);
-
+                    
                     // parameter finished, we out!
                     generator.MarkLabel(finishedProcessingParameter);
                 }

@@ -29,8 +29,8 @@ for `graph_0_Vertex`, `graph_0_Edge`
 in outbound shortest_path @P1 to @P2 graph ""SocialGraph""
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
-            Assert.Equal(query.BindVars[1].Value, "Person/4321");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
+            Assert.Equal("Person/4321", query.BindVars[1].Value);
         }
 
         [Fact]
@@ -175,7 +175,7 @@ for `graph_0_Vertex`, `graph_0_Edge`
 in outbound shortest_path @P1 to @P2 `Friend`, `Flight`
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ for `graph_0_Vertex`, `graph_0_Edge`
 in outbound shortest_path @P1 to @P2 inbound `Friend`, `Flight`
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
         }
     }
 }

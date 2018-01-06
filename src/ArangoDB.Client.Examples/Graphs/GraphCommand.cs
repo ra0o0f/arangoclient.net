@@ -199,7 +199,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var replaced = graph.GetEdge<Follow>(inserted.Key);
 
-            Assert.Equal(replaced.CreatedDate.Year, 1900);
+            Assert.Equal(1900, replaced.CreatedDate.Year);
         }
 
         [Fact]
@@ -239,7 +239,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var replaced = graph.GetEdge<Follow>(inserted.Key);
 
-            Assert.Equal(replaced.CreatedDate.Year, 1900);
+            Assert.Equal(1900, replaced.CreatedDate.Year);
         }
 
         [Fact]
@@ -309,7 +309,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var updated = graph.GetEdge<Follow>(inserted.Key);
 
-            Assert.Equal(updated.CreatedDate.Year, 1900);
+            Assert.Equal(1900, updated.CreatedDate.Year);
         }
 
         [Fact]
@@ -342,7 +342,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var updated = graph.GetEdge<Follow>(inserted.Key);
 
-            Assert.Equal(updated.CreatedDate.Year, 1900);
+            Assert.Equal(1900, updated.CreatedDate.Year);
         }
 
         [Fact]
@@ -552,7 +552,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var replaced = graph.GetVertex<Person>(inserted.Key);
 
-            Assert.Equal(replaced.Age, 33);
+            Assert.Equal(33, replaced.Age);
         }
 
         [Fact]
@@ -573,7 +573,7 @@ namespace ArangoDB.Client.Examples.Graphs
             var replaced = graph.GetVertex<Person>(inserted.Key);
 
             Assert.Null(replaced.Name);
-            Assert.Equal(replaced.Age, 22);
+            Assert.Equal(22, replaced.Age);
         }
 
         [Fact]
@@ -617,7 +617,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var updated = graph.GetVertex<Person>(inserted.Key);
 
-            Assert.Equal(updated.Age, 33);
+            Assert.Equal(33, updated.Age);
         }
 
         [Fact]
@@ -637,7 +637,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var updated = graph.GetVertex<Person>(inserted.Key);
 
-            Assert.Equal(updated.Age, 22);
+            Assert.Equal(22, updated.Age);
         }
 
         [Fact]
@@ -719,7 +719,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var list = graph.ListEdgeDefinitions();
 
-            Assert.Equal(list.Count, 1);
+            Assert.Single(list);
             Assert.Equal(list[0], db.SharedSetting.Collection.ResolveCollectionName<Follow>());
         }
 
@@ -734,7 +734,7 @@ namespace ArangoDB.Client.Examples.Graphs
                 new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() },
                 new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() });
 
-            Assert.Equal(result.EdgeDefinitions.Count, 2);
+            Assert.Equal(2, result.EdgeDefinitions.Count);
         }
 
         [Fact]
@@ -746,7 +746,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var result = graph.EditEdgeDefinition<Follow, Follow>(new List<Type> { typeof(Host) }, new List<Type> { typeof(Host) });
 
-            Assert.Equal(result.EdgeDefinitions.Count, 1);
+            Assert.Single(result.EdgeDefinitions);
             Assert.Equal(result.EdgeDefinitions[0].From[0], db.SharedSetting.Collection.ResolveCollectionName<Host>());
         }
 
@@ -759,7 +759,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var result = graph.DeleteEdgeDefinition<Follow>();
 
-            Assert.Equal(result.EdgeDefinitions.Count, 0);
+            Assert.Empty(result.EdgeDefinitions);
         }
 
         [Fact]
@@ -773,11 +773,11 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var result = graph.ListVertexCollections();
 
-            Assert.Equal(result.Count, 2);
-            Assert.Equal(result.Except(new string[] {
-            db.SharedSetting.Collection.ResolveCollectionName<Host>(),
-            db.SharedSetting.Collection.ResolveCollectionName<Person>()
-            }).Count(), 0);
+            Assert.Equal(2, result.Count);
+            Assert.Empty(result.Except(new string[] {
+                db.SharedSetting.Collection.ResolveCollectionName<Host>(),
+                db.SharedSetting.Collection.ResolveCollectionName<Person>()
+            }));
         }
 
         [Fact]
@@ -789,7 +789,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var result = graph.AddVertexCollection<Host>();
 
-            Assert.Equal(result.OrphanCollections.Count, 1);
+            Assert.Single(result.OrphanCollections);
         }
 
         [Fact]
@@ -803,7 +803,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var result = graph.RemoveVertexCollection<Host>();
 
-            Assert.Equal(result.OrphanCollections.Count, 0);
+            Assert.Empty(result.OrphanCollections);
         }
 
         [Fact]
@@ -828,7 +828,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var allGraphs = db.ListGraphs();
 
-            Assert.Equal(allGraphs.Count, 1);
+            Assert.Single(allGraphs);
 
             Assert.Equal(allGraphs[0].Key, graph.Name);
         }
@@ -844,7 +844,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             Assert.NotNull(result.Rev);
 
-            Assert.Equal(result.EdgeDefinitions.Count, 1);
+            Assert.Single(result.EdgeDefinitions);
         }
 
         [Fact]

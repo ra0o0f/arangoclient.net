@@ -23,18 +23,21 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-
 namespace ArangoDB.Client.Utility.Newtonsoft.Json
 {
-    internal static class ValidationUtils
+    /// <summary>
+    /// Indicates the method that will be used during deserialization for locating and loading assemblies.
+    /// </summary>
+    public enum TypeNameAssemblyFormatHandling
     {
-        public static void ArgumentNotNull(object value, string parameterName)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(parameterName);
-            }
-        }
+        /// <summary>
+        /// In simple mode, the assembly used during deserialization need not match exactly the assembly used during serialization. Specifically, the version numbers need not match as the <c>LoadWithPartialName</c> method of the <see cref="System.Reflection.Assembly"/> class is used to load the assembly.
+        /// </summary>
+        Simple = 0,
+
+        /// <summary>
+        /// In full mode, the assembly used during deserialization must match exactly the assembly used during serialization. The <c>Load</c> method of the <see cref="System.Reflection.Assembly"/> class is used to load the assembly.
+        /// </summary>
+        Full = 1
     }
 }

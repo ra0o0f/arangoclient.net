@@ -26,10 +26,9 @@
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Globalization;
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
@@ -47,12 +46,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
     internal class ReflectionObject
     {
-        public ObjectConstructor<object> Creator { get; private set; }
-        public IDictionary<string, ReflectionMember> Members { get; private set; }
+        public ObjectConstructor<object> Creator { get; }
+        public IDictionary<string, ReflectionMember> Members { get; }
 
-        public ReflectionObject()
+        private ReflectionObject(ObjectConstructor<object> creator)
         {
             Members = new Dictionary<string, ReflectionMember>();
+            Creator = creator;
         }
 
         public object GetValue(object target, string member)
@@ -79,13 +79,12 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static ReflectionObject Create(Type t, MethodBase creator, params string[] memberNames)
         {
-            ReflectionObject d = new ReflectionObject();
-
             ReflectionDelegateFactory delegateFactory = JsonTypeReflector.ReflectionDelegateFactory;
 
+            ObjectConstructor<object> creatorConstructor = null;
             if (creator != null)
             {
-                d.Creator = delegateFactory.CreateParameterizedConstructor(creator);
+                creatorConstructor = delegateFactory.CreateParameterizedConstructor(creator);
             }
             else
             {
@@ -93,9 +92,11 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 {
                     Func<object> ctor = delegateFactory.CreateDefaultConstructor<object>(t);
 
-                    d.Creator = args => ctor();
+                    creatorConstructor = args => ctor();
                 }
             }
+
+            ReflectionObject d = new ReflectionObject(creatorConstructor);
 
             foreach (string memberName in memberNames)
             {

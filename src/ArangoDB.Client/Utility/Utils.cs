@@ -9,7 +9,15 @@ namespace ArangoDB.Client.Utility
     {
         public static string ResolveId(string id, string collectionName = null)
         {
-            return id.IndexOf("/") == -1 ? $"{StringUtils.Encode(collectionName)}/{StringUtils.Encode(id)}" : StringUtils.Encode(id);
+            if (id.IndexOf("/") == -1)
+            {
+                return $"{StringUtils.Encode(collectionName)}/{StringUtils.Encode(id)}";
+            }
+            else
+            {
+                string[] splited = id.Split('/');
+                return $"{StringUtils.Encode(splited[0])}/{splited[1]}";
+            }
         }
 
         public static MemberInfo GetMemberInfo<T>(Expression<Func<T, object>> attribute)

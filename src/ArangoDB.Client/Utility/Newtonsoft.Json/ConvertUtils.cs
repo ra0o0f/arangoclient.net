@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -27,17 +27,19 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.ComponentModel;
-#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
 using System.Numerics;
 #endif
+#if !HAVE_GUID_TRY_PARSE
 using System.Text;
 using System.Text.RegularExpressions;
+#endif
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
-#if !(DOTNET || PORTABLE40 || PORTABLE)
+#if HAVE_ADO_NET
 using System.Data.SqlTypes;
 
 #endif
@@ -135,7 +137,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 { typeof(double?), PrimitiveTypeCode.DoubleNullable },
                 { typeof(DateTime), PrimitiveTypeCode.DateTime },
                 { typeof(DateTime?), PrimitiveTypeCode.DateTimeNullable },
-#if !NET20
+#if HAVE_DATE_TIME_OFFSET
                 { typeof(DateTimeOffset), PrimitiveTypeCode.DateTimeOffset },
                 { typeof(DateTimeOffset?), PrimitiveTypeCode.DateTimeOffsetNullable },
 #endif
@@ -145,19 +147,19 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 { typeof(Guid?), PrimitiveTypeCode.GuidNullable },
                 { typeof(TimeSpan), PrimitiveTypeCode.TimeSpan },
                 { typeof(TimeSpan?), PrimitiveTypeCode.TimeSpanNullable },
-#if !(PORTABLE || PORTABLE40 || NET35 || NET20) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
                 { typeof(BigInteger), PrimitiveTypeCode.BigInteger },
                 { typeof(BigInteger?), PrimitiveTypeCode.BigIntegerNullable },
 #endif
                 { typeof(Uri), PrimitiveTypeCode.Uri },
                 { typeof(string), PrimitiveTypeCode.String },
                 { typeof(byte[]), PrimitiveTypeCode.Bytes },
-#if !(PORTABLE || PORTABLE40 || DOTNET)
+#if HAVE_ADO_NET
                 { typeof(DBNull), PrimitiveTypeCode.DBNull }
 #endif
             };
 
-#if !PORTABLE
+#if HAVE_ICONVERTIBLE
         private static readonly TypeInformation[] PrimitiveTypeCodes =
         {
             // need all of these. lookup against the index with TypeCode value
@@ -185,14 +187,12 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static PrimitiveTypeCode GetTypeCode(Type t)
         {
-            bool isEnum;
-            return GetTypeCode(t, out isEnum);
+            return GetTypeCode(t, out _);
         }
 
         public static PrimitiveTypeCode GetTypeCode(Type t, out bool isEnum)
         {
-            PrimitiveTypeCode typeCode;
-            if (TypeCodeMap.TryGetValue(t, out typeCode))
+            if (TypeCodeMap.TryGetValue(t, out PrimitiveTypeCode typeCode))
             {
                 isEnum = false;
                 return typeCode;
@@ -220,7 +220,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return PrimitiveTypeCode.Object;
         }
 
-#if !PORTABLE
+#if HAVE_ICONVERTIBLE
         public static TypeInformation GetTypeInformation(IConvertible convertable)
         {
             TypeInformation typeInformation = PrimitiveTypeCodes[(int)convertable.GetTypeCode()];
@@ -230,7 +230,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsConvertible(Type t)
         {
-#if !PORTABLE
+#if HAVE_ICONVERTIBLE
             return typeof(IConvertible).IsAssignableFrom(t);
 #else
             return (
@@ -241,7 +241,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static TimeSpan ParseTimeSpan(string input)
         {
-#if !(NET35 || NET20)
+#if HAVE_TIME_SPAN_PARSE_WITH_CULTURE
             return TimeSpan.Parse(input, CultureInfo.InvariantCulture);
 #else
             return TimeSpan.Parse(input);
@@ -250,28 +250,19 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         internal struct TypeConvertKey : IEquatable<TypeConvertKey>
         {
-            private readonly Type _initialType;
-            private readonly Type _targetType;
+            public Type InitialType { get; }
 
-            public Type InitialType
-            {
-                get { return _initialType; }
-            }
-
-            public Type TargetType
-            {
-                get { return _targetType; }
-            }
+            public Type TargetType { get; }
 
             public TypeConvertKey(Type initialType, Type targetType)
             {
-                _initialType = initialType;
-                _targetType = targetType;
+                InitialType = initialType;
+                TargetType = targetType;
             }
 
             public override int GetHashCode()
             {
-                return _initialType.GetHashCode() ^ _targetType.GetHashCode();
+                return InitialType.GetHashCode() ^ TargetType.GetHashCode();
             }
 
             public override bool Equals(object obj)
@@ -286,7 +277,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
             public bool Equals(TypeConvertKey other)
             {
-                return (_initialType == other._initialType && _targetType == other._targetType);
+                return (InitialType == other.InitialType && TargetType == other.TargetType);
             }
         }
 
@@ -295,11 +286,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         private static Func<object, object> CreateCastConverter(TypeConvertKey t)
         {
-            MethodInfo castMethodInfo = t.TargetType.GetMethod("op_Implicit", new[] { t.InitialType });
-            if (castMethodInfo == null)
-            {
-                castMethodInfo = t.TargetType.GetMethod("op_Explicit", new[] { t.InitialType });
-            }
+            MethodInfo castMethodInfo = t.TargetType.GetMethod("op_Implicit", new[] { t.InitialType })
+                ?? t.TargetType.GetMethod("op_Explicit", new[] { t.InitialType });
 
             if (castMethodInfo == null)
             {
@@ -311,48 +299,51 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return o => call(null, o);
         }
 
-#if !(NET20 || NET35 || PORTABLE || PORTABLE40) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
         internal static BigInteger ToBigInteger(object value)
         {
-            if (value is BigInteger)
+            if (value is BigInteger integer)
             {
-                return (BigInteger)value;
+                return integer;
             }
-            if (value is string)
+
+            if (value is string s)
             {
-                return BigInteger.Parse((string)value, CultureInfo.InvariantCulture);
+                return BigInteger.Parse(s, CultureInfo.InvariantCulture);
             }
-            if (value is float)
+
+            if (value is float f)
             {
-                return new BigInteger((float)value);
+                return new BigInteger(f);
             }
-            if (value is double)
+            if (value is double d)
             {
-                return new BigInteger((double)value);
+                return new BigInteger(d);
             }
-            if (value is decimal)
+            if (value is decimal @decimal)
             {
-                return new BigInteger((decimal)value);
+                return new BigInteger(@decimal);
             }
-            if (value is int)
+            if (value is int i)
             {
-                return new BigInteger((int)value);
+                return new BigInteger(i);
             }
-            if (value is long)
+            if (value is long l)
             {
-                return new BigInteger((long)value);
+                return new BigInteger(l);
             }
-            if (value is uint)
+            if (value is uint u)
             {
-                return new BigInteger((uint)value);
+                return new BigInteger(u);
             }
-            if (value is ulong)
+            if (value is ulong @ulong)
             {
-                return new BigInteger((ulong)value);
+                return new BigInteger(@ulong);
             }
-            if (value is byte[])
+
+            if (value is byte[] bytes)
             {
-                return new BigInteger((byte[])value);
+                return new BigInteger(bytes);
             }
 
             throw new InvalidCastException("Cannot convert {0} to BigInteger.".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
@@ -392,7 +383,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         }
 #endif
 
-        #region TryConvert
+#region TryConvert
         internal enum ConvertResult
         {
             Success = 0,
@@ -403,8 +394,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static object Convert(object initialValue, CultureInfo culture, Type targetType)
         {
-            object value;
-            switch (TryConvertInternal(initialValue, culture, targetType, out value))
+            switch (TryConvertInternal(initialValue, culture, targetType, out object value))
             {
                 case ConvertResult.Success:
                     return value;
@@ -459,7 +449,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             }
 
             // use Convert.ChangeType if both types are IConvertible
-            if (ConvertUtils.IsConvertible(initialValue.GetType()) && ConvertUtils.IsConvertible(targetType))
+            if (IsConvertible(initialValue.GetType()) && IsConvertible(targetType))
             {
                 if (targetType.IsEnum())
                 {
@@ -479,28 +469,27 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return ConvertResult.Success;
             }
 
-#if !NET20
-            if (initialValue is DateTime && targetType == typeof(DateTimeOffset))
+#if HAVE_DATE_TIME_OFFSET
+            if (initialValue is DateTime dt && targetType == typeof(DateTimeOffset))
             {
-                value = new DateTimeOffset((DateTime)initialValue);
+                value = new DateTimeOffset(dt);
                 return ConvertResult.Success;
             }
 #endif
 
-            if (initialValue is byte[] && targetType == typeof(Guid))
+            if (initialValue is byte[] bytes && targetType == typeof(Guid))
             {
-                value = new Guid((byte[])initialValue);
+                value = new Guid(bytes);
                 return ConvertResult.Success;
             }
 
-            if (initialValue is Guid && targetType == typeof(byte[]))
+            if (initialValue is Guid guid && targetType == typeof(byte[]))
             {
-                value = ((Guid)initialValue).ToByteArray();
+                value = guid.ToByteArray();
                 return ConvertResult.Success;
             }
 
-            string s = initialValue as string;
-            if (s != null)
+            if (initialValue is string s)
             {
                 if (targetType == typeof(Guid))
                 {
@@ -524,8 +513,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 }
                 if (targetType == typeof(Version))
                 {
-                    Version result;
-                    if (VersionTryParse(s, out result))
+                    if (VersionTryParse(s, out Version result))
                     {
                         value = result;
                         return ConvertResult.Success;
@@ -540,22 +528,22 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 }
             }
 
-#if !(NET20 || NET35 || PORTABLE40 || PORTABLE) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
             if (targetType == typeof(BigInteger))
             {
                 value = ToBigInteger(initialValue);
                 return ConvertResult.Success;
             }
-            if (initialValue is BigInteger)
+            if (initialValue is BigInteger integer)
             {
-                value = FromBigInteger((BigInteger)initialValue, targetType);
+                value = FromBigInteger(integer, targetType);
                 return ConvertResult.Success;
             }
 #endif
 
-#if !(PORTABLE40 || PORTABLE)
+#if HAVE_TYPE_DESCRIPTOR
             // see if source or target types have a TypeConverter that converts between the two
-            TypeConverter toConverter = GetConverter(initialType);
+            TypeConverter toConverter = TypeDescriptor.GetConverter(initialType);
 
             if (toConverter != null && toConverter.CanConvertTo(targetType))
             {
@@ -563,7 +551,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return ConvertResult.Success;
             }
 
-            TypeConverter fromConverter = GetConverter(targetType);
+            TypeConverter fromConverter = TypeDescriptor.GetConverter(targetType);
 
             if (fromConverter != null && fromConverter.CanConvertFrom(initialType))
             {
@@ -571,8 +559,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return ConvertResult.Success;
             }
 #endif
-#if !(DOTNET || PORTABLE40 || PORTABLE)
-            // handle DBNull and INullable
+#if HAVE_ADO_NET
+            // handle DBNull
             if (initialValue == DBNull.Value)
             {
                 if (ReflectionUtils.IsNullable(targetType))
@@ -586,13 +574,6 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return ConvertResult.CannotConvertNull;
             }
 #endif
-#if !(DOTNET || PORTABLE40 || PORTABLE)
-            if (initialValue is INullable)
-            {
-                value = EnsureTypeAssignable(ToValue((INullable)initialValue), initialType, targetType);
-                return ConvertResult.Success;
-            }
-#endif
 
             if (targetType.IsInterface() || targetType.IsGenericTypeDefinition() || targetType.IsAbstract())
             {
@@ -603,9 +584,9 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             value = null;
             return ConvertResult.NoValidConversion;
         }
-        #endregion
+#endregion
 
-        #region ConvertOrCast
+#region ConvertOrCast
         /// <summary>
         /// Converts the value to the specified type. If the value is unable to be converted, the
         /// value is checked whether it assignable to the specified type.
@@ -619,8 +600,6 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         /// </returns>
         public static object ConvertOrCast(object initialValue, CultureInfo culture, Type targetType)
         {
-            object convertedValue;
-
             if (targetType == typeof(object))
             {
                 return initialValue;
@@ -631,18 +610,18 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return null;
             }
 
-            if (TryConvert(initialValue, culture, targetType, out convertedValue))
+            if (TryConvert(initialValue, culture, targetType, out object convertedValue))
             {
                 return convertedValue;
             }
 
             return EnsureTypeAssignable(initialValue, ReflectionUtils.GetObjectType(initialValue), targetType);
         }
-        #endregion
+#endregion
 
         private static object EnsureTypeAssignable(object value, Type initialType, Type targetType)
         {
-            Type valueType = (value != null) ? value.GetType() : null;
+            Type valueType = value?.GetType();
 
             if (value != null)
             {
@@ -665,54 +644,15 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 }
             }
 
-            throw new ArgumentException("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, (initialType != null) ? initialType.ToString() : "{null}", targetType));
+            throw new ArgumentException("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, initialType?.ToString() ?? "{null}", targetType));
         }
-
-#if !(DOTNET || PORTABLE40 || PORTABLE)
-        public static object ToValue(INullable nullableValue)
-        {
-            if (nullableValue == null)
-            {
-                return null;
-            }
-            else if (nullableValue is SqlInt32)
-            {
-                return ToValue((SqlInt32)nullableValue);
-            }
-            else if (nullableValue is SqlInt64)
-            {
-                return ToValue((SqlInt64)nullableValue);
-            }
-            else if (nullableValue is SqlBoolean)
-            {
-                return ToValue((SqlBoolean)nullableValue);
-            }
-            else if (nullableValue is SqlString)
-            {
-                return ToValue((SqlString)nullableValue);
-            }
-            else if (nullableValue is SqlDateTime)
-            {
-                return ToValue((SqlDateTime)nullableValue);
-            }
-
-            throw new ArgumentException("Unsupported INullable type: {0}".FormatWith(CultureInfo.InvariantCulture, nullableValue.GetType()));
-        }
-#endif
-
-#if !(PORTABLE40 || PORTABLE)
-        internal static TypeConverter GetConverter(Type t)
-        {
-            return JsonTypeReflector.GetTypeConverter(t);
-        }
-#endif
 
         public static bool VersionTryParse(string input, out Version result)
         {
-#if !(NET20 || NET35)
+#if HAVE_VERSION_TRY_PARSE
             return Version.TryParse(input, out result);
 #else
-    // improve failure performance with regex?
+            // improve failure performance with regex?
             try
             {
                 result = new Version(input);
@@ -930,6 +870,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return ParseResult.Success;
         }
 
+#if HAS_CUSTOM_DOUBLE_PARSE
         private static class IEEE754
         {
             /// <summary>
@@ -1008,7 +949,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             /// <param name="val">Mantissa</param>
             /// <param name="scale">Exponent</param>
             /// <remarks>
-            /// Adoption of native function NumberToDouble() from coreclr sources, 
+            /// Adoption of native function NumberToDouble() from coreclr sources,
             /// see https://github.com/dotnet/coreclr/blob/master/src/classlibnative/bcltype/number.cpp#L451
             /// </remarks>
             public static double PackDouble(bool negative, ulong val, int scale)
@@ -1065,7 +1006,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                     }
 
                     // perform scaling
-                    var index = scale & 15;
+                    int index = scale & 15;
                     if (index != 0)
                     {
                         exp -= MultExp64Power10[index - 1] - 1;
@@ -1089,7 +1030,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                     }
 
                     // perform scaling
-                    var index = scale & 15;
+                    int index = scale & 15;
                     if (index != 0)
                     {
                         exp += MultExp64Power10[index - 1];
@@ -1150,7 +1091,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 }
                 else
                 {
-                    // normal postive exponent case
+                    // normal positive exponent case
                     val = ((ulong)exp << 52) | ((val >> 11) & 0x000FFFFFFFFFFFFF);
                 }
 
@@ -1171,7 +1112,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 ulong b_hi = (b >> 32);
                 uint b_lo = (uint)b;
 
-                var result = a_hi * b_hi;
+                ulong result = a_hi * b_hi;
 
                 // save some multiplications if lo-parts aren't big enough to produce carry
                 // (hi-parts will be always big enough, since a and b are normalized)
@@ -1258,7 +1199,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                         }
                         if (i == numDecimalStart)
                         {
-                            // E follows decimal point		
+                            // E follows decimal point
                             return ParseResult.Invalid;
                         }
                         i++;
@@ -1285,7 +1226,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                                 break;
                         }
 
-                        // parse 3 digit 
+                        // parse 3 digit
                         for (; i < end; i++)
                         {
                             c = chars[i];
@@ -1294,7 +1235,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                                 return ParseResult.Invalid;
                             }
 
-                            var newExponent = (10 * exponent) + (c - '0');
+                            int newExponent = (10 * exponent) + (c - '0');
                             // stops updating exponent when overflowing
                             if (exponent < newExponent)
                             {
@@ -1356,11 +1297,249 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             value = IEEE754.PackDouble(isNegative, mantissa, exponent);
             return double.IsInfinity(value) ? ParseResult.Overflow : ParseResult.Success;
         }
+#endif
+
+        public static ParseResult DecimalTryParse(char[] chars, int start, int length, out decimal value)
+        {
+            value = 0M;
+            const decimal decimalMaxValueHi28 = 7922816251426433759354395033M;
+            const ulong decimalMaxValueHi19 = 7922816251426433759UL;
+            const ulong decimalMaxValueLo9 = 354395033UL;
+            const char decimalMaxValueLo1 = '5';
+
+            if (length == 0)
+            {
+                return ParseResult.Invalid;
+            }
+
+            bool isNegative = (chars[start] == '-');
+            if (isNegative)
+            {
+                // text just a negative sign
+                if (length == 1)
+                {
+                    return ParseResult.Invalid;
+                }
+
+                start++;
+                length--;
+            }
+
+            int i = start;
+            int end = start + length;
+            int numDecimalStart = end;
+            int numDecimalEnd = end;
+            int exponent = 0;
+            ulong hi19 = 0UL;
+            ulong lo10 = 0UL;
+            int mantissaDigits = 0;
+            int exponentFromMantissa = 0;
+            bool? roundUp = null;
+            bool? storeOnly28Digits = null;
+            for (; i < end; i++)
+            {
+                char c = chars[i];
+                switch (c)
+                {
+                    case '.':
+                        if (i == start)
+                        {
+                            return ParseResult.Invalid;
+                        }
+                        if (i + 1 == end)
+                        {
+                            return ParseResult.Invalid;
+                        }
+
+                        if (numDecimalStart != end)
+                        {
+                            // multiple decimal points
+                            return ParseResult.Invalid;
+                        }
+
+                        numDecimalStart = i + 1;
+                        break;
+                    case 'e':
+                    case 'E':
+                        if (i == start)
+                        {
+                            return ParseResult.Invalid;
+                        }
+                        if (i == numDecimalStart)
+                        {
+                            // E follows decimal point		
+                            return ParseResult.Invalid;
+                        }
+                        i++;
+                        if (i == end)
+                        {
+                            return ParseResult.Invalid;
+                        }
+
+                        if (numDecimalStart < end)
+                        {
+                            numDecimalEnd = i - 1;
+                        }
+
+                        c = chars[i];
+                        bool exponentNegative = false;
+                        switch (c)
+                        {
+                            case '-':
+                                exponentNegative = true;
+                                i++;
+                                break;
+                            case '+':
+                                i++;
+                                break;
+                        }
+
+                        // parse 3 digit 
+                        for (; i < end; i++)
+                        {
+                            c = chars[i];
+                            if (c < '0' || c > '9')
+                            {
+                                return ParseResult.Invalid;
+                            }
+
+                            int newExponent = (10 * exponent) + (c - '0');
+                            // stops updating exponent when overflowing
+                            if (exponent < newExponent)
+                            {
+                                exponent = newExponent;
+                            }
+                        }
+
+                        if (exponentNegative)
+                        {
+                            exponent = -exponent;
+                        }
+                        break;
+                    default:
+                        if (c < '0' || c > '9')
+                        {
+                            return ParseResult.Invalid;
+                        }
+
+                        if (i == start && c == '0')
+                        {
+                            i++;
+                            if (i != end)
+                            {
+                                c = chars[i];
+                                if (c == '.')
+                                {
+                                    goto case '.';
+                                }
+                                if (c == 'e' || c == 'E')
+                                {
+                                    goto case 'E';
+                                }
+
+                                return ParseResult.Invalid;
+                            }
+                        }
+
+                        if (mantissaDigits < 29 && (mantissaDigits != 28 || !(storeOnly28Digits ?? (storeOnly28Digits = (hi19 > decimalMaxValueHi19 || (hi19 == decimalMaxValueHi19 && (lo10 > decimalMaxValueLo9 || (lo10 == decimalMaxValueLo9 && c > decimalMaxValueLo1))))).GetValueOrDefault())))
+                        {
+                            if (mantissaDigits < 19)
+                            {
+                                hi19 = (hi19 * 10UL) + (ulong)(c - '0');
+                            }
+                            else
+                            {
+                                lo10 = (lo10 * 10UL) + (ulong)(c - '0');
+                            }
+                            ++mantissaDigits;
+                        }
+                        else
+                        {
+                            if (!roundUp.HasValue)
+                            {
+                                roundUp = c >= '5';
+                            }
+                            ++exponentFromMantissa;
+                        }
+                        break;
+                }
+            }
+
+            exponent += exponentFromMantissa;
+
+            // correct the decimal point
+            exponent -= (numDecimalEnd - numDecimalStart);
+
+            if (mantissaDigits <= 19)
+            {
+                value = hi19;
+            }
+            else
+            {
+                value = (hi19 / new decimal(1, 0, 0, false, (byte)(mantissaDigits - 19))) + lo10;
+            }
+
+            if (exponent > 0)
+            {
+                mantissaDigits += exponent;
+                if (mantissaDigits > 29)
+                {
+                    return ParseResult.Overflow;
+                }
+                if (mantissaDigits == 29)
+                {
+                    if (exponent > 1)
+                    {
+                        value /= new decimal(1, 0, 0, false, (byte)(exponent - 1));
+                        if (value > decimalMaxValueHi28)
+                        {
+                            return ParseResult.Overflow;
+                        }
+                    }
+                    value *= 10M;
+                }
+                else
+                {
+                    value /= new decimal(1, 0, 0, false, (byte)exponent);
+                }
+            }
+            else
+            {
+                if (roundUp == true && exponent >= -28)
+                {
+                    ++value;
+                }
+                if (exponent < 0)
+                {
+                    if (mantissaDigits + exponent + 28 <= 0)
+                    {
+                        value = isNegative ? -0M : 0M;
+                        return ParseResult.Success;
+                    }
+                    if (exponent >= -28)
+                    {
+                        value *= new decimal(1, 0, 0, false, (byte)(-exponent));
+                    }
+                    else
+                    {
+                        value /= 1e28M;
+                        value *= new decimal(1, 0, 0, false, (byte)(-exponent - 28));
+                    }
+                }
+            }
+
+            if (isNegative)
+            {
+                value = -value;
+            }
+
+            return ParseResult.Success;
+        }
 
         public static bool TryConvertGuid(string s, out Guid g)
         {
             // GUID has to have format 00000000-0000-0000-0000-000000000000
-#if NET20 || NET35
+#if !HAVE_GUID_TRY_PARSE
             if (s == null)
             {
                 throw new ArgumentNullException("s");
@@ -1381,34 +1560,37 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 #endif
         }
 
-        public static int HexTextToInt(char[] text, int start, int end)
+        public static bool TryHexTextToInt(char[] text, int start, int end, out int value)
         {
-            int value = 0;
+            value = 0;
+
             for (int i = start; i < end; i++)
             {
-                value += HexCharToInt(text[i]) << ((end - 1 - i) * 4);
-            }
-            return value;
-        }
+                char ch = text[i];
+                int chValue;
 
-        private static int HexCharToInt(char ch)
-        {
-            if (ch <= 57 && ch >= 48)
-            {
-                return ch - 48;
+                if (ch <= 57 && ch >= 48)
+                {
+                    chValue = ch - 48;
+                }
+                else if (ch <= 70 && ch >= 65)
+                {
+                    chValue = ch - 55;
+                }
+                else if (ch <= 102 && ch >= 97)
+                {
+                    chValue = ch - 87;
+                }
+                else
+                {
+                    value = 0;
+                    return false;
+                }
+
+                value += chValue << ((end - 1 - i) * 4);
             }
 
-            if (ch <= 70 && ch >= 65)
-            {
-                return ch - 55;
-            }
-
-            if (ch <= 102 && ch >= 97)
-            {
-                return ch - 87;
-            }
-
-            throw new FormatException("Invalid hex character: " + ch);
+            return true;
         }
     }
 }

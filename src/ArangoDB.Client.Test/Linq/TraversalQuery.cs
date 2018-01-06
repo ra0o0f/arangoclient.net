@@ -30,7 +30,7 @@ for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path`
 in 1..5 outbound @P1 graph ""SocialGraph""
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
         }
 
         [Fact]
@@ -212,7 +212,7 @@ for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path`
 in 1..5 outbound @P1 `Friend`, `Flight`
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
         }
 
         [Fact]
@@ -234,7 +234,7 @@ for `graph_0_Vertex`, `graph_0_Edge`, `graph_0_Path`
 in 1..5 outbound @P1 inbound `Friend`, `Flight`
 return { `vertex` : `graph_0_Vertex`, `edge` : `graph_0_Edge`, `path` : `graph_0_Path` }".RemoveSpaces());
 
-            Assert.Equal(query.BindVars[0].Value, "Person/1234");
+            Assert.Equal("Person/1234", query.BindVars[0].Value);
         }
     }
 }
