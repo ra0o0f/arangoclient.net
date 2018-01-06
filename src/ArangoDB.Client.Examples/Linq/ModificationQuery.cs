@@ -55,7 +55,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             db.Query().Update(_ => new { Age = 25 }, _ => eve.Key).In<Person>().Execute();
 
-            Assert.Equal(db.Document<Person>(eve.Key).Age, 25);
+            Assert.Equal(25, db.Document<Person>(eve.Key).Age);
         }
 
         [Fact]
@@ -69,8 +69,8 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select((n, o) => new { o, n })
                 .First();
 
-            Assert.Equal(result.n.Age, 25);
-            Assert.Equal(result.o.Age, 24);
+            Assert.Equal(25, result.n.Age);
+            Assert.Equal(24, result.o.Age);
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             db.Query().Replace(_ => new Person { Age = 25 }, _ => eve.Key).In<Person>().Execute();
 
-            Assert.Equal(db.Document<Person>(eve.Key).Age, 25);
+            Assert.Equal(25, db.Document<Person>(eve.Key).Age);
         }
 
         [Fact]
@@ -140,8 +140,8 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select((n, o) => new { o, n })
                 .First();
 
-            Assert.Equal(result.n.Age, 25);
-            Assert.Equal(result.o.Age, 24);
+            Assert.Equal(25, result.n.Age);
+            Assert.Equal(24, result.o.Age);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             db.Query().Remove(_ => alice.Key).In<Person>().Execute();
 
-            Assert.Equal(db.Query<Person>().Count(), 4);
+            Assert.Equal(4, db.Query<Person>().Count());
             Assert.Null(db.Query<Person>().FirstOrDefault(p => p.Key == alice.Key));
         }
 
@@ -208,7 +208,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             var result = db.Query().Remove(_ => alice.Key).In<Person>().Select((n, o) => o.Age).ToList();
 
-            Assert.Equal(db.Query<Person>().Count(), 4);
+            Assert.Equal(4, db.Query<Person>().Count());
             Assert.Equal(result[0], alice.Age);
         }
 
@@ -219,7 +219,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             db.Query<Person>().Remove().Execute();
 
-            Assert.Equal(db.Query<Person>().Count(), 0);
+            Assert.Equal(0, db.Query<Person>().Count());
         }
 
         [Fact]
@@ -232,13 +232,13 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select((n, o) => o.Key)
                 .ToList();
 
-            Assert.Equal(result.Count, 5);
+            Assert.Equal(5, result.Count);
             Assert.True(result.All(k => string.IsNullOrEmpty(k) == false));
-            Assert.Equal(result.Except(new string[]
+            Assert.Empty(result.Except(new string[]
             {
                 alice.Key, bob.Key, charlie.Key, dave.Key, eve.Key
-            }).Count(), 0);
-            Assert.Equal(db.Query<Person>().Count(), 0);
+            }));
+            Assert.Equal(0, db.Query<Person>().Count());
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Remove(x => x.Key)
                 .Execute();
 
-            Assert.Equal(db.Query<Person>().Count(), 4);
+            Assert.Equal(4, db.Query<Person>().Count());
             Assert.Null(db.Query<Person>().FirstOrDefault(x => x.Key == bob.Key));
         }
 
@@ -266,7 +266,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select((n, o) => o.Age)
                 .First();
 
-            Assert.Equal(db.Query<Person>().Count(), 4);
+            Assert.Equal(4, db.Query<Person>().Count());
             Assert.Equal(age, bob.Age);
         }
 
@@ -280,7 +280,7 @@ namespace ArangoDB.Client.Examples.Linq
 
             db.Query().Insert(_ => person).In<Person>().Execute();
 
-            Assert.Equal(db.Query<Person>().Count(), 1);
+            Assert.Equal(1, db.Query<Person>().Count());
             Assert.NotNull(db.Query<Person>().FirstOrDefault(p => p.Age == person.Age));
         }
 
@@ -330,17 +330,17 @@ namespace ArangoDB.Client.Examples.Linq
             // execute query for the first time
             var firstResult = query.Select((n, o) => n).ToList();
 
-            Assert.Equal(firstResult.Count, 1);
-            Assert.Equal(firstResult[0].Tags.Count, 1);
-            Assert.Equal(firstResult[0].Tags[0], "development");
+            Assert.Single(firstResult);
+            Assert.Equal(1, firstResult[0].Tags.Count);
+            Assert.Equal("development", firstResult[0].Tags[0]);
 
             // execute query for the second time
             var secondResult = query.Select((n, o) => n).ToList();
 
-            Assert.Equal(secondResult.Count, 1);
-            Assert.Equal(secondResult[0].Tags.Count, 2);
-            Assert.Equal(secondResult[0].Tags[0], "development");
-            Assert.Equal(secondResult[0].Tags[1], "production");
+            Assert.Single(secondResult);
+            Assert.Equal(2, secondResult[0].Tags.Count);
+            Assert.Equal("development", secondResult[0].Tags[0]);
+            Assert.Equal("production", secondResult[0].Tags[1]);
         }
 
         [Fact]
@@ -354,9 +354,9 @@ namespace ArangoDB.Client.Examples.Linq
                 h => new Host { },
                 (h, old) => new Host { Tags = AQL.Append(h.Tags, old.Tags) }).Select((n, o) => n).ToList();
 
-            Assert.Equal(result.Count, 1);
-            Assert.Equal(result[0].Tags.Count, 6);
-            Assert.Equal(result[0].Tags.Count(t => t == "2"), 2);
+            Assert.Single(result);
+            Assert.Equal(6, result[0].Tags.Count);
+            Assert.Equal(2, result[0].Tags.Count(t => t == "2"));
         }
     }
 }

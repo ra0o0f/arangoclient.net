@@ -17,13 +17,13 @@ namespace ArangoDB.Client.Examples.SetupClient
             // you can setup a database-setting with just url and database-name
             using (IArangoDatabase db = new ArangoDatabase(url: "http://localhost:8529", database: "ExampleDB"))
             {
-                Assert.Equal(db.SharedSetting.Database, "ExampleDB");
+                Assert.Equal("ExampleDB", db.SharedSetting.Database);
 
-                Assert.Equal(db.SharedSetting.Url, "http://localhost:8529/");
+                Assert.Equal("http://localhost:8529/", db.SharedSetting.Url);
             }
         }
 
-        public void SharedSetting()
+        private void SharedSetting()
         {
             // you can setup a database-setting with DatabaseSharedSetting object and use it
             // everytime you create a ArangoDatabase object

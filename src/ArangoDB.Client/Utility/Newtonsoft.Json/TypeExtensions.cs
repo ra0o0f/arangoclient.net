@@ -26,7 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
@@ -98,7 +98,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static MethodInfo Method(this Delegate d)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return d.Method;
 #else
             return d.GetMethodInfo();
@@ -128,14 +128,14 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             }
             else
             {
-                return MemberTypes.Other;
+                return default(MemberTypes);
             }
 #endif
         }
 
         public static bool ContainsGenericParameters(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.ContainsGenericParameters;
 #else
             return type.GetTypeInfo().ContainsGenericParameters;
@@ -144,7 +144,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsInterface(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsInterface;
 #else
             return type.GetTypeInfo().IsInterface;
@@ -153,7 +153,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsGenericType(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsGenericType;
 #else
             return type.GetTypeInfo().IsGenericType;
@@ -162,7 +162,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsGenericTypeDefinition(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsGenericTypeDefinition;
 #else
             return type.GetTypeInfo().IsGenericTypeDefinition;
@@ -171,7 +171,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static Type BaseType(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.BaseType;
 #else
             return type.GetTypeInfo().BaseType;
@@ -180,7 +180,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static Assembly Assembly(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.Assembly;
 #else
             return type.GetTypeInfo().Assembly;
@@ -189,7 +189,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsEnum(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsEnum;
 #else
             return type.GetTypeInfo().IsEnum;
@@ -198,7 +198,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsClass(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsClass;
 #else
             return type.GetTypeInfo().IsClass;
@@ -207,7 +207,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsSealed(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsSealed;
 #else
             return type.GetTypeInfo().IsSealed;
@@ -248,7 +248,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 #else
             return type.GetMember(name, bindingFlags).Where(m =>
             {
-                if (m.MemberType() != memberType)
+                if ((m.MemberType() | memberType) != memberType)
                 {
                     return false;
                 }
@@ -273,7 +273,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         }
 
 #if !DOTNET
-
+        
         public static MethodInfo GetMethod(this Type type, string name)
         {
             return type.GetMethod(name, DefaultFlags);
@@ -308,7 +308,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             return type.GetTypeInfo().DeclaredConstructors.Where(c => TestAccessibility(c, bindingFlags));
         }
-
+        
         public static ConstructorInfo GetConstructor(this Type type, IList<Type> parameterTypes)
         {
             return type.GetConstructor(DefaultFlags, null, parameterTypes, null);
@@ -318,7 +318,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             return MethodBinder.SelectMethod(type.GetConstructors(bindingFlags), parameterTypes);
         }
-
+        
         public static MemberInfo[] GetMember(this Type type, string member)
         {
             return type.GetMemberInternal(member, null, DefaultFlags);
@@ -334,18 +334,24 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return type.GetTypeInfo().GetMembersRecursive().Where(m =>
                 m.Name == member &&
                 // test type before accessibility - accessibility doesn't support some types
-                (memberType == null || m.MemberType() == memberType) &&
+                (memberType == null || (m.MemberType() | memberType) == memberType) &&
                 TestAccessibility(m, bindingFlags)).ToArray();
         }
 
-        public static MemberInfo GetField(this Type type, string member)
+        public static FieldInfo GetField(this Type type, string member)
         {
             return type.GetField(member, DefaultFlags);
         }
 
-        public static MemberInfo GetField(this Type type, string member, BindingFlags bindingFlags)
+        public static FieldInfo GetField(this Type type, string member, BindingFlags bindingFlags)
         {
-            return type.GetTypeInfo().GetDeclaredField(member);
+            FieldInfo field = type.GetTypeInfo().GetDeclaredField(member);
+            if (field == null || !TestAccessibility(field, bindingFlags))
+            {
+                return null;
+            }
+            
+            return field;
         }
 
         public static IEnumerable<PropertyInfo> GetProperties(this Type type, BindingFlags bindingFlags)
@@ -426,7 +432,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static PropertyInfo GetProperty(this Type type, string name, BindingFlags bindingFlags)
         {
-            return type.GetTypeInfo().GetDeclaredProperty(name);
+            PropertyInfo property = type.GetTypeInfo().GetDeclaredProperty(name);
+            if (property == null || !TestAccessibility(property, bindingFlags))
+            {
+                return null;
+            }
+            
+            return property;
         }
 
         public static IEnumerable<FieldInfo> GetFields(this Type type)
@@ -462,15 +474,15 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             if (member is FieldInfo)
             {
-                return TestAccessibility((FieldInfo)member, bindingFlags);
+                return TestAccessibility((FieldInfo) member, bindingFlags);
             }
             else if (member is MethodBase)
             {
-                return TestAccessibility((MethodBase)member, bindingFlags);
+                return TestAccessibility((MethodBase) member, bindingFlags);
             }
             else if (member is PropertyInfo)
             {
-                return TestAccessibility((PropertyInfo)member, bindingFlags);
+                return TestAccessibility((PropertyInfo) member, bindingFlags);
             }
 
             throw new Exception("Unexpected member type.");
@@ -517,7 +529,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsAbstract(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsAbstract;
 #else
             return type.GetTypeInfo().IsAbstract;
@@ -526,7 +538,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsVisible(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsVisible;
 #else
             return type.GetTypeInfo().IsVisible;
@@ -535,23 +547,23 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool IsValueType(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsValueType;
 #else
             return type.GetTypeInfo().IsValueType;
 #endif
         }
-
+        
         public static bool IsPrimitive(this Type type)
         {
-#if !(DOTNET || PORTABLE)
+#if HAVE_FULL_REFLECTION
             return type.IsPrimitive;
 #else
             return type.GetTypeInfo().IsPrimitive;
 #endif
         }
 
-        public static bool AssignableToTypeName(this Type type, string fullTypeName, out Type match)
+        public static bool AssignableToTypeName(this Type type, string fullTypeName, bool searchInterfaces, out Type match)
         {
             Type current = type;
 
@@ -566,12 +578,15 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 current = current.BaseType();
             }
 
-            foreach (Type i in type.GetInterfaces())
+            if (searchInterfaces)
             {
-                if (string.Equals(i.Name, fullTypeName, StringComparison.Ordinal))
+                foreach (Type i in type.GetInterfaces())
                 {
-                    match = type;
-                    return true;
+                    if (string.Equals(i.Name, fullTypeName, StringComparison.Ordinal))
+                    {
+                        match = type;
+                        return true;
+                    }
                 }
             }
 
@@ -579,10 +594,10 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return false;
         }
 
-        public static bool AssignableToTypeName(this Type type, string fullTypeName)
+        public static bool AssignableToTypeName(this Type type, string fullTypeName, bool searchInterfaces)
         {
             Type match;
-            return type.AssignableToTypeName(fullTypeName, out match);
+            return type.AssignableToTypeName(fullTypeName, searchInterfaces, out match);
         }
 
         public static bool ImplementInterface(this Type type, Type interfaceType)

@@ -22,9 +22,9 @@ namespace ArangoDB.Client.Test.Linq
 
             var queryData = query.GetQueryData();
 
-            Assert.Equal(queryData.Query.RemoveSpaces(), @"return @P1");
+            Assert.Equal(@"return @P1", queryData.Query.RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars[0].Value, "this will be returned");
+            Assert.Equal("this will be returned", queryData.BindVars[0].Value);
         }
 
         [Fact]
@@ -54,10 +54,10 @@ return {
 }
 ".RemoveSpaces());
 
-            Assert.Equal(queryData.BindVars.Count, 3);
-            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[0].Value), "[2011,2012,2013]");
-            Assert.Equal(JsonConvert.SerializeObject(queryData.BindVars[1].Value), "[1,2,3,4]");
-            Assert.Equal(queryData.BindVars[2].Value, "/");
+            Assert.Equal(3, queryData.BindVars.Count);
+            Assert.Equal("[2011,2012,2013]", JsonConvert.SerializeObject(queryData.BindVars[0].Value));
+            Assert.Equal("[1,2,3,4]", JsonConvert.SerializeObject(queryData.BindVars[1].Value));
+            Assert.Equal("/", queryData.BindVars[2].Value);
         }
 
         [Fact]
@@ -84,8 +84,8 @@ return `NEW`
 
             ObjectUtility.AssertSerialize(queryData.BindVars[0].Value, new { ip = "192.168.173.94" }, db);
             ObjectUtility.AssertSerialize(queryData.BindVars[1].Value, new { ip = "192.168.173.94", name = "chorweiler", tags = new string[] { "development" } }, db);
-            Assert.Equal(queryData.BindVars[2].Value, "development");
-            Assert.Equal(queryData.BindVars[3].Value, true);
+            Assert.Equal("development", queryData.BindVars[2].Value);
+            Assert.True((bool)queryData.BindVars[3].Value);
         }
     }
 }

@@ -13,49 +13,47 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Http
 {
-#if !NETSTANDARD1_1
     // from http://stackoverflow.com/questions/25335897/using-json-net-to-serialize-object-into-httpclients-response-stream
-    public class JsonContent : HttpContent
-    {
-        IArangoDatabase db;
+    //public class JsonContent : HttpContent
+    //{
+    //    IArangoDatabase db;
 
-        object data { get; set; }
-        public JsonContent(IArangoDatabase db, object data)
-        {
-            this.db = db;
-            this.data = data;
-            this.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        }
+    //    object data { get; set; }
+    //    public JsonContent(IArangoDatabase db, object data)
+    //    {
+    //        this.db = db;
+    //        this.data = data;
+    //        this.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+    //    }
 
-        protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
-        {
-            var jObject = data as JObject;
-            if (jObject != null)
-            {
-                var streamWriter = new StreamWriter(stream);
-                var jsonWriter = new JsonTextWriter(streamWriter);
-                jObject.WriteTo(jsonWriter);
-                await streamWriter.FlushAsync().ConfigureAwait(false);
-            }
-            else
-            {
-                var docSerializer = new DocumentSerializer(db);
-                var streamWriter = new StreamWriter(stream);
-                var jsonWriter = new JsonTextWriter(streamWriter);
-                var serializer = docSerializer.CreateJsonSerializer();
-                serializer.Serialize(jsonWriter, data);
+    //    protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
+    //    {
+    //        var jObject = data as JObject;
+    //        if (jObject != null)
+    //        {
+    //            var streamWriter = new StreamWriter(stream);
+    //            var jsonWriter = new JsonTextWriter(streamWriter);
+    //            jObject.WriteTo(jsonWriter);
+    //            await streamWriter.FlushAsync().ConfigureAwait(false);
+    //        }
+    //        else
+    //        {
+    //            var docSerializer = new DocumentSerializer(db);
+    //            var streamWriter = new StreamWriter(stream);
+    //            var jsonWriter = new JsonTextWriter(streamWriter);
+    //            var serializer = docSerializer.CreateJsonSerializer();
+    //            serializer.Serialize(jsonWriter, data);
 
-                await streamWriter.FlushAsync().ConfigureAwait(false);
-            }
-        }
+    //            await streamWriter.FlushAsync().ConfigureAwait(false);
+    //        }
+    //    }
 
-        protected override bool TryComputeLength(out long length)
-        {
-            length = -1;
-            return false;
-        }
-    }
-#else
+    //    protected override bool TryComputeLength(out long length)
+    //    {
+    //        length = -1;
+    //        return false;
+    //    }
+    //}
     public class JsonContent : HttpContent
     {
         private readonly MemoryStream _Stream = new MemoryStream();
@@ -92,5 +90,4 @@ namespace ArangoDB.Client.Http
             return true;
         }
     }
-#endif
 }

@@ -27,7 +27,7 @@ using System;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
+namespace ArangoDB.Client.Utility.Newtonsoft.Json
 {
     /// <summary>
     /// Instructs the <see cref="JsonSerializer"/> how to serialize the object.
@@ -60,13 +60,15 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         public Type ItemConverterType { get; set; }
 
         /// <summary>
-        /// The parameter list to use when constructing the <see cref="JsonConverter"/> described by ItemConverterType.
-        /// If null, the default constructor is used.
-        /// When non-null, there must be a constructor defined in the <see cref="JsonConverter"/> that exactly matches the number,
+        /// The parameter list to use when constructing the <see cref="JsonConverter"/> described by <see cref="ItemConverterType"/>.
+        /// If <c>null</c>, the default constructor is used.
+        /// When non-<c>null</c>, there must be a constructor defined in the <see cref="JsonConverter"/> that exactly matches the number,
         /// order, and type of these parameters.
         /// </summary>
         /// <example>
+        /// <code>
         /// [JsonContainer(ItemConverterType = typeof(MyContainerConverter), ItemConverterParameters = new object[] { 123, "Four" })]
+        /// </code>
         /// </example>
         public object[] ItemConverterParameters { get; set; }
 
@@ -76,7 +78,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         /// <value>The <see cref="Type"/> of the <see cref="NamingStrategy"/>.</value>
         public Type NamingStrategyType
         {
-            get { return _namingStrategyType; }
+            get => _namingStrategyType;
             set
             {
                 _namingStrategyType = value;
@@ -85,17 +87,19 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         }
 
         /// <summary>
-        /// The parameter list to use when constructing the <see cref="NamingStrategy"/> described by NamingStrategyType.  
-        /// If null, the default constructor is used.
-        /// When non-null, there must be a constructor defined in the <see cref="NamingStrategy"/> that exactly matches the number,
+        /// The parameter list to use when constructing the <see cref="NamingStrategy"/> described by <see cref="NamingStrategyType"/>.
+        /// If <c>null</c>, the default constructor is used.
+        /// When non-<c>null</c>, there must be a constructor defined in the <see cref="NamingStrategy"/> that exactly matches the number,
         /// order, and type of these parameters.
         /// </summary>
         /// <example>
+        /// <code>
         /// [JsonContainer(NamingStrategyType = typeof(MyNamingStrategy), NamingStrategyParameters = new object[] { 123, "Four" })]
+        /// </code>
         /// </example>
         public object[] NamingStrategyParameters
         {
-            get { return _namingStrategyParameters; }
+            get => _namingStrategyParameters;
             set
             {
                 _namingStrategyParameters = value;
@@ -122,8 +126,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         /// </value>
         public bool IsReference
         {
-            get { return _isReference ?? default(bool); }
-            set { _isReference = value; }
+            get => _isReference ?? default(bool);
+            set => _isReference = value;
         }
 
         /// <summary>
@@ -134,8 +138,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         /// </value>
         public bool ItemIsReference
         {
-            get { return _itemIsReference ?? default(bool); }
-            set { _itemIsReference = value; }
+            get => _itemIsReference ?? default(bool);
+            set => _itemIsReference = value;
         }
 
         /// <summary>
@@ -144,8 +148,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         /// <value>The reference loop handling.</value>
         public ReferenceLoopHandling ItemReferenceLoopHandling
         {
-            get { return _itemReferenceLoopHandling ?? default(ReferenceLoopHandling); }
-            set { _itemReferenceLoopHandling = value; }
+            get => _itemReferenceLoopHandling ?? default(ReferenceLoopHandling);
+            set => _itemReferenceLoopHandling = value;
         }
 
         /// <summary>
@@ -154,8 +158,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json.Ambiguity
         /// <value>The type name handling.</value>
         public TypeNameHandling ItemTypeNameHandling
         {
-            get { return _itemTypeNameHandling ?? default(TypeNameHandling); }
-            set { _itemTypeNameHandling = value; }
+            get => _itemTypeNameHandling ?? default(TypeNameHandling);
+            set => _itemTypeNameHandling = value;
         }
 
         /// <summary>

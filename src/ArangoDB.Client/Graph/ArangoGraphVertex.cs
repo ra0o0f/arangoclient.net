@@ -176,13 +176,13 @@ namespace ArangoDB.Client.Graph
         /// <returns>T</returns>
         public async Task<T> GetAsync<T>(string id, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
+            var documentHandle = Utils.ResolveId(id, collection);
 
             var command = new HttpCommand(this.db)
             {
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Get,
-                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{documentHandle}",
                 EnableChangeTracking = db.Setting.DisableChangeTracking == false,
                 Headers = new Dictionary<string, string>()
             };
@@ -227,7 +227,7 @@ namespace ArangoDB.Client.Graph
         /// <returns></returns>
         public async Task<IDocumentIdentifierResult> UpdateByIdAsync(string id, object document, bool? waitForSync = null, bool? keepNull = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
+            var documentHandle = Utils.ResolveId(id, collection);
 
             keepNull = keepNull ?? db.Setting.Document.KeepNullAttributesOnUpdate;
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
@@ -237,7 +237,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = new HttpMethod("PATCH"),
                 Query = new Dictionary<string, string>(),
-                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{documentHandle}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -327,7 +327,7 @@ namespace ArangoDB.Client.Graph
         public async Task<IDocumentIdentifierResult> ReplaceByIdAsync(string id, object document,
             bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
+            var documentHandle = Utils.ResolveId(id, collection);
 
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
@@ -336,7 +336,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Put,
                 Query = new Dictionary<string, string>(),
-                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{documentHandle}",
                 Headers = new Dictionary<string, string>()
             };
 
@@ -418,7 +418,7 @@ namespace ArangoDB.Client.Graph
         public async Task<bool> RemoveByIdAsync(string id,
             bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
-            var documentHandle = id.IndexOf("/") == -1 ? $"{collection}/{id}" : id;
+            var documentHandle = Utils.ResolveId(id, collection);
 
             waitForSync = waitForSync ?? db.Setting.WaitForSync;
 
@@ -427,7 +427,7 @@ namespace ArangoDB.Client.Graph
                 Api = CommandApi.Graph,
                 Method = HttpMethod.Delete,
                 Query = new Dictionary<string, string>(),
-                Command = $"{StringUtils.Encode(graphName)}/vertex/{StringUtils.Encode(documentHandle)}",
+                Command = $"{StringUtils.Encode(graphName)}/vertex/{documentHandle}",
                 Headers = new Dictionary<string, string>()
             };
 

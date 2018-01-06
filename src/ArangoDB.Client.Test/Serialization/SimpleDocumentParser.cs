@@ -38,9 +38,9 @@ namespace ArangoDB.Client.Test.Serialization
                 JObject jObject = null;
                 var person = documentParser.ParseSingleResult<Person>(reader, out jObject, true);
 
-                Assert.Equal(person.Age, 27);
-                Assert.Equal(person.Fullname, "raoof hojat");
-                Assert.Equal(person.Height, 172);
+                Assert.Equal(27, person.Age);
+                Assert.Equal("raoof hojat", person.Fullname);
+                Assert.Equal(172, person.Height);
 
                 Assert.True(JObject.DeepEquals(jObject, JObject.Parse(JsonSample.SingleResult)));
             }
@@ -58,30 +58,30 @@ namespace ArangoDB.Client.Test.Serialization
                 BaseResult baseResult = null;
                 var personList = documentParser.ParseBatchResult<Person>(reader, out baseResult);
 
-                Assert.Equal(personList.Count, 2);
+                Assert.Equal(2, personList.Count);
 
-                Assert.Equal(personList[0].Age, 27);
-                Assert.Equal(personList[0].Fullname, "raoof hojat");
-                Assert.Equal(personList[0].Height, 172);
+                Assert.Equal(27, personList[0].Age);
+                Assert.Equal("raoof hojat", personList[0].Fullname);
+                Assert.Equal(172, personList[0].Height);
 
-                Assert.Equal(personList[1].Age, 7);
-                Assert.Equal(personList[1].Fullname, "hojat raoof");
-                Assert.Equal(personList[1].Height, 721);
+                Assert.Equal(7, personList[1].Age);
+                Assert.Equal("hojat raoof", personList[1].Fullname);
+                Assert.Equal(721, personList[1].Height);
 
                 var info1 = db.FindDocumentInfo(personList[0]);
                 Assert.NotNull(info1.Document);
-                Assert.Equal(info1.Id, "Person/KEY1");
-                Assert.Equal(info1.Key, "KEY1");
-                Assert.Equal(info1.Rev, "REV1");
+                Assert.Equal("Person/KEY1", info1.Id);
+                Assert.Equal("KEY1", info1.Key);
+                Assert.Equal("REV1", info1.Rev);
 
                 var info2 = db.FindDocumentInfo(personList[1]);
                 Assert.NotNull(info2.Document);
-                Assert.Equal(info2.Id, "Person/KEY2");
-                Assert.Equal(info2.Key, "KEY2");
-                Assert.Equal(info2.Rev, "REV2");
+                Assert.Equal("Person/KEY2", info2.Id);
+                Assert.Equal("KEY2", info2.Key);
+                Assert.Equal("REV2", info2.Rev);
 
-                Assert.Equal(baseResult.Code, 200);
-                Assert.Equal(baseResult.Error, false);
+                Assert.Equal(200, baseResult.Code);
+                Assert.False(baseResult.Error);
             }
         }
 
@@ -95,16 +95,16 @@ namespace ArangoDB.Client.Test.Serialization
                 BaseResult baseResult = null;
                 var personList = documentParser.ParseBatchResult<Person>(reader, out baseResult);
 
-                Assert.Equal(personList.Count, 1);
+                Assert.Single(personList);
 
                 var person = personList[0];
 
-                Assert.Equal(person.Age, 27);
-                Assert.Equal(person.Fullname, "raoof hojat");
-                Assert.Equal(person.Height, 172);
+                Assert.Equal(27, person.Age);
+                Assert.Equal("raoof hojat", person.Fullname);
+                Assert.Equal(172, person.Height);
 
-                Assert.Equal(baseResult.Code, 200);
-                Assert.Equal(baseResult.Error, false);
+                Assert.Equal(200, baseResult.Code);
+                Assert.False(baseResult.Error);
             }
         }
 
@@ -120,7 +120,7 @@ namespace ArangoDB.Client.Test.Serialization
                 var result = documentParser.ParseBatchResult<Person>(reader, out baseResult);
 
                 Assert.NotNull(result);
-                Assert.Equal(result.Count, 0);
+                Assert.Empty(result);
 
                 // old behavior
                 //Assert.Throws<ArangoServerException>(() => documentParser.ParseBatchResult<Person>(reader, out baseResult));
@@ -139,12 +139,12 @@ namespace ArangoDB.Client.Test.Serialization
                 BaseResult baseResult = null;
                 var list = documentParser.ParseBatchResult<Person>(reader, out baseResult);
 
-                Assert.Equal(list.Count, 0);
+                Assert.Empty(list);
 
-                Assert.Equal(baseResult.Error, true);
-                Assert.Equal(baseResult.Code, 400);
-                Assert.Equal(baseResult.ErrorMessage, "ERROR");
-                Assert.Equal(baseResult.ErrorNum, 1202);
+                Assert.True(baseResult.Error);
+                Assert.Equal(400, baseResult.Code);
+                Assert.Equal("ERROR", baseResult.ErrorMessage);
+                Assert.Equal(1202, baseResult.ErrorNum);
             }
         }
 
@@ -158,9 +158,9 @@ namespace ArangoDB.Client.Test.Serialization
                 var person = documentParser.ParseSingleResult<Person>(reader, out jObject, true);
 
                 // person wont be null here because we have no base result yet 
-                Assert.Equal(person.Age, 0);
+                Assert.Equal(0, person.Age);
                 Assert.Null(person.Fullname);
-                Assert.Equal(person.Height, 0);
+                Assert.Equal(0, person.Height);
             }
         }
     }

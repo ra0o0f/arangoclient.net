@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -25,17 +25,15 @@
 
 using System;
 using System.Collections.Generic;
-#if !(PORTABLE || PORTABLE40 || NET35 || NET20) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
 using System.Numerics;
 #endif
 using System.Reflection;
 using System.Collections;
 using System.Globalization;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
 using System.Text;
 using Newtonsoft.Json;
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
@@ -44,18 +42,18 @@ using Newtonsoft.Json.Serialization;
 
 namespace ArangoDB.Client.Utility.Newtonsoft.Json
 {
-#if (DOTNET || PORTABLE || PORTABLE40)
+#if (DOTNET || PORTABLE || PORTABLE40) && !NETSTANDARD2_0
+    [Flags]
     internal enum MemberTypes
     {
-        Property = 0,
-        Field = 1,
         Event = 2,
-        Method = 3,
-        Other = 4
+        Field = 4,
+        Method = 8,
+        Property = 16
     }
 #endif
 
-#if PORTABLE
+#if PORTABLE && !NETSTANDARD2_0
     [Flags]
     internal enum BindingFlags
     {
@@ -88,10 +86,10 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         static ReflectionUtils()
         {
-#if !(PORTABLE40 || PORTABLE)
+#if HAVE_EMPTY_TYPES
             EmptyTypes = Type.EmptyTypes;
 #else
-            EmptyTypes = new Type[0];
+            EmptyTypes = CollectionUtils.ArrayEmpty<Type>();
 #endif
         }
 
@@ -99,13 +97,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             ValidationUtils.ArgumentNotNull(propertyInfo, nameof(propertyInfo));
 
-            MethodInfo m = propertyInfo.GetGetMethod();
+            MethodInfo m = propertyInfo.GetGetMethod(true);
             if (m != null && m.IsVirtual)
             {
                 return true;
             }
 
-            m = propertyInfo.GetSetMethod();
+            m = propertyInfo.GetSetMethod(true);
             if (m != null && m.IsVirtual)
             {
                 return true;
@@ -118,19 +116,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             ValidationUtils.ArgumentNotNull(propertyInfo, nameof(propertyInfo));
 
-            MethodInfo m = propertyInfo.GetGetMethod();
+            MethodInfo m = propertyInfo.GetGetMethod(true);
             if (m != null)
             {
                 return m.GetBaseDefinition();
             }
 
-            m = propertyInfo.GetSetMethod();
-            if (m != null)
-            {
-                return m.GetBaseDefinition();
-            }
-
-            return null;
+            return propertyInfo.GetSetMethod(true)?.GetBaseDefinition();
         }
 
         public static bool IsPublic(PropertyInfo property)
@@ -149,36 +141,40 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static Type GetObjectType(object v)
         {
-            return (v != null) ? v.GetType() : null;
+            return v?.GetType();
         }
 
-        public static string GetTypeName(Type t, FormatterAssemblyStyle assemblyFormat, SerializationBinder binder)
+        public static string GetTypeName(Type t, TypeNameAssemblyFormatHandling assemblyFormat, ISerializationBinder binder)
         {
-            string fullyQualifiedTypeName;
-#if !(NET20 || NET35)
-            if (binder != null)
-            {
-                string assemblyName, typeName;
-                binder.BindToName(t, out assemblyName, out typeName);
-                fullyQualifiedTypeName = typeName + (assemblyName == null ? "" : ", " + assemblyName);
-            }
-            else
-            {
-                fullyQualifiedTypeName = t.AssemblyQualifiedName;
-            }
-#else
-            fullyQualifiedTypeName = t.AssemblyQualifiedName;
-#endif
+            string fullyQualifiedTypeName = GetFullyQualifiedTypeName(t, binder);
 
             switch (assemblyFormat)
             {
-                case FormatterAssemblyStyle.Simple:
+                case TypeNameAssemblyFormatHandling.Simple:
                     return RemoveAssemblyDetails(fullyQualifiedTypeName);
-                case FormatterAssemblyStyle.Full:
+                case TypeNameAssemblyFormatHandling.Full:
                     return fullyQualifiedTypeName;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private static string GetFullyQualifiedTypeName(Type t, ISerializationBinder binder)
+        {
+            if (binder != null)
+            {
+                binder.BindToName(t, out string assemblyName, out string typeName);
+#if (NET20 || NET35)
+                // for older SerializationBinder implementations that didn't have BindToName
+                if (assemblyName == null & typeName == null)
+                {
+                    return t.AssemblyQualifiedName;
+                }
+#endif
+                return typeName + (assemblyName == null ? "" : ", " + assemblyName);
+            }
+
+            return t.AssemblyQualifiedName;
         }
 
         private static string RemoveAssemblyDetails(string fullyQualifiedTypeName)
@@ -293,8 +289,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool ImplementsGenericDefinition(Type type, Type genericInterfaceDefinition)
         {
-            Type implementingType;
-            return ImplementsGenericDefinition(type, genericInterfaceDefinition, out implementingType);
+            return ImplementsGenericDefinition(type, genericInterfaceDefinition, out _);
         }
 
         public static bool ImplementsGenericDefinition(Type type, Type genericInterfaceDefinition, out Type implementingType)
@@ -341,8 +336,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static bool InheritsGenericDefinition(Type type, Type genericClassDefinition)
         {
-            Type implementingType;
-            return InheritsGenericDefinition(type, genericClassDefinition, out implementingType);
+            return InheritsGenericDefinition(type, genericClassDefinition, out _);
         }
 
         public static bool InheritsGenericDefinition(Type type, Type genericClassDefinition, out Type implementingType)
@@ -360,24 +354,20 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         private static bool InheritsGenericDefinitionInternal(Type currentType, Type genericClassDefinition, out Type implementingType)
         {
-            if (currentType.IsGenericType())
+            do
             {
-                Type currentGenericClassDefinition = currentType.GetGenericTypeDefinition();
-
-                if (genericClassDefinition == currentGenericClassDefinition)
+                if (currentType.IsGenericType() && genericClassDefinition == currentType.GetGenericTypeDefinition())
                 {
                     implementingType = currentType;
                     return true;
                 }
-            }
 
-            if (currentType.BaseType() == null)
-            {
-                implementingType = null;
-                return false;
+                currentType = currentType.BaseType();
             }
+            while (currentType != null);
 
-            return InheritsGenericDefinitionInternal(currentType.BaseType(), genericClassDefinition, out implementingType);
+            implementingType = null;
+            return false;
         }
 
         /// <summary>
@@ -388,13 +378,12 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         public static Type GetCollectionItemType(Type type)
         {
             ValidationUtils.ArgumentNotNull(type, nameof(type));
-            Type genericListType;
 
             if (type.IsArray)
             {
                 return type.GetElementType();
             }
-            if (ImplementsGenericDefinition(type, typeof(IEnumerable<>), out genericListType))
+            if (ImplementsGenericDefinition(type, typeof(IEnumerable<>), out Type genericListType))
             {
                 if (genericListType.IsGenericTypeDefinition())
                 {
@@ -415,8 +404,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             ValidationUtils.ArgumentNotNull(dictionaryType, nameof(dictionaryType));
 
-            Type genericDictionaryType;
-            if (ImplementsGenericDefinition(dictionaryType, typeof(IDictionary<,>), out genericDictionaryType))
+            if (ImplementsGenericDefinition(dictionaryType, typeof(IDictionary<,>), out Type genericDictionaryType))
             {
                 if (genericDictionaryType.IsGenericTypeDefinition())
                 {
@@ -474,9 +462,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             ValidationUtils.ArgumentNotNull(member, nameof(member));
 
-            PropertyInfo propertyInfo = member as PropertyInfo;
-
-            if (propertyInfo != null)
+            if (member is PropertyInfo propertyInfo)
             {
                 return IsIndexedProperty(propertyInfo);
             }
@@ -525,7 +511,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                         throw new ArgumentException("MemberInfo '{0}' has index parameters".FormatWith(CultureInfo.InvariantCulture, member.Name), e);
                     }
                 default:
-                    throw new ArgumentException("MemberInfo '{0}' is not of type FieldInfo or PropertyInfo".FormatWith(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture, member.Name), nameof(member));
+                    throw new ArgumentException("MemberInfo '{0}' is not of type FieldInfo or PropertyInfo".FormatWith(CultureInfo.InvariantCulture, member.Name), nameof(member));
             }
         }
 
@@ -657,19 +643,18 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             // update: I think this is fixed in .NET 3.5 SP1 - leave this in for now...
             List<MemberInfo> distinctMembers = new List<MemberInfo>(targetMembers.Count);
 
-            foreach (var groupedMember in targetMembers.GroupBy(m => m.Name))
+            foreach (IGrouping<string, MemberInfo> groupedMember in targetMembers.GroupBy(m => m.Name))
             {
                 int count = groupedMember.Count();
-                IList<MemberInfo> members = groupedMember.ToList();
 
                 if (count == 1)
                 {
-                    distinctMembers.Add(members.First());
+                    distinctMembers.Add(groupedMember.First());
                 }
                 else
                 {
                     IList<MemberInfo> resolvedMembers = new List<MemberInfo>();
-                    foreach (MemberInfo memberInfo in members)
+                    foreach (MemberInfo memberInfo in groupedMember)
                     {
                         // this is a bit hacky
                         // if the hiding property is hiding a base property and it is virtual
@@ -737,10 +722,10 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         {
             T[] attributes = GetAttributes<T>(attributeProvider, inherit);
 
-            return (attributes != null) ? attributes.FirstOrDefault() : null;
+            return attributes?.FirstOrDefault();
         }
 
-#if !(DOTNET || PORTABLE)
+#if !(DOTNET || PORTABLE) || NETSTANDARD2_0
         public static T[] GetAttributes<T>(object attributeProvider, bool inherit) where T : Attribute
         {
             Attribute[] a = GetAttributes(attributeProvider, typeof(T), inherit);
@@ -763,11 +748,11 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             // http://hyperthink.net/blog/getcustomattributes-gotcha/
             // ICustomAttributeProvider doesn't do inheritance
 
-            if (provider is Type)
+            Type t = provider as Type;
+            if (t != null)
             {
-                Type t = (Type)provider;
-                object[] a = (attributeType != null) ? t.GetCustomAttributes(attributeType, inherit) : t.GetCustomAttributes(inherit);
-                Attribute[] attributes = a.Cast<Attribute>().ToArray();
+                object[] array = attributeType != null ? t.GetCustomAttributes(attributeType, inherit) : t.GetCustomAttributes(inherit);
+                Attribute[] attributes = array.Cast<Attribute>().ToArray();
 
 #if (NET20 || NET35)
                 // ye olde .NET GetCustomAttributes doesn't respect the inherit argument
@@ -780,29 +765,29 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 return attributes;
             }
 
-            if (provider is Assembly)
+            Assembly a = provider as Assembly;
+            if (a != null)
             {
-                Assembly a = (Assembly)provider;
                 return (attributeType != null) ? Attribute.GetCustomAttributes(a, attributeType) : Attribute.GetCustomAttributes(a);
             }
 
-            if (provider is MemberInfo)
+            MemberInfo mi = provider as MemberInfo;
+            if (mi != null)
             {
-                MemberInfo m = (MemberInfo)provider;
-                return (attributeType != null) ? Attribute.GetCustomAttributes(m, attributeType, inherit) : Attribute.GetCustomAttributes(m, inherit);
+                return (attributeType != null) ? Attribute.GetCustomAttributes(mi, attributeType, inherit) : Attribute.GetCustomAttributes(mi, inherit);
             }
 
 #if !PORTABLE40
-            if (provider is Module)
+            Module m = provider as Module;
+            if (m != null)
             {
-                Module m = (Module)provider;
                 return (attributeType != null) ? Attribute.GetCustomAttributes(m, attributeType, inherit) : Attribute.GetCustomAttributes(m, inherit);
             }
 #endif
 
-            if (provider is ParameterInfo)
+            ParameterInfo p = provider as ParameterInfo;
+            if (p != null)
             {
-                ParameterInfo p = (ParameterInfo)provider;
                 return (attributeType != null) ? Attribute.GetCustomAttributes(p, attributeType, inherit) : Attribute.GetCustomAttributes(p, inherit);
             }
 
@@ -823,36 +808,31 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public static Attribute[] GetAttributes(object provider, Type attributeType, bool inherit)
         {
-            if (provider is Type)
+            if (provider is Type t)
             {
-                Type t = (Type)provider;
                 return (attributeType != null)
                     ? t.GetTypeInfo().GetCustomAttributes(attributeType, inherit).ToArray()
                     : t.GetTypeInfo().GetCustomAttributes(inherit).ToArray();
             }
 
-            if (provider is Assembly)
+            if (provider is Assembly a)
             {
-                Assembly a = (Assembly)provider;
                 return (attributeType != null) ? a.GetCustomAttributes(attributeType).ToArray() : a.GetCustomAttributes().ToArray();
             }
 
-            if (provider is MemberInfo)
+            if (provider is MemberInfo memberInfo)
             {
-                MemberInfo m = (MemberInfo)provider;
-                return (attributeType != null) ? m.GetCustomAttributes(attributeType, inherit).ToArray() : m.GetCustomAttributes(inherit).ToArray();
+                return (attributeType != null) ? memberInfo.GetCustomAttributes(attributeType, inherit).ToArray() : memberInfo.GetCustomAttributes(inherit).ToArray();
             }
 
-            if (provider is Module)
+            if (provider is Module module)
             {
-                Module m = (Module)provider;
-                return (attributeType != null) ? m.GetCustomAttributes(attributeType).ToArray() : m.GetCustomAttributes().ToArray();
+                return (attributeType != null) ? module.GetCustomAttributes(attributeType).ToArray() : module.GetCustomAttributes().ToArray();
             }
 
-            if (provider is ParameterInfo)
+            if (provider is ParameterInfo parameterInfo)
             {
-                ParameterInfo p = (ParameterInfo)provider;
-                return (attributeType != null) ? p.GetCustomAttributes(attributeType, inherit).ToArray() : p.GetCustomAttributes(inherit).ToArray();
+                return (attributeType != null) ? parameterInfo.GetCustomAttributes(attributeType, inherit).ToArray() : parameterInfo.GetCustomAttributes(inherit).ToArray();
             }
 
             throw new Exception("Cannot get attributes from '{0}'.".FormatWith(CultureInfo.InvariantCulture, provider));
@@ -868,8 +848,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
             if (assemblyDelimiterIndex != null)
             {
-                typeName = fullyQualifiedTypeName.Substring(0, assemblyDelimiterIndex.GetValueOrDefault()).Trim();
-                assemblyName = fullyQualifiedTypeName.Substring(assemblyDelimiterIndex.GetValueOrDefault() + 1, fullyQualifiedTypeName.Length - assemblyDelimiterIndex.GetValueOrDefault() - 1).Trim();
+                typeName = fullyQualifiedTypeName.Trim(0, assemblyDelimiterIndex.GetValueOrDefault());
+                assemblyName = fullyQualifiedTypeName.Trim(assemblyDelimiterIndex.GetValueOrDefault() + 1, fullyQualifiedTypeName.Length - assemblyDelimiterIndex.GetValueOrDefault() - 1);
             }
             else
             {
@@ -952,8 +932,8 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 while ((targetType = targetType.BaseType()) != null)
                 {
                     // filter out protected fields
-                    IEnumerable<MemberInfo> childPrivateFields =
-                        targetType.GetFields(nonPublicBindingAttr).Where(f => f.IsPrivate).Cast<MemberInfo>();
+                    IEnumerable<FieldInfo> childPrivateFields =
+                        targetType.GetFields(nonPublicBindingAttr).Where(f => f.IsPrivate);
 
                     initialFields.AddRange(childPrivateFields);
                 }
@@ -978,7 +958,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
             GetChildPrivateProperties(propertyInfos, targetType, bindingAttr);
 
-            // a base class private getter/setter will be inaccessable unless the property was gotten from the base class
+            // a base class private getter/setter will be inaccessible unless the property was gotten from the base class
             for (int i = 0; i < propertyInfos.Count; i++)
             {
                 PropertyInfo member = propertyInfos[i];
@@ -1012,31 +992,31 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 {
                     PropertyInfo subTypeProperty = propertyInfo;
 
-                    if (!IsPublic(subTypeProperty))
+                    if (!subTypeProperty.IsVirtual())
                     {
-                        // have to test on name rather than reference because instances are different
-                        // depending on the type that GetProperties was called on
-                        int index = initialProperties.IndexOf(p => p.Name == subTypeProperty.Name);
-                        if (index == -1)
+                        if (!IsPublic(subTypeProperty))
                         {
-                            initialProperties.Add(subTypeProperty);
-                        }
-                        else
-                        {
-                            PropertyInfo childProperty = initialProperties[index];
-                            // don't replace public child with private base
-                            if (!IsPublic(childProperty))
+                            // have to test on name rather than reference because instances are different
+                            // depending on the type that GetProperties was called on
+                            int index = initialProperties.IndexOf(p => p.Name == subTypeProperty.Name);
+                            if (index == -1)
                             {
-                                // replace nonpublic properties for a child, but gotten from
-                                // the parent with the one from the child
-                                // the property gotten from the child will have access to private getter/setter
-                                initialProperties[index] = subTypeProperty;
+                                initialProperties.Add(subTypeProperty);
+                            }
+                            else
+                            {
+                                PropertyInfo childProperty = initialProperties[index];
+                                // don't replace public child with private base
+                                if (!IsPublic(childProperty))
+                                {
+                                    // replace nonpublic properties for a child, but gotten from
+                                    // the parent with the one from the child
+                                    // the property gotten from the child will have access to private getter/setter
+                                    initialProperties[index] = subTypeProperty;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!subTypeProperty.IsVirtual())
+                        else
                         {
                             int index = initialProperties.IndexOf(p => p.Name == subTypeProperty.Name
                                                                        && p.DeclaringType == subTypeProperty.DeclaringType);
@@ -1046,17 +1026,19 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                                 initialProperties.Add(subTypeProperty);
                             }
                         }
-                        else
-                        {
-                            int index = initialProperties.IndexOf(p => p.Name == subTypeProperty.Name
-                                                                       && p.IsVirtual()
-                                                                       && p.GetBaseDefinition() != null
-                                                                       && p.GetBaseDefinition().DeclaringType.IsAssignableFrom(subTypeProperty.GetBaseDefinition().DeclaringType));
+                    }
+                    else
+                    {
+                        Type subTypePropertyDeclaringType = subTypeProperty.GetBaseDefinition()?.DeclaringType ?? subTypeProperty.DeclaringType;
 
-                            if (index == -1)
-                            {
-                                initialProperties.Add(subTypeProperty);
-                            }
+                        int index = initialProperties.IndexOf(p => p.Name == subTypeProperty.Name
+                                                                   && p.IsVirtual()
+                                                                   && (p.GetBaseDefinition()?.DeclaringType ?? p.DeclaringType).IsAssignableFrom(subTypePropertyDeclaringType));
+
+                        // don't add a virtual property that has an override
+                        if (index == -1)
+                        {
+                            initialProperties.Add(subTypeProperty);
                         }
                     }
                 }
@@ -1106,13 +1088,13 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                     return 0m;
                 case PrimitiveTypeCode.DateTime:
                     return new DateTime();
-#if !(PORTABLE || PORTABLE40 || NET35 || NET20) || NETSTANDARD1_1
+#if HAVE_BIG_INTEGER
                 case PrimitiveTypeCode.BigInteger:
                     return new BigInteger();
 #endif
                 case PrimitiveTypeCode.Guid:
                     return new Guid();
-#if !NET20
+#if HAVE_DATE_TIME_OFFSET
                 case PrimitiveTypeCode.DateTimeOffset:
                     return new DateTimeOffset();
 #endif

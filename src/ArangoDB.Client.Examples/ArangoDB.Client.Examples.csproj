@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0;net46;netcoreapp1.1</TargetFrameworks>
+    <NoWarn>1701;1702;1705,1591,1573,1572,1570,1711</NoWarn>
+    <!--<IsPackable>false</IsPackable>-->
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.8.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170427-09" />
+    <ProjectReference Include="..\ArangoDB.Client\ArangoDB.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net46'">
+  </ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
+    <DefineConstants>NET46</DefineConstants>
+  </PropertyGroup>
+
+</Project>

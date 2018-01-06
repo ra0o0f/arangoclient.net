@@ -108,7 +108,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select(g => g)
                 .ToList();
 
-            Assert.Equal(result.Count, 4);
+            Assert.Equal(4, result.Count);
             Assert.Equal(result[0].Vertex.Key, alice.Key);
             Assert.Equal(result[1].Vertex.Key, bob.Key);
             Assert.Equal(result[2].Vertex.Key, charlie.Key);
@@ -132,7 +132,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select(g => g)
                 .ToList();
 
-            Assert.Equal(result.Count, 4);
+            Assert.Equal(4, result.Count);
         }
 
         [Fact]
@@ -160,7 +160,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select(g => g.Vertex.Key)
                 .ToList();
 
-            Assert.Equal(result.Count, 4);
+            Assert.Equal(4, result.Count);
             Assert.True(result.All(x => string.IsNullOrEmpty(x) == false));
         }
 
@@ -176,7 +176,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select(g => g)
                 .ToList();
 
-            Assert.Equal(result.Count, 4);
+            Assert.Equal(4, result.Count);
         }
 
 
@@ -192,7 +192,7 @@ namespace ArangoDB.Client.Examples.Linq
                 .Select(g => g)
                 .ToList();
 
-            Assert.Equal(result.Count, 4);
+            Assert.Equal(4, result.Count);
         }
     }
 }

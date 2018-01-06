@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArangoDB.Client", "ArangoDB.Client\ArangoDB.Client.csproj", "{A495275F-E7CC-4F03-9CF0-2FF94BCF9211}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArangoDB.Client.Test", "ArangoDB.Client.Test\ArangoDB.Client.Test.csproj", "{24FC4257-04D4-430E-8A3E-A40F0E0BFE36}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArangoDB.Client.Examples", "ArangoDB.Client.Examples\ArangoDB.Client.Examples.csproj", "{9C557704-2EC1-452C-9303-FD65A40554C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A495275F-E7CC-4F03-9CF0-2FF94BCF9211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A495275F-E7CC-4F03-9CF0-2FF94BCF9211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A495275F-E7CC-4F03-9CF0-2FF94BCF9211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A495275F-E7CC-4F03-9CF0-2FF94BCF9211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24FC4257-04D4-430E-8A3E-A40F0E0BFE36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24FC4257-04D4-430E-8A3E-A40F0E0BFE36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24FC4257-04D4-430E-8A3E-A40F0E0BFE36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24FC4257-04D4-430E-8A3E-A40F0E0BFE36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C557704-2EC1-452C-9303-FD65A40554C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C557704-2EC1-452C-9303-FD65A40554C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C557704-2EC1-452C-9303-FD65A40554C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C557704-2EC1-452C-9303-FD65A40554C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1596B393-8B16-4EF5-9A8F-C20D1053CD0F}
+	EndGlobalSection
+EndGlobal
