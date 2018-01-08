@@ -9,12 +9,15 @@ namespace ArangoDB.Client.Config
     {
         IDatabaseConfig config;
 
-        public DatabaseCursorConfigBuilder Cursor;
+        public DatabaseCursorConfigBuilder Cursor { get; set; }
+        public DatabaseLinqConfigBuilder Linq { get; set; }
+
 
         public DatabaseConfigBuilder(IDatabaseConfig config)
         {
             this.config = config;
             Cursor = new DatabaseCursorConfigBuilder(this, config);
+            Linq = new DatabaseLinqConfigBuilder(this, config);
         }
 
         public DatabaseConfigBuilder WaitForSync(bool value = true)

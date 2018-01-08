@@ -26,5 +26,7 @@ namespace ArangoDB.Client
         NetworkCredential SystemDatabaseCredential { get; set; }
 
         IDatabaseCursorConfig Cursor { get; set; }
+
+        IDatabaseLinqConfig Linq { get; set; }
     }
 }

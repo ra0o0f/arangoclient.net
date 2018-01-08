@@ -14,6 +14,7 @@ namespace ArangoDB.Client.Config
         public DatabaseConfig()
         {
             Cursor = new DatabaseCursorConfig();
+            Linq = new DatabaseLinqConfig();
         }
 
         public string ConfigIdentifier { get; set; }
@@ -33,5 +34,7 @@ namespace ArangoDB.Client.Config
         public NetworkCredential SystemDatabaseCredential { get; set; }
 
         public IDatabaseCursorConfig Cursor { get; set; }
+
+        public IDatabaseLinqConfig Linq { get; set; }
     }
 }
