@@ -21,7 +21,7 @@ namespace ArangoDB.Client.ServiceProvider
             ServiceProvider = new ServiceCollectionFactory().BuilderServiceProvider();
         }
 
-        public void AddCoreServices(IServiceCollection services)
+        void AddCoreServices(IServiceCollection services)
         {
             services.AddSingleton<DatabaseConfigContainer, DatabaseConfigContainer>();
 
@@ -46,9 +46,5 @@ namespace ArangoDB.Client.ServiceProvider
 
             return serviceProvider;
         }
-
-        public IServiceScope CreateScope() => ServiceProvider
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope();
     }
 }

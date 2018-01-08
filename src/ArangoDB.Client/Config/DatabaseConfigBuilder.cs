@@ -6,9 +6,9 @@ namespace ArangoDB.Client.Config
 {
     public class DatabaseConfigBuilder
     {
-        DatabaseConfig _config;
+        IDatabaseConfig _config;
 
-        public DatabaseConfigBuilder(DatabaseConfig config)
+        public DatabaseConfigBuilder(IDatabaseConfig config)
         {
             _config = config;
         }

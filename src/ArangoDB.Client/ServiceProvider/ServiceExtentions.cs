@@ -13,7 +13,7 @@ namespace ArangoDB.Client.ServiceProvider
         {
             var scopedService = serviceProvider.GetRequiredService<ScopeService>();
 
-            if (typeof(T) == typeof(DatabaseConfig))
+            if (typeof(T) == typeof(IDatabaseConfig))
                 return scopedService.DatabaseConfig as T;
 
             throw new InvalidOperationException($"No scope item found for type of {typeof(T)}");
@@ -23,7 +23,7 @@ namespace ArangoDB.Client.ServiceProvider
         {
             var scopedService = serviceProvider.GetRequiredService<ScopeService>();
 
-            if (scopeItem is DatabaseConfig item)
+            if (scopeItem is IDatabaseConfig item)
             {
                 scopedService.DatabaseConfig = item;
                 return;

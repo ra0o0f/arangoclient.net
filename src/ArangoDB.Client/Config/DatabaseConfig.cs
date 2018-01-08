@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ArangoDB.Client.Config
 {
-    public class DatabaseConfig : IScopeItem
+    public class DatabaseConfig : IDatabaseConfig
     {
         public string ConfigIdentifier { get; set; }
 

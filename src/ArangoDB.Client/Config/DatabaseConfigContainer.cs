@@ -8,18 +8,18 @@ namespace ArangoDB.Client.Config
 {
     public class DatabaseConfigContainer
     {
-        private ConcurrentDictionary<string, DatabaseConfig> _cachedConfigs = new ConcurrentDictionary<string, DatabaseConfig>();
+        private ConcurrentDictionary<string, IDatabaseConfig> _cachedConfigs = new ConcurrentDictionary<string, IDatabaseConfig>();
 
-        public void AddOrUpdate(DatabaseConfig config)
+        public void AddOrUpdate(IDatabaseConfig config)
         {
             Utils.CheckNotNull(nameof(config.ConfigIdentifier), config.ConfigIdentifier);
 
             _cachedConfigs[config.ConfigIdentifier] = config;
         }
 
-        public DatabaseConfig Get(string identifier)
+        public IDatabaseConfig Get(string identifier)
         {
-            _cachedConfigs.TryGetValue(identifier, out DatabaseConfig config);
+            _cachedConfigs.TryGetValue(identifier, out IDatabaseConfig config);
             return config;
         }
     }

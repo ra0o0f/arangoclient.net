@@ -67,7 +67,7 @@ namespace ArangoDB.Client
             Setting = new DatabaseSetting(SharedSetting);
         }
 
-        public ArangoDatabase(DatabaseConfig option)
+        public ArangoDatabase(IDatabaseConfig option)
         {
             serviceScope = ServiceCollectionFactory.ServiceProvider
                 .GetRequiredService<IServiceScopeFactory>()
@@ -77,12 +77,12 @@ namespace ArangoDB.Client
             serviceProvider.SetScopeItem(option);
         }
 
-        public static DatabaseConfig Config(Action<DatabaseConfigBuilder> action)
+        public static IDatabaseConfig Config(Action<DatabaseConfigBuilder> action)
         {
             return Config("default", action);
         }
 
-        public static DatabaseConfig Config(string identifier, Action<DatabaseConfigBuilder> action)
+        public static IDatabaseConfig Config(string identifier, Action<DatabaseConfigBuilder> action)
         {
             var configContainer = ServiceCollectionFactory.ServiceProvider.GetRequiredService<DatabaseConfigContainer>();
             var config = configContainer.Get(identifier) ?? new DatabaseConfig { ConfigIdentifier = identifier };
@@ -93,6 +93,12 @@ namespace ArangoDB.Client
             configContainer.AddOrUpdate(config);
 
             return config;
+        }
+
+        public static IArangoDatabase WithConfig(string identifier)
+        {
+            var configContainer = ServiceCollectionFactory.ServiceProvider.GetRequiredService<DatabaseConfigContainer>();
+            return new ArangoDatabase(configContainer.Get(identifier));
         }
 
         /// <summary>

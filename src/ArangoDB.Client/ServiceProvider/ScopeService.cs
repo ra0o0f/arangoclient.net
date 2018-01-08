@@ -7,6 +7,6 @@ namespace ArangoDB.Client.ServiceProvider
 {
     public class ScopeService
     {
-        public DatabaseConfig DatabaseConfig { get; set; }
+        public IDatabaseConfig DatabaseConfig { get; set; }
     }
 }

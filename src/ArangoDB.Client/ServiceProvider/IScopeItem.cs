@@ -6,5 +6,6 @@ namespace ArangoDB.Client.ServiceProvider
 {
     public interface IScopeItem
     {
+
     }
 }
