@@ -1,5 +1,6 @@
 ﻿using ArangoDB.Client.Config;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,6 +24,10 @@ namespace ArangoDB.Client.ServiceProvider
 
         void AddCoreServices(IServiceCollection services)
         {
+            var loggerFactory = new LoggerFactory();
+            services.AddSingleton<ILoggerFactory, LoggerFactory>((s) => loggerFactory);
+            DatabaseConfig.ConfigureLoggerFactory?.Invoke(loggerFactory);
+
             services.AddSingleton<DatabaseConfigContainer, DatabaseConfigContainer>();
 
             services.AddScoped<ScopeService, ScopeService>();

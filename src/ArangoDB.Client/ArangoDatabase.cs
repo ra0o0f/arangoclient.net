@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ArangoDB.Client.ServiceProvider;
+using Microsoft.Extensions.Logging;
 
 namespace ArangoDB.Client
 {
@@ -26,6 +27,8 @@ namespace ArangoDB.Client
         private static ConcurrentDictionary<string, DatabaseSharedSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSharedSetting>();
 
         IServiceScope serviceScope;
+        IDatabaseConfig config;
+        ILogger<ArangoDatabase> logger;
 
         public DocumentTracker ChangeTracker { get; set; }
 
@@ -67,14 +70,22 @@ namespace ArangoDB.Client
             Setting = new DatabaseSetting(SharedSetting);
         }
 
-        public ArangoDatabase(IDatabaseConfig option)
+        public ArangoDatabase(IDatabaseConfig config)
         {
             serviceScope = ServiceCollectionFactory.ServiceProvider
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
             IServiceProvider serviceProvider = serviceScope.ServiceProvider;
 
-            serviceProvider.SetScopeItem(option);
+            serviceProvider.SetScopeItem(config);
+            this.config = config;
+
+            logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<ArangoDatabase>();
+        }
+
+        public static void GlobalConfig(Action<DatabaseGlobalConfigBuilder> action)
+        {
+            action(new DatabaseGlobalConfigBuilder());
         }
 
         public static IDatabaseConfig Config(Action<DatabaseConfigBuilder> action)
@@ -93,6 +104,11 @@ namespace ArangoDB.Client
             configContainer.AddOrUpdate(config);
 
             return config;
+        }
+
+        public static IArangoDatabase WithConfig()
+        {
+            return WithConfig("default");
         }
 
         public static IArangoDatabase WithConfig(string identifier)
