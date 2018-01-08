@@ -11,6 +11,11 @@ namespace ArangoDB.Client.Config
     {
         public static Action<ILoggerFactory> ConfigureLoggerFactory { get; set; }
 
+        public DatabaseConfig()
+        {
+            Cursor = new DatabaseCursorConfig();
+        }
+
         public string ConfigIdentifier { get; set; }
 
         public bool WaitForSync { get; set; }
@@ -26,5 +31,7 @@ namespace ArangoDB.Client.Config
         public NetworkCredential Credential { get; set; }
 
         public NetworkCredential SystemDatabaseCredential { get; set; }
+
+        public IDatabaseCursorConfig Cursor { get; set; }
     }
 }

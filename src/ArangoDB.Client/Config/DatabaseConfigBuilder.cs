@@ -7,52 +7,55 @@ namespace ArangoDB.Client.Config
 {
     public class DatabaseConfigBuilder
     {
-        IDatabaseConfig _config;
+        IDatabaseConfig config;
+
+        public DatabaseCursorConfigBuilder Cursor;
 
         public DatabaseConfigBuilder(IDatabaseConfig config)
         {
-            _config = config;
+            this.config = config;
+            Cursor = new DatabaseCursorConfigBuilder(this, config);
         }
 
         public DatabaseConfigBuilder WaitForSync(bool value = true)
         {
-            _config.WaitForSync = value;
+            config.WaitForSync = value;
             return this;
         }
 
         public DatabaseConfigBuilder ThrowForServerErrors(bool value = true)
         {
-            _config.ThrowForServerErrors = true;
+            config.ThrowForServerErrors = true;
             return this;
         }
 
         public DatabaseConfigBuilder DisableChangeTracking(bool value = true)
         {
-            _config.DisableChangeTracking = true;
+            config.DisableChangeTracking = true;
             return this;
         }
 
         public DatabaseConfigBuilder Url(string url)
         {
-            _config.Url = url;
+            config.Url = url;
             return this;
         }
 
         public DatabaseConfigBuilder Database(string database)
         {
-            _config.Database = database;
+            config.Database = database;
             return this;
         }
 
         public DatabaseConfigBuilder Credential(string user, string password)
         {
-            _config.Credential = new NetworkCredential(user, password);
+            config.Credential = new NetworkCredential(user, password);
             return this;
         }
 
         public DatabaseConfigBuilder SystemCredential(string user, string password)
         {
-            _config.SystemDatabaseCredential = new NetworkCredential(user, password);
+            config.SystemDatabaseCredential = new NetworkCredential(user, password);
             return this;
         }
     }

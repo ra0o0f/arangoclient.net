@@ -1,4 +1,5 @@
-﻿using ArangoDB.Client.ServiceProvider;
+﻿using ArangoDB.Client.Config;
+using ArangoDB.Client.ServiceProvider;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,5 +24,7 @@ namespace ArangoDB.Client
         NetworkCredential Credential { get; set; }
 
         NetworkCredential SystemDatabaseCredential { get; set; }
+
+        IDatabaseCursorConfig Cursor { get; set; }
     }
 }
