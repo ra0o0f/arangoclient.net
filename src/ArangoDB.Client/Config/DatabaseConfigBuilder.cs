@@ -12,6 +12,7 @@ namespace ArangoDB.Client.Config
         public DatabaseCursorConfigBuilder Cursor { get; set; }
         public DatabaseLinqConfigBuilder Linq { get; set; }
         public DatabaseDocumentConfigBuilder Document { get; set; }
+        public DatabaseSerializationConfigBuilder Serialization { get; set; }
 
 
         public DatabaseConfigBuilder(IDatabaseConfig config)

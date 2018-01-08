@@ -30,5 +30,7 @@ namespace ArangoDB.Client
         IDatabaseLinqConfig Linq { get; set; }
 
         IDatabaseDocumentConfig Document { get; set; }
+
+        IDatabaseSerializationConfig Serialization { get; set; }
     }
 }
