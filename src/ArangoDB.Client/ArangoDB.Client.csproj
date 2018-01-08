@@ -19,6 +19,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Remotion.Linq" Version="2.1.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>ArangoDB.Client Netstandard_2.0</AssemblyTitle>
@@ -30,6 +31,11 @@
     <PackageReference Include="Remotion.Linq" Version="2.1.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
     <AssemblyTitle>ArangoDB.Client Netstandard_1.3</AssemblyTitle>

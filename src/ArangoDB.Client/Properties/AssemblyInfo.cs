@@ -10,4 +10,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("ArangoDB.Client.Test")]
 [assembly: InternalsVisibleTo("ArangoDB.Client.Try")]
 
-[assembly: CLSCompliant(true)]
+//[assembly: CLSCompliant(true)]

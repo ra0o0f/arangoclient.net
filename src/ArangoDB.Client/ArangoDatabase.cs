@@ -2,9 +2,11 @@
 using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
+using ArangoDB.Client.Config;
 using ArangoDB.Client.Query;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Utility;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,12 +17,15 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ArangoDB.Client.ServiceProvider;
 
 namespace ArangoDB.Client
 {
     public partial class ArangoDatabase : IArangoDatabase
     {
         private static ConcurrentDictionary<string, DatabaseSharedSetting> cachedSettings = new ConcurrentDictionary<string, DatabaseSharedSetting>();
+
+        IServiceScope serviceScope;
 
         public DocumentTracker ChangeTracker { get; set; }
 
@@ -60,6 +65,34 @@ namespace ArangoDB.Client
         {
             SharedSetting = sharedSetting;
             Setting = new DatabaseSetting(SharedSetting);
+        }
+
+        public ArangoDatabase(DatabaseConfig option)
+        {
+            serviceScope = ServiceCollectionFactory.ServiceProvider
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+            IServiceProvider serviceProvider = serviceScope.ServiceProvider;
+
+            serviceProvider.SetScopeItem(option);
+        }
+
+        public static DatabaseConfig Config(Action<DatabaseConfigBuilder> action)
+        {
+            return Config("default", action);
+        }
+
+        public static DatabaseConfig Config(string identifier, Action<DatabaseConfigBuilder> action)
+        {
+            var configContainer = ServiceCollectionFactory.ServiceProvider.GetRequiredService<DatabaseConfigContainer>();
+            var config = configContainer.Get(identifier) ?? new DatabaseConfig { ConfigIdentifier = identifier };
+            var configBuilder = new DatabaseConfigBuilder(config);
+
+            action(configBuilder);
+
+            configContainer.AddOrUpdate(config);
+
+            return config;
         }
 
         /// <summary>
@@ -150,11 +183,6 @@ namespace ArangoDB.Client
         public DocumentContainer FindDocumentInfo(object document)
         {
             return ChangeTracker.FindDocumentInfo(document);
-        }
-
-        public void Dispose()
-        {
-
         }
 
         public ArangoQueryable<T> Query<T>()
@@ -264,6 +292,11 @@ namespace ArangoDB.Client
                 baseResult(result.BaseResult);
 
             return result.Result.Result;
+        }
+
+        public void Dispose()
+        {
+            serviceScope?.Dispose();
         }
     }
 }

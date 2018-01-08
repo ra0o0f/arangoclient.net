@@ -1,11 +1,14 @@
-﻿using System;
+﻿using ArangoDB.Client.ServiceProvider;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArangoDB.Client.Option
+namespace ArangoDB.Client.Config
 {
-    public class DatabaseOption
+    public class DatabaseConfig : IScopeItem
     {
+        public string ConfigIdentifier { get; set; }
+
         public bool WaitForSync { get; set; }
 
         public bool ThrowForServerErrors { get; set; }
