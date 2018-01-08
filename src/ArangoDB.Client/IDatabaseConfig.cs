@@ -28,5 +28,7 @@ namespace ArangoDB.Client
         IDatabaseCursorConfig Cursor { get; set; }
 
         IDatabaseLinqConfig Linq { get; set; }
+
+        IDatabaseDocumentConfig Document { get; set; }
     }
 }

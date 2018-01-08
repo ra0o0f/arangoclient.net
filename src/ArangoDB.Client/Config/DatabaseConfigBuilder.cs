@@ -11,6 +11,7 @@ namespace ArangoDB.Client.Config
 
         public DatabaseCursorConfigBuilder Cursor { get; set; }
         public DatabaseLinqConfigBuilder Linq { get; set; }
+        public DatabaseDocumentConfigBuilder Document { get; set; }
 
 
         public DatabaseConfigBuilder(IDatabaseConfig config)
@@ -40,7 +41,7 @@ namespace ArangoDB.Client.Config
 
         public DatabaseConfigBuilder Url(string url)
         {
-            config.Url = url;
+            config.Url = new UriBuilder(url).Uri.ToString();
             return this;
         }
 
