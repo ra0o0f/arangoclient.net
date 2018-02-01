@@ -154,13 +154,14 @@ namespace ArangoDB.Client
         /// <param name="type"> The type of the collection to create</param>
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
+        /// <param name="replicationFactor">In a cluster, this attribute determines how many copies of each shard are kept on different DBServers</param>
         /// <returns>CreateCollectionResult</returns>
         public CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null,
-            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
+            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, int? replicationFactor = null, Action<BaseResult> baseResult = null)
         {
             return CreateCollectionAsync(name, waitForSync, doCompact, journalSize, isSystem,
-                isVolatile, type, numberOfShards, shardKeys, keyOptions, IndexBuckets, baseResult).ResultSynchronizer();
+                isVolatile, type, numberOfShards, shardKeys, keyOptions, IndexBuckets, replicationFactor, baseResult).ResultSynchronizer();
         }
 
         /// <summary>
@@ -175,10 +176,11 @@ namespace ArangoDB.Client
         /// <param name="type"> The type of the collection to create</param>
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
+        /// <param name="replicationFactor">In a cluster, this attribute determines how many copies of each shard are kept on different DBServers</param>
         /// <returns>CreateCollectionResult</returns>
         public async Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
-            bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null
-            , string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
+            bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null,
+            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, int? replicationFactor = null, Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -197,7 +199,8 @@ namespace ArangoDB.Client
                 WaitForSync = waitForSync,
                 JournalSize = journalSize,
                 KeyOptions = keyOptions,
-                IndexBuckets = IndexBuckets
+                IndexBuckets = IndexBuckets,
+                ReplicationFactor = replicationFactor
             };
 
             if (type.HasValue)
