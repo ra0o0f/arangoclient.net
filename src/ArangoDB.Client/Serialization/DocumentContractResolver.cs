@@ -46,6 +46,11 @@ namespace ArangoDB.Client.Serialization
                 {
                     if (documentProperty.IgnoreProperty)
                         continue;
+
+					// this change allows the JsonProperty.PropertyName to be used instead of the Object.PropertyName
+					if (!sharedSetting.Serialization.UseUnderlyingPropertyName && p.PropertyName != p.UnderlyingName) {
+						documentProperty.PropertyName = p.PropertyName;
+					}
                 }
 
                 p.PropertyName = sharedSetting.Collection.ResolvePropertyName(type, p.UnderlyingName);
