@@ -126,6 +126,11 @@ namespace ArangoDB.Client
             return source.AsArangoQueryable<T>().AsCursor();
         }
 
+        public static ICursor<T> AsCursor<T>(this IQueryable<T> source, bool? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
+        {
+            return source.AsArangoQueryable<T>().AsCursor(count, batchSize, ttl, options);
+        }
+
         public static void Execute<T>(this IAqlModifiable<T> source)
         {
             // AsCursor is needed for executing query by ArangoQueryable methods instead of ArangoQueryExecuter

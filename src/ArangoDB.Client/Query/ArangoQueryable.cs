@@ -82,5 +82,11 @@ namespace ArangoDB.Client.Query
             return db.CreateStatement<T>(queryData.Query
                 , bindVars: queryData.BindVars);
         }
+
+        public ICursor<T> AsCursor(bool? count = null, int? batchSize = null, TimeSpan? ttl = null, QueryOption options = null)
+        {
+            var queryData = GetQueryData();
+            return db.CreateStatement<T>(queryData.Query, queryData.BindVars, count, batchSize, ttl, options);
+        }
     }
 }
