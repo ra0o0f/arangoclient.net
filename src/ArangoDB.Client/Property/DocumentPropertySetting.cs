@@ -37,7 +37,11 @@ namespace ArangoDB.Client.Property
                 cachedAttributeProperties.TryAdd(type, typeSetting);
             }
 
-            return typeSetting[memberName];
+            //check if the property existing in the dictionary and return it in case it does
+            if (typeSetting.TryGetValue(memberName, out IDocumentPropertySetting documentPropertySetting))
+                return documentPropertySetting;
+
+            return null;
         }
 
         internal static IDocumentPropertySetting FindDocumentAttributeForType<T>(Expression<Func<T, object>> attribute)
