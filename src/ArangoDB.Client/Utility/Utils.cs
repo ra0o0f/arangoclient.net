@@ -20,6 +20,28 @@ namespace ArangoDB.Client.Utility
             }
         }
 
+        public static string GetPropertyName<TModel, TValue>(Expression<Func<TModel, TValue>> attribute)
+        {
+            const char delimiterDot = '.';
+            const char delimiterPlus = '+';
+            const char delimiterComma = ',';
+            const char endTrim = ')';
+            
+            var asString = attribute.ToString(); // gives you: "o => o.Whatever"
+            //now we need to replace the plus signs with the dots in case of the nesting classes
+            asString = asString.Replace(delimiterPlus, delimiterDot);
+            // make sure there is a beginning property indicator; the "." in "o.Whatever"
+            var firstDotDelim = asString.IndexOf(delimiterDot);
+            var firstCommaDelim = asString.IndexOf(delimiterComma);
+
+            if (firstDotDelim < 0)
+                return asString;
+            else if (firstCommaDelim < 0)
+                return asString.Substring(firstDotDelim + 1).TrimEnd(endTrim);
+            else
+                return asString.Substring(firstDotDelim + 1, firstCommaDelim - firstDotDelim - 1);
+        }
+
         public static MemberInfo GetMemberInfo<T>(Expression<Func<T, object>> attribute)
         {
             return GetMemberExpression(attribute).Member;

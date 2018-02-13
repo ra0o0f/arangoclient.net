@@ -253,9 +253,7 @@ namespace ArangoDB.Client.Property
 
         public string ResolvePropertyName<T>(Expression<Func<T, object>> attribute)
         {
-            var memberInfo = Utils.GetMemberInfo<T>(attribute);
-
-            return ResolvePropertyName(typeof(T), memberInfo.Name);
+            return ResolvePropertyName(typeof(T), Utils.GetPropertyName(attribute));
         }
 
         internal string ResolveNestedPropertyName<T>(Expression<Func<T, object>> attribute)
