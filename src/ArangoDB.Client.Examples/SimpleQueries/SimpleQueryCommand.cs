@@ -33,9 +33,9 @@ namespace ArangoDB.Client.Examples.SimpleQueries
 
             var loadedPersons = cursor.ToList();
 
-            Assert.Equal(cursor.Statistics.RequestCount, 1);
+            Assert.Equal(1, cursor.Statistics.RequestCount);
 
-            Assert.Equal(loadedPersons.Count, 3);
+            Assert.Equal(3, loadedPersons.Count);
 
             Assert.Empty(loadedPersons
                 .Select(p => p.Key)
@@ -51,9 +51,9 @@ namespace ArangoDB.Client.Examples.SimpleQueries
 
             var loadedPersons = cursor.ToList();
 
-            Assert.Equal(cursor.Statistics.RequestCount, 3);
+            Assert.Equal(3, cursor.Statistics.RequestCount);
 
-            Assert.Equal(loadedPersons.Count, 3);
+            Assert.Equal(3, loadedPersons.Count);
 
             Assert.Empty(loadedPersons
                 .Select(p => p.Key)
@@ -77,7 +77,7 @@ namespace ArangoDB.Client.Examples.SimpleQueries
 
             var loadedPersons = db.ByExample<Person>(new { Name = "Dr. frank celler" }).ToList();
 
-            Assert.Equal(loadedPersons.Count, 1);
+            Assert.Single(loadedPersons);
             Assert.Equal(loadedPersons[0].Key, persons.First(p => p.Name == "Dr. frank celler").Key);
         }
 
@@ -99,7 +99,7 @@ namespace ArangoDB.Client.Examples.SimpleQueries
 
             var loadedPerson = db.Range<Person>(x => x.Age, 25, 28, closed: true).ToList();
 
-            Assert.Equal(loadedPerson.Count, 2);
+            Assert.Equal(2, loadedPerson.Count);
         }
     }
 }

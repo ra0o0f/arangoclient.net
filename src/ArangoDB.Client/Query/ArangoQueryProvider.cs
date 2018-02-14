@@ -21,13 +21,6 @@ namespace ArangoDB.Client.Query
         /// <summary>
         /// Initializes a new instance of <see cref="ArangoQueryProvider"/> using a custom <see cref="IQueryParser"/>.
         /// </summary>
-        /// <param name="queryableType">
-        ///   A type implementing <see cref="IQueryable{T}"/>. This type is used to construct the chain of query operators. Must be a generic type
-        ///   definition.
-        /// </param>
-        /// <param name="queryParser">The <see cref="IQueryParser"/> used to parse queries. Specify an instance of 
-        ///   <see cref="Parsing.Structure.QueryParser"/> for default behavior. See also <see cref="QueryParser.CreateDefault"/>.</param>
-        /// <param name="executor">The <see cref="IQueryExecutor"/> used to execute queries against a specific query backend.</param>
         public ArangoQueryProvider(Type queryableType, IQueryParser queryParser, IQueryExecutor executor, IArangoDatabase db)
           : base(LinqUtility.CheckNotNull("queryParser", queryParser), LinqUtility.CheckNotNull("executor", executor))
         {

@@ -3,7 +3,6 @@ using ArangoDB.Client.ChangeTracking;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Http;
 using ArangoDB.Client.Query;
-using ArangoDB.Client.Query;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -476,7 +475,6 @@ namespace ArangoDB.Client
         /// <param name="latitude">The latitude of the coordinate</param>
         /// <param name="longitude">The longitude of the coordinate</param>
         /// <param name="distance">If True, distances are returned in meters</param>
-        /// <param name="distance">If True, distances are returned in meters</param>
         /// <param name="skip">The number of documents to skip in the query</param>
         /// <param name="limit">The maximal amount of documents to return. The skip is applied before the limit restriction</param>
         /// <param name="batchSize">Limits the number of results to be transferred in one batch</param>
@@ -540,7 +538,7 @@ namespace ArangoDB.Client
         /// <param name="config">Configuration for the traversal</param>
         /// <param name="startVertex">Id of the startVertex</param>
         /// <param name="baseResult"></param>
-        /// <returns>TraversalResult<TVertex, TEdge></returns>
+        /// <returns>TraversalResult<TVertex TEdge></returns>
         TraversalResult<TVertex, TEdge> Traverse<TVertex, TEdge>(TraversalConfig config, string startVertex = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
@@ -551,7 +549,7 @@ namespace ArangoDB.Client
         /// <param name="config">Configuration for the traversal</param>
         /// <param name="startVertex">Id of the startVertex</param>
         /// <param name="baseResult"></param>
-        /// <returns>TraversalResult<TVertex, TEdge></returns>
+        /// <returns>TraversalResult[TVertex, TEdge]</returns>
         Task<TraversalResult<TVertex, TEdge>> TraverseAsync<TVertex, TEdge>(TraversalConfig config, string startVertex = null, Action<BaseResult> baseResult = null);
 
     }

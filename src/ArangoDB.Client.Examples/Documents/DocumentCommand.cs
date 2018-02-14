@@ -44,12 +44,12 @@ namespace ArangoDB.Client.Examples.Documents
 
             var results = db.InsertMultiple<Person>(persons, baseResults: (bs) =>
             {
-                Assert.Equal(bs.Count, 2);
+                Assert.Equal(2, bs.Count);
                 Assert.True(bs[0].HasError() == false);
                 Assert.True(bs[1].HasError());
             });
 
-            Assert.Equal(results.Count, 2);
+            Assert.Equal(2, results.Count);
             Assert.True(string.IsNullOrEmpty(results[0].Key) == false);
             Assert.True(string.IsNullOrEmpty(results[1].Key));
         }
@@ -73,11 +73,11 @@ namespace ArangoDB.Client.Examples.Documents
 
             var results = db.InsertMultiple<Person>(persons, baseResults: (bs) =>
             {
-                Assert.Equal(bs.Count, 2);
+                Assert.Equal(2, bs.Count);
                 Assert.True(bs.All(x => x.HasError() == false));
             });
 
-            Assert.Equal(results.Count, 2);
+            Assert.Equal(2, results.Count);
             Assert.True(results.All(x => string.IsNullOrEmpty(x.Key) == false));
         }
 
@@ -184,7 +184,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             db.Replace<Person>(person);
 
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(20, db.Document<Person>(person.Key).Age);
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace ArangoDB.Client.Examples.Documents
             db.ReplaceById<Person>(person.Key, new { Age = 20 });
 
             Assert.Null(db.Document<Person>(person.Key).Name);
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(20, db.Document<Person>(person.Key).Age);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             db.UpdateById<Person>(person.Key, new { Age = 20 });
 
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(20, db.Document<Person>(person.Key).Age);
             Assert.Equal(db.Document<Person>(person.Key).Name, person.Name);
         }
 
@@ -262,7 +262,7 @@ namespace ArangoDB.Client.Examples.Documents
 
             db.Update<Person>(person);
 
-            Assert.Equal(db.Document<Person>(person.Key).Age, 20);
+            Assert.Equal(20, db.Document<Person>(person.Key).Age);
         }
 
         [Fact]
@@ -362,15 +362,15 @@ namespace ArangoDB.Client.Examples.Documents
 
             var outboundEdge = db.Edges<Follow>(person1.Id, direction: EdgeDirection.Outbound);
 
-            Assert.Equal(outboundEdge.Count, 1);
+            Assert.Single(outboundEdge);
 
             var inboundEdge = db.Edges<Follow>(person1.Id, direction: EdgeDirection.Inbound);
 
-            Assert.Equal(inboundEdge.Count, 0);
+            Assert.Empty(inboundEdge);
 
             var anyEdge = db.Edges<Follow>(person2.Id);
 
-            Assert.Equal(anyEdge.Count, 1);
+            Assert.Single(anyEdge);
 
             Assert.Equal(anyEdge[0].Key, follow.Key);
         }

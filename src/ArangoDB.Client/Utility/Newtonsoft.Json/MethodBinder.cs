@@ -1,15 +1,43 @@
-﻿namespace ArangoDB.Client.Utility.Newtonsoft.Json
+﻿#region License
+// Copyright (c) 2007 James Newton-King
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+#endregion
+
+using System;
+using System.Collections.Generic;
+#if !HAVE_LINQ
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
+#endif
+using System.Reflection;
+
+namespace ArangoDB.Client.Utility.Newtonsoft.Json
 {
 #if PORTABLE
-
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-
     internal static class MethodBinder
     {
-
+        
         /// <summary>
         /// List of primitive types which can be widened.
         /// </summary>
@@ -39,9 +67,9 @@
         /// Checks if value of primitive type <paramref name="from"/> can be  
         /// assigned to parameter of primitive type <paramref name="to"/>.
         /// </summary>
-        /// <param name="from">Source primitive type</param>
-        /// <param name="to">Target primitive type</param>
-        /// <returns>True if source type can be widened to target type, false otherwise</returns>
+        /// <param name="from">Source primitive type.</param>
+        /// <param name="to">Target primitive type.</param>
+        /// <returns><c>true</c> if source type can be widened to target type, <c>false</c> otherwise.</returns>
         private static bool CanConvertPrimitive(Type from, Type to)
         {
             if (from == to)
@@ -77,10 +105,10 @@
         /// Checks if a set of values with given <paramref name="types"/> can be used
         /// to invoke a method with specified <paramref name="parameters"/>. 
         /// </summary>
-        /// <param name="parameters">Method parameters</param>
-        /// <param name="types">Argument types</param>
-        /// <param name="enableParamArray">Try to pack extra arguments into ParamArray</param>
-        /// <returns>True if method can be called with given arguments, false otherwise</returns>
+        /// <param name="parameters">Method parameters.</param>
+        /// <param name="types">Argument types.</param>
+        /// <param name="enableParamArray">Try to pack extra arguments into the last parameter when it is marked up with <see cref="ParamArrayAttribute"/>.</param>
+        /// <returns><c>true</c> if method can be called with given arguments, <c>false</c> otherwise.</returns>
         private static bool FilterParameters(ParameterInfo[] parameters, IList<Type> types, bool enableParamArray)
         {
             ValidationUtils.ArgumentNotNull(parameters, nameof(parameters));
@@ -293,11 +321,11 @@
         }
 
         /// <summary>
-        /// Retunrs a best method overload for given argument <paramref name="types"/>.
+        /// Returns a best method overload for given argument <paramref name="types"/>.
         /// </summary>
-        /// <param name="candidates">List of method candidates</param>
-        /// <param name="types">Argument types</param>
-        /// <returns>Best method overload, or <c>null</c> if none matched</returns>
+        /// <param name="candidates">List of method candidates.</param>
+        /// <param name="types">Argument types.</param>
+        /// <returns>Best method overload, or <c>null</c> if none matched.</returns>
         public static TMethod SelectMethod<TMethod>(IEnumerable<TMethod> candidates, IList<Type> types) where TMethod : MethodBase
         {
             ValidationUtils.ArgumentNotNull(candidates, nameof(candidates));
@@ -314,6 +342,5 @@
         }
 
     }
-
 #endif
 }

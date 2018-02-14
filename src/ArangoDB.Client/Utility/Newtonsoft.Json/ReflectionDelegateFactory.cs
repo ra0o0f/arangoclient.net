@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -28,7 +28,7 @@ using System.Globalization;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
 
-#if NET20
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 
@@ -38,14 +38,18 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
     {
         public Func<T, object> CreateGet<T>(MemberInfo memberInfo)
         {
-            PropertyInfo propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
+            if (memberInfo is PropertyInfo propertyInfo)
             {
+                // https://github.com/dotnet/corefx/issues/26053
+                if (propertyInfo.PropertyType.IsByRef)
+                {
+                    throw new InvalidOperationException("Could not create getter for {0}. ByRef return values are not supported.".FormatWith(CultureInfo.InvariantCulture, propertyInfo));
+                }
+
                 return CreateGet<T>(propertyInfo);
             }
 
-            FieldInfo fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
+            if (memberInfo is FieldInfo fieldInfo)
             {
                 return CreateGet<T>(fieldInfo);
             }
@@ -55,14 +59,12 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
 
         public Action<T, object> CreateSet<T>(MemberInfo memberInfo)
         {
-            PropertyInfo propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
+            if (memberInfo is PropertyInfo propertyInfo)
             {
                 return CreateSet<T>(propertyInfo);
             }
 
-            FieldInfo fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
+            if (memberInfo is FieldInfo fieldInfo)
             {
                 return CreateSet<T>(fieldInfo);
             }

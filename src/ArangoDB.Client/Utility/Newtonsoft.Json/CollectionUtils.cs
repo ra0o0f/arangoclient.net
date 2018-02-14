@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -29,12 +29,16 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Collections;
-#if NET20
+using System.Diagnostics;
+#if !HAVE_LINQ
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 using System.Globalization;
+#if HAVE_METHOD_IMPL_ATTRIBUTE
+using System.Runtime.CompilerServices;
+#endif
 using Newtonsoft.Json.Serialization;
 
 namespace ArangoDB.Client.Utility.Newtonsoft.Json
@@ -42,11 +46,11 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
     internal static class CollectionUtils
     {
         /// <summary>
-        /// Determines whether the collection is null or empty.
+        /// Determines whether the collection is <c>null</c> or empty.
         /// </summary>
         /// <param name="collection">The collection.</param>
         /// <returns>
-        /// 	<c>true</c> if the collection is null or empty; otherwise, <c>false</c>.
+        /// 	<c>true</c> if the collection is <c>null</c> or empty; otherwise, <c>false</c>.
         /// </returns>
         public static bool IsNullOrEmpty<T>(ICollection<T> collection)
         {
@@ -58,7 +62,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
         }
 
         /// <summary>
-        /// Adds the elements of the specified collection to the specified generic IList.
+        /// Adds the elements of the specified collection to the specified generic <see cref="IList{T}"/>.
         /// </summary>
         /// <param name="initial">The list to add to.</param>
         /// <param name="collection">The collection of elements to add.</param>
@@ -80,7 +84,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             }
         }
 
-#if (NET20 || NET35 || PORTABLE40)
+#if !HAVE_COVARIANT_GENERICS
         public static void AddRange<T>(this IList<T> initial, IEnumerable collection)
         {
             ValidationUtils.ArgumentNotNull(initial, nameof(initial));
@@ -102,7 +106,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             {
                 return true;
             }
-#if !(NET40 || NET35 || NET20 || PORTABLE40)
+#if HAVE_READ_ONLY_COLLECTIONS
             if (ReflectionUtils.ImplementsGenericDefinition(type, typeof(IReadOnlyDictionary<,>)))
             {
                 return true;
@@ -139,7 +143,7 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                         break;
                     }
 
-                    // incase we can't find an exact match, use first inexact
+                    // in case we can't find an exact match, use first inexact
                     if (match == null)
                     {
                         if (parameterType.IsAssignableFrom(constructorArgumentType))
@@ -247,6 +251,23 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             return -1;
         }
 
+#if HAVE_FAST_REVERSE
+        // faster reverse in .NET Framework with value types - https://github.com/JamesNK/Newtonsoft.Json/issues/1430
+        public static void FastReverse<T>(this List<T> list)
+        {
+            int i = 0;
+            int j = list.Count - 1;
+            while (i < j)
+            {
+                T temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+                i++;
+                j--;
+            }
+        }
+#endif
+
         private static IList<int> GetDimensions(IList values, int dimensionsCount)
         {
             IList<int> dimensions = new List<int>();
@@ -268,9 +289,9 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
                 }
 
                 object v = currentArray[0];
-                if (v is IList)
+                if (v is IList list)
                 {
-                    currentArray = (IList)v;
+                    currentArray = list;
                 }
                 else
                 {
@@ -339,9 +360,30 @@ namespace ArangoDB.Client.Utility.Newtonsoft.Json
             }
 
             Array multidimensionalArray = Array.CreateInstance(type, dimensions.ToArray());
-            CopyFromJaggedToMultidimensionalArray(values, multidimensionalArray, new int[0]);
+            CopyFromJaggedToMultidimensionalArray(values, multidimensionalArray, ArrayEmpty<int>());
 
             return multidimensionalArray;
+        }
+
+        // 4.6 has Array.Empty<T> to return a cached empty array. Lacking that in other
+        // frameworks, Enumerable.Empty<T> happens to be implemented as a cached empty
+        // array in all versions (in .NET Core the same instance as Array.Empty<T>).
+        // This includes the internal Linq bridge for 2.0.
+        // Since this method is simple and only 11 bytes long in a release build it's
+        // pretty much guaranteed to be inlined, giving us fast access of that cached
+        // array. With 4.5 and up we use AggressiveInlining just to be sure, so it's
+        // effectively the same as calling Array.Empty<T> even when not available.
+#if HAVE_METHOD_IMPL_ATTRIBUTE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static T[] ArrayEmpty<T>()
+        {
+            T[] array = Enumerable.Empty<T>() as T[];
+            Debug.Assert(array != null);
+            // Defensively guard against a version of Linq where Enumerable.Empty<T> doesn't
+            // return an array, but throw in debug versions so a better strategy can be
+            // used if that ever happens.
+            return array ?? new T[0];
         }
     }
 }

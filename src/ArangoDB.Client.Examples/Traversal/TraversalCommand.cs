@@ -105,11 +105,11 @@ namespace ArangoDB.Client.Examples.Traversal
                 Direction = EdgeDirection.Outbound
             });
 
-            Assert.Equal(result.Visited.Vertices.Count, 4);
-            Assert.Equal(result.Visited.Vertices
+            Assert.Equal(4, result.Visited.Vertices.Count);
+            Assert.Empty(result.Visited.Vertices
                 .Select(x => x.Id)
                 .Except(new string[] { alice.Id, bob.Id, charlie.Id, dave.Id })
-                .Count(), 0);
+);
         }
     }
 }
