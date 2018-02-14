@@ -15,6 +15,7 @@ namespace ArangoDB.Client.Serialization
     public class DocumentSerializer
     {
         IArangoDatabase db;
+
         public DocumentSerializer(IArangoDatabase db)
         {
             this.db = db;
@@ -23,11 +24,9 @@ namespace ArangoDB.Client.Serialization
         public T Deserialize<T>(Stream stream)
         {
             using (var streamReader = new StreamReader(stream))
-            using (var jsonReader = new JsonTextReader(streamReader))
+            using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
-                var serializer = CreateJsonSerializer();
-
-                return serializer.Deserialize<T>(jsonReader);
+                return Deserialize<T>(jsonReader);
             }
         }
 
@@ -41,7 +40,7 @@ namespace ArangoDB.Client.Serialization
         public List<T> DeserializeBatchResult<T>(Stream stream, out BaseResult baseResult)
         {
             using (var streamReader = new StreamReader(stream))
-            using (var jsonReader = new JsonTextReader(streamReader))
+            using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult);
@@ -51,7 +50,7 @@ namespace ArangoDB.Client.Serialization
         public T DeserializeSingleResult<T>(Stream stream, out BaseResult baseResult)
         {
             using (var streamReader = new StreamReader(stream))
-            using (var jsonReader = new JsonTextReader(streamReader))
+            using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
                 var serializer = CreateJsonSerializer();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult).FirstOrDefault();
@@ -61,9 +60,8 @@ namespace ArangoDB.Client.Serialization
         public T DeserializeSingleResult<T>(Stream stream, out JObject jObject)
         {
             using (var streamReader = new StreamReader(stream))
-            using (var jsonReader = new JsonTextReader(streamReader))
+            using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
-                var serializer = CreateJsonSerializer();
                 return new DocumentParser(db).ParseSingleResult<T>(jsonReader, out jObject, true);
             }
         }

@@ -60,8 +60,7 @@ namespace ArangoDB.Client.Cursor
 
             stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             streamReader = new StreamReader(stream);
-            jsonTextReader = new JsonTextReader(streamReader);
-            jsonTextReader.DateParseHandling = DateParseHandling.None;
+            jsonTextReader = new ArangoJsonTextReader(streamReader);
 
             CursorResult.RequestCount++;
         }

@@ -4,11 +4,7 @@ using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization;
 using ArangoDB.Client.Test.Model;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ArangoDB.Client.Test.Serialization
@@ -24,26 +20,98 @@ namespace ArangoDB.Client.Test.Serialization
             stream.Position = 0;
 
             var streamReader = new StreamReader(stream);
-            return new JsonTextReader(streamReader);
+            return new ArangoJsonTextReader(streamReader);
         }
 
 
+        public void ParseSingleResult<T>(string value, Action<JObject, T> assert)
+        {
+            using (var reader = GenerateReader(value))
+            {
+                var documentParser = new DocumentParser(new ArangoDatabase());
+                JObject jObject = null;
+                var result = documentParser.ParseSingleResult<T>(reader, out jObject, true);
+
+                assert(jObject, result);
+            }
+        }
 
         [Fact]
         public void ParseSingle()
         {
-            using (var reader = GenerateReader(JsonSample.SingleResult))
+            ParseSingleResult<Person>(JsonSample.SingleResult, (jObject, person) =>
             {
-                var documentParser = new DocumentParser(new ArangoDatabase());
-                JObject jObject = null;
-                var person = documentParser.ParseSingleResult<Person>(reader, out jObject, true);
-
                 Assert.Equal(27, person.Age);
                 Assert.Equal("raoof hojat", person.Fullname);
                 Assert.Equal(172, person.Height);
 
                 Assert.True(JObject.DeepEquals(jObject, JObject.Parse(JsonSample.SingleResult)));
-            }
+            });
+        }
+
+
+        [Fact]
+        public void ParseSingle_IsoDate_ToString()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                // ISO Date to String
+                Assert.Equal(JTokenType.String, jObject["IsoDateAsString"].Type);
+                Assert.Equal("1983-10-20", result.IsoDateAsString);
+
+            });
+        }
+
+        [Fact]
+        public void ParseSingle_IsoDate_ToDateTime()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                Assert.Equal(JTokenType.String, jObject["IsoDateAsDateTime"].Type);
+                Assert.Equal(new DateTime(1983, 10, 20), result.IsoDateAsDateTime);
+
+            });
+        }
+
+        [Fact]
+        public void ParseSingle_IsoDateTime_ToString()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                Assert.Equal(JTokenType.String, jObject["IsoDateTimeAsString"].Type);
+                Assert.Equal("2017-11-16T00:00:00Z", result.IsoDateTimeAsString);
+
+            });
+        }
+
+        [Fact]
+        public void ParseSingle_IsoDateTimeInUtc_ToDateTimeUtcKind()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                Assert.Equal(new DateTime(2017, 11, 16, 02, 30, 15), result.IsoDateTimeAsDateTime);
+                Assert.Equal(DateTimeKind.Utc, result.IsoDateTimeAsDateTime.Kind);
+
+            });
+        }
+
+        [Fact]
+        public void ParseSingle_IsoDateTimeInUtc_ToDateTimeOffset()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                Assert.Equal(new DateTimeOffset(2017, 11, 16, 01, 00, 00, TimeSpan.Zero), result.IsoDateTimeAsDateTimeOffset);
+            });
+        }
+
+        [Fact]
+        public void ParseSingle_IsoDateTimeWithOffset_ToDateTimeOffset()
+        {
+            ParseSingleResult<DateModel>(DateJson.SingleDateModelResult, (jObject, result) =>
+            {
+                // "2018-02-14T13:43:12+02:30"
+                Assert.Equal(new DateTimeOffset(2018, 2, 14, 13, 43, 12, new TimeSpan(2,30,0)), result.IsoDateTimeWithOffsetAsDateTimeOffset);
+            });
         }
 
         [Fact]
