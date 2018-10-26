@@ -20,10 +20,8 @@ namespace ArangoDB.Client.Examples
 
         static Lazy<DatabaseSharedSetting> SharedSetting = new Lazy<DatabaseSharedSetting>(() =>
         {
-#if NET46
             // Uncomment if you want your requests goes through proxy
-            ArangoDatabase.ClientSetting.Proxy = new System.Net.WebProxy("http://localhost:19777");
-#endif
+            // ArangoDatabase.ClientSetting.Proxy = new System.Net.WebProxy("http://localhost:19777");
 
             var sharedSetting = new DatabaseSharedSetting();
             sharedSetting.Database = "ExampleDB";
