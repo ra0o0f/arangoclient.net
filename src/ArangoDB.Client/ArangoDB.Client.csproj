@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>0.7.5</Version>
+    <Version>0.7.70</Version>
     <TargetFrameworks>netstandard2.0;netstandard1.3;</TargetFrameworks>
     <Description>.NET client for ArangoDB with LINQ provider</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -11,7 +11,7 @@
     <PackageLicenseUrl>https://raw.github.com/ra0o0f/arangoclient.net/next/LICENSE.md</PackageLicenseUrl>
     <PackageIconUrl>http://arangoclient.net/arangodbLogo.png</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://raw.githubusercontent.com/sethjuarez/numl</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ra0o0f/arangoclient.net</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -37,6 +37,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <NoWarn>1701;1702;1705,1591,1573,1572,1570,1711</NoWarn>
+    <PackageReleaseNotes>.NET Core 2.0 release</PackageReleaseNotes>
   </PropertyGroup>
   
   <!--<ItemGroup Condition="'$(TargetFramework)'=='net46'">
