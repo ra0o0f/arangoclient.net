@@ -13,6 +13,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ra0o0f/arangoclient.net</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\hangfire.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
@@ -30,6 +32,12 @@
     <PackageReference Include="Remotion.Linq" Version="2.1.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\hangfire.snk">
+      <Link>osp.snk</Link>
+    </None>
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
     <AssemblyTitle>ArangoDB.Client Netstandard_1.3</AssemblyTitle>

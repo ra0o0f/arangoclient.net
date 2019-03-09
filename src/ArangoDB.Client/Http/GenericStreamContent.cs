@@ -13,7 +13,6 @@ namespace ArangoDB.Client.Http
     public class GenericStreamContent : HttpContent
     {
         private readonly MemoryStream _stream;
-        private readonly IArangoDatabase _db;
 
         public GenericStreamContent(Func<StreamWriter, Task> onStreamReady)
         {
