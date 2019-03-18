@@ -8,7 +8,6 @@
     <Authors>raoof hojat</Authors>
     <PackageProjectUrl>http://www.arangoclient.net</PackageProjectUrl>
     <PackageTags>ArangoDB;Arango Client;NoSql;Database</PackageTags>
-    <PackageLicenseUrl>https://raw.github.com/ra0o0f/arangoclient.net/next/LICENSE.md</PackageLicenseUrl>
     <PackageIconUrl>http://arangoclient.net/arangodbLogo.png</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ra0o0f/arangoclient.net</RepositoryUrl>
