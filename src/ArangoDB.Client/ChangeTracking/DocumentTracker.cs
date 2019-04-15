@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace ArangoDB.Client.ChangeTracking
 {
     public class DocumentTracker
     {
-        private readonly Dictionary<object, DocumentContainer> containerByInstance = new Dictionary<object, DocumentContainer>();
-        private readonly Dictionary<string, DocumentContainer> containerById = new Dictionary<string, DocumentContainer>();
+        private readonly ConcurrentDictionary<object, DocumentContainer> containerByInstance = new ConcurrentDictionary<object, DocumentContainer>();
+        private readonly ConcurrentDictionary<string, DocumentContainer> containerById = new ConcurrentDictionary<string, DocumentContainer>();
 
         IArangoDatabase db;
 
@@ -24,8 +25,8 @@ namespace ArangoDB.Client.ChangeTracking
         public void StopTrackChanges(object document)
         {
             var container = FindDocumentInfo(document);
-            containerByInstance.Remove(document);
-            containerById.Remove(container.Id);
+            containerByInstance.TryRemove(document, out DocumentContainer _);
+            containerById.TryRemove(container.Id, out DocumentContainer _);
         }
 
         public DocumentContainer TrackChanges(object document, JObject jObject)
