@@ -58,5 +58,17 @@ namespace ArangoDB.Client.Serialization
 
             return convertedProperties;
         }
+
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            var property = base.CreateProperty(member, memberSerialization);
+
+            if (!(member is PropertyInfo pi)) return property;
+
+            property.Readable = (pi.GetMethod != null);
+            property.Writable = (pi.SetMethod != null);
+
+            return property;
+        }
     }
 }
