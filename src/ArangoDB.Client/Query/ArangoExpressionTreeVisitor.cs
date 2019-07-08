@@ -27,6 +27,16 @@ namespace ArangoDB.Client.Query
             this.ModelVisitor = modelVisitor;
         }
 
+        protected override Expression VisitConditional(ConditionalExpression expression)
+        {
+            VisitBinary(expression.Test as BinaryExpression);
+            ModelVisitor.QueryText.Append(" ? ");
+            Visit(expression.IfTrue);
+            ModelVisitor.QueryText.Append(" : ");
+            Visit(expression.IfFalse);
+            return expression;
+        }
+
         protected override Expression VisitMethodCall(MethodCallExpression expression)
         {
             if (expression.Method.Name == "As")
