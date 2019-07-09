@@ -23,7 +23,7 @@ namespace ArangoDB.Client.Serialization.Converters
             var date = value as DateTime?;
             if (date.HasValue)
             {
-                writer.WriteValue(date.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffffff", CultureInfo.InvariantCulture));
+                writer.WriteValue(date.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffff", CultureInfo.InvariantCulture) + "Z");
                 return;
             }
 
