@@ -86,6 +86,10 @@ namespace ArangoDB.Client.Utility
                     return "autoincrement";
                 case KeyGeneratorType.Traditional:
                     return "traditional";
+                case KeyGeneratorType.Uuid:
+                    return "uuid";
+                case KeyGeneratorType.Padded:
+                    return "padded";
                 default:
                     throw new InvalidOperationException($"KeyGeneratorType {type} binding not found, this is a client bug");
             }

@@ -10,7 +10,9 @@ namespace ArangoDB.Client.Data
     public enum KeyGeneratorType
     {
         Autoincrement = 0,
-        Traditional = 1
+        Traditional = 1,
+        Uuid = 2,
+        Padded = 3
     }
 
     [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
