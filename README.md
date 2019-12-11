@@ -1,6 +1,3 @@
-
-#### Project website: http://www.arangoclient.net
-
 ##### [ArangoDB](http://www.arangodb.net) .Net client driver 
 
 <hr/>
