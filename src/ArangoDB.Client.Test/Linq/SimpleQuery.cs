@@ -32,6 +32,25 @@ namespace ArangoDB.Client.Test.Linq
 
             Assert.Equal("for `p` in `Person` return `p`", query.GetQueryData().Query.RemoveSpaces());
         }
+        
+        [Fact]
+        public void FromWithSelectNewTernary()
+        {
+            var db = DatabaseGenerator.Get();
+            var query = from p in db.Query<Person>()
+                      select new Person
+                      {
+                          Fullname = p.Age > 10 ? p.Fullname : "",
+                          Outfit = p.Age < 10 ? p.Outfit : null
+                      };
+            var queryText = query.GetQueryData().Query.RemoveSpaces();
+            Assert.Equal(
+@"for `p` in `Person` 
+return {
+ `Fullname` : ( `p`.`Age` > @P1 ) ? `p`.`Fullname` : @P2 ,
+ `Outfit` : ( `p`.`Age` < @P3 ) ? `p`.`Outfit` : @P4 
+}".RemoveSpaces(), queryText);
+        }
 
         [Fact]
         public void FromWithSelectNew()
