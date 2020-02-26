@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>0.7.70</Version>
-    <TargetFrameworks>netstandard2.0;netstandard1.3;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Description>.NET client for ArangoDB with LINQ provider</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>raoof hojat</Authors>
