@@ -20,13 +20,17 @@ namespace ArangoDB.Client.Data
     [CollectionProperty(Naming = NamingConvention.ToCamelCase)]
     public class TextAnalyzerData
     {
+        public TextAnalyzerData()
+        {
+            Stopwords = new List<string>();
+        }
+        
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Locale { get; set; }
         
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Case { get; set; }
         
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<string> Stopwords { get; set; }
         
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
