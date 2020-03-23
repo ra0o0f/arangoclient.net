@@ -524,6 +524,59 @@ namespace ArangoDB.Client
         /// <returns></returns>
         Task DropDatabaseAsync(string name, Action<BaseResult> baseResult = null);
 
+        /// <summary>
+        /// Create a search view
+        /// </summary>
+        /// <param name="name">Name of the view</param>
+        /// <param name="viewLinkData">Link data definition list (fields that are used)</param>
+        /// <param name="primarySortList">Primary sorting of the view</param>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns></returns>
+        Task<CreateSearchViewResult> CreateSearchViewAsync(string name, ViewLinkData viewLinkData = null,
+            IList<PrimarySort> primarySortList = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// List of search views
+        /// </summary>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        Task<List<CreateSearchViewResult>> ListSearchViewAsync(Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Drops the search view identified by view name
+        /// </summary>
+        /// <param name="name">Name of the view</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropSearchViewResult</returns>
+        Task<DropSearchViewResult> DropSearchViewAsync(string name, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Creates a text analyzer
+        /// </summary>
+        /// <param name="name">Name of analyzer</param>
+        /// <param name="textAnalyzerData">Analyzer properties</param>
+        /// <param name="featureData">Analyzer features</param>
+        /// <param name="baseResult"></param>
+        /// <returns></returns>
+        Task<CreateAnalyzerResult> CreateTextAnalyzer(string name, TextAnalyzerData textAnalyzerData,
+            IEnumerable<string> featureData,
+            Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// List of analyzers
+        /// </summary>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        Task<List<CreateAnalyzerResult>> ListAnalyzerAsync(Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Drops the search view identified by view name
+        /// </summary>
+        /// <param name="name">Name of the analyzer</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropSearchViewResult</returns>
+       Task<DropAnalyzerResult> DropAnalyzer(string name, Action<BaseResult> baseResult = null);
+
         Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null);
         Task ExecuteTransactionAsync(TransactionData data, Action<BaseResult> baseResult = null);
 

@@ -25,8 +25,8 @@ namespace ArangoDB.Client.Examples.Graphs
                 new EdgeDefinitionTypedData
                 {
                     Collection = typeof(Follow),
-                    From = new List<Type> { typeof(Person) },
-                    To = new List<Type> { typeof(Person) }
+                    From = new List<Type> {typeof(Person)},
+                    To = new List<Type> {typeof(Person)}
                 }
             });
         }
@@ -61,7 +61,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var inserted = graph.InsertEdge<Follow>(follow);
 
-            Assert.Throws<ArangoServerException>(() => graph.RemoveEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.RemoveEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -162,7 +163,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var inserted = graph.InsertEdge<Follow>(follow);
 
-            Assert.Throws<ArangoServerException>(() => graph.ReplaceEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(
+                () => graph.ReplaceEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -193,7 +195,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var inserted = graph.InsertEdge<Follow>(follow);
 
-            follow.CreatedDate = new DateTime(1900, 1, 1);
+            follow.CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             graph.ReplaceEdge<Follow>(follow, ifMatchRev: inserted.Rev);
 
@@ -234,7 +236,7 @@ namespace ArangoDB.Client.Examples.Graphs
             {
                 _from = v1.Id,
                 _to = v2.Id,
-                CreatedDate = new DateTime(1900, 1, 1)
+                CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
 
             var replaced = graph.GetEdge<Follow>(inserted.Key);
@@ -272,7 +274,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             follow.CreatedDate = new DateTime(1900, 1, 1);
 
-            Assert.Throws<ArangoServerException>(() => graph.UpdateEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.UpdateEdge<Follow>(follow, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -303,7 +306,7 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var inserted = graph.InsertEdge<Follow>(follow);
 
-            follow.CreatedDate = new DateTime(1900, 1, 1);
+            follow.CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             graph.UpdateEdge<Follow>(follow, ifMatchRev: inserted.Rev);
 
@@ -338,7 +341,7 @@ namespace ArangoDB.Client.Examples.Graphs
                 CreatedDate = DateTime.Now
             });
 
-            graph.UpdateEdgeById<Follow>(inserted.Key, new { CreatedDate = new DateTime(1900, 1, 1) });
+            graph.UpdateEdgeById<Follow>(inserted.Key, new {CreatedDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)});
 
             var updated = graph.GetEdge<Follow>(inserted.Key);
 
@@ -446,7 +449,8 @@ namespace ArangoDB.Client.Examples.Graphs
             Assert.NotNull(edgeInfo);
             Assert.NotNull(edgeInfo.Rev);
 
-            Assert.Throws<ArangoServerException>(() => graph.GetEdge<Follow>(inserted.Key, ifMatchRev: $"{edgeInfo.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.GetEdge<Follow>(inserted.Key, ifMatchRev: $"{edgeInfo.Rev}0"));
         }
 
         // vertex examples
@@ -466,7 +470,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var inserted = graph.InsertVertex<Person>(person);
 
-            Assert.Throws<ArangoServerException>(() => graph.RemoveVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.RemoveVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -528,7 +533,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             person.Age = 33;
 
-            Assert.Throws<ArangoServerException>(() => graph.ReplaceVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.ReplaceVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -568,7 +574,7 @@ namespace ArangoDB.Client.Examples.Graphs
                 Name = "raoof hojat"
             });
 
-            graph.ReplaceVertexById<Person>(inserted.Key, new { Age = 22 });
+            graph.ReplaceVertexById<Person>(inserted.Key, new {Age = 22});
 
             var replaced = graph.GetVertex<Person>(inserted.Key);
 
@@ -593,7 +599,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             person.Age = 33;
 
-            Assert.Throws<ArangoServerException>(() => graph.UpdateVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.UpdateVertex<Person>(person, ifMatchRev: $"{inserted.Rev}0"));
         }
 
         [Fact]
@@ -633,7 +640,7 @@ namespace ArangoDB.Client.Examples.Graphs
                 Name = "raoof hojat"
             });
 
-            graph.UpdateVertexById<Person>(inserted.Key, new { Age = 22 });
+            graph.UpdateVertexById<Person>(inserted.Key, new {Age = 22});
 
             var updated = graph.GetVertex<Person>(inserted.Key);
 
@@ -705,7 +712,8 @@ namespace ArangoDB.Client.Examples.Graphs
             Assert.NotNull(vertexInfo);
             Assert.NotNull(vertexInfo.Rev);
 
-            Assert.Throws<ArangoServerException>(() => graph.GetVertex<Person>(inserted.Key, ifMatchRev: $"{vertexInfo.Rev}0"));
+            Assert.Throws<ArangoServerException>(() =>
+                graph.GetVertex<Person>(inserted.Key, ifMatchRev: $"{vertexInfo.Rev}0"));
         }
 
         // management examples
@@ -731,8 +739,8 @@ namespace ArangoDB.Client.Examples.Graphs
             var createdGraph = CreateNewGraph();
 
             var result = graph.Edge("Relation").ExtendDefinitions(
-                new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() },
-                new string[] { db.SharedSetting.Collection.ResolveCollectionName<Host>() });
+                new string[] {db.SharedSetting.Collection.ResolveCollectionName<Host>()},
+                new string[] {db.SharedSetting.Collection.ResolveCollectionName<Host>()});
 
             Assert.Equal(2, result.EdgeDefinitions.Count);
         }
@@ -744,7 +752,8 @@ namespace ArangoDB.Client.Examples.Graphs
 
             var createdGraph = CreateNewGraph();
 
-            var result = graph.EditEdgeDefinition<Follow, Follow>(new List<Type> { typeof(Host) }, new List<Type> { typeof(Host) });
+            var result =
+                graph.EditEdgeDefinition<Follow, Follow>(new List<Type> {typeof(Host)}, new List<Type> {typeof(Host)});
 
             Assert.Single(result.EdgeDefinitions);
             Assert.Equal(result.EdgeDefinitions[0].From[0], db.SharedSetting.Collection.ResolveCollectionName<Host>());
@@ -774,7 +783,8 @@ namespace ArangoDB.Client.Examples.Graphs
             var result = graph.ListVertexCollections();
 
             Assert.Equal(2, result.Count);
-            Assert.Empty(result.Except(new string[] {
+            Assert.Empty(result.Except(new string[]
+            {
                 db.SharedSetting.Collection.ResolveCollectionName<Host>(),
                 db.SharedSetting.Collection.ResolveCollectionName<Person>()
             }));
