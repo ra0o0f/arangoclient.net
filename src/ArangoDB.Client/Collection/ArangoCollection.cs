@@ -1164,6 +1164,17 @@ namespace ArangoDB.Client.Collection
         }
 
         /// <summary>
+        /// Reads a single document
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <returns>A Document</returns>
+        public async Task<TDerived> DocumentAsync<TDerived>(string id, string ifMatchRev = null, string ifNoneMatchRev = null,
+            Action<BaseResult> baseResult = null) where TDerived : T
+        {
+            return await collectionMethods.DocumentAsync<TDerived>(id, ifMatchRev, ifNoneMatchRev, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Check if document exists
         /// </summary>
         /// <param name="id">The document handle or key of document</param>
