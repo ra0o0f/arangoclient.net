@@ -1,31 +1,28 @@
 ﻿using Newtonsoft.Json.Linq;
-using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace ArangoDB.Client.ChangeTracking
 {
     public class DocumentTracker
     {
-        private readonly Dictionary<object, DocumentContainer> containerByInstance = new Dictionary<object, DocumentContainer>();
-        private readonly Dictionary<string, DocumentContainer> containerById = new Dictionary<string, DocumentContainer>();
-
-        IArangoDatabase db;
+        private readonly ConditionalWeakTable<object, DocumentContainer> _containerByInstance;
+        private readonly ConditionalWeakTable<string, DocumentContainer> _containerById;
+        private readonly IArangoDatabase _db;
 
         public DocumentTracker(IArangoDatabase db)
         {
-            this.db = db;
+            _containerById = new ConditionalWeakTable<string, DocumentContainer>();
+            _containerByInstance = new ConditionalWeakTable<object, DocumentContainer>();
+            _db = db;
         }
 
         public void StopTrackChanges(object document)
         {
             var container = FindDocumentInfo(document);
-            containerByInstance.Remove(document);
-            containerById.Remove(container.Id);
+            _containerByInstance.Remove(document);
+            _containerById.Remove(container.Id);
         }
 
         public DocumentContainer TrackChanges(object document, JObject jObject)
@@ -34,8 +31,8 @@ namespace ArangoDB.Client.ChangeTracking
 
             if (container != null)
             {
-                containerById[container.Id] = container;
-                containerByInstance[document] = container;
+                _containerById.Add(container.Id, container);
+                _containerByInstance.Add(document, container);
             }
 
             return container;
@@ -43,14 +40,14 @@ namespace ArangoDB.Client.ChangeTracking
 
         public DocumentContainer TrackChanges(object document, IDocumentIdentifierResult identifiers)
         {
-            var jObject = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
+            var jObject = JObject.FromObject(document, new DocumentSerializer(_db).CreateJsonSerializer());
 
             var container = CreateContainer(jObject, identifiers);
 
             if (container != null)
             {
-                containerById[container.Id] = container;
-                containerByInstance[document] = container;
+                _containerById.Add(container.Id, container);
+                _containerByInstance.Add(document, container);
             }
 
             return container;
@@ -58,52 +55,47 @@ namespace ArangoDB.Client.ChangeTracking
 
         public DocumentContainer FindDocumentInfo(string id)
         {
-            try
+            if (!_containerById.TryGetValue(id, out var container))
             {
-                return containerById[id];
+                throw new Exception(
+                    $"No tracked document found for {id}, change tracking is maybe disabled");
             }
-            catch (KeyNotFoundException e)
-            {
-                throw new Exception(string.Format("No tracked document found for {0}, change tracking is maybe disabled", id), e);
-            }
+
+            return container;
         }
 
         public DocumentContainer FindDocumentInfo(object document)
         {
-            try
+            if (!_containerByInstance.TryGetValue(document, out var container))
             {
-                return containerByInstance[document];
+                throw new Exception("No tracked document found");
             }
-            catch (KeyNotFoundException e)
-            {
-                throw new Exception("No tracked document found", e);
-            }
+
+            return container;
         }
 
         public JObject GetChanges(object document)
         {
-            DocumentContainer container = null;
-            JObject jObject = null;
-            return GetChanges(document, out container, out jObject);
+            return GetChanges(document, out _, out _);
         }
 
         public JObject GetChanges(object document, out DocumentContainer container, out JObject jObject)
         {
-            container = containerByInstance[document];
-
-            jObject = JObject.FromObject(document, new DocumentSerializer(db).CreateJsonSerializer());
+            jObject = JObject.FromObject(document, new DocumentSerializer(_db).CreateJsonSerializer());
 
             JObject changedObject = new JObject();
-            CreateChangedDocument(container.Document, jObject, ref changedObject);
+            if (_containerByInstance.TryGetValue(document, out container))
+            {
+                CreateChangedDocument(container.Document, jObject, ref changedObject);
+            }
 
             return changedObject;
         }
 
         DocumentContainer CreateContainer(JObject jObject)
         {
-            DocumentContainer container = new DocumentContainer();
+            DocumentContainer container = new DocumentContainer {Id = jObject.Value<string>("_id")};
 
-            container.Id = jObject.Value<string>("_id");
             if (container.Id == null)
                 return null;
 
@@ -139,7 +131,8 @@ namespace ArangoDB.Client.ChangeTracking
             return container;
         }
 
-        public void CreateChangedDocument(JObject oldObject, JObject newObject, ref JObject changedObject, bool handleInnerObjects = false)
+        public void CreateChangedDocument(JObject oldObject, JObject newObject, ref JObject changedObject,
+            bool handleInnerObjects = false)
         {
             if (oldObject == null || oldObject.Type == JTokenType.Null)
             {
@@ -149,7 +142,8 @@ namespace ArangoDB.Client.ChangeTracking
 
             foreach (var n in newObject)
             {
-                if (!handleInnerObjects && (n.Key == "_id" || n.Key == "_key" || n.Key == "_rev" || n.Key == "_from" || n.Key == "_to"))
+                if (!handleInnerObjects && (n.Key == "_id" || n.Key == "_key" || n.Key == "_rev" || n.Key == "_from" ||
+                                            n.Key == "_to"))
                     continue;
 
                 JToken newValue = n.Value;
@@ -159,11 +153,12 @@ namespace ArangoDB.Client.ChangeTracking
                 {
                     JObject subChangeObject = new JObject();
 
-                    CreateChangedDocument(oldValue as JObject, newValue as JObject, ref subChangeObject, handleInnerObjects: true);
+                    CreateChangedDocument(oldValue as JObject, newValue as JObject, ref subChangeObject,
+                        true);
                     if (subChangeObject.Count != 0)
                         changedObject.Add(n.Key, subChangeObject);
                 }
-                else if (!JObject.DeepEquals(oldValue, newValue))
+                else if (!JToken.DeepEquals(oldValue, newValue))
                 {
                     changedObject.Add(n.Key, newValue);
                 }

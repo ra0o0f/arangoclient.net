@@ -12,29 +12,32 @@ namespace ArangoDB.Client.Http
 {
     public class GenericStreamContent : HttpContent
     {
-        IArangoDatabase db;
-        Func<StreamWriter, Task> onStreamReady;
+        private readonly MemoryStream _stream;
 
-        public GenericStreamContent(IArangoDatabase db, Func<StreamWriter, Task> onStreamReady)
+        public GenericStreamContent(Func<StreamWriter, Task> onStreamReady)
         {
             if (onStreamReady == null)
                 throw new ArgumentNullException(nameof(onStreamReady));
 
-            this.db = db;
-            this.onStreamReady = onStreamReady;
-            this.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            _stream = new MemoryStream();
+            Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            onStreamReady(new StreamWriter(_stream));
+            _stream.Position = 0;
         }
 
-        protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
-            await onStreamReady(new StreamWriter(stream)).ConfigureAwait(false);
+            _stream.CopyTo(stream);
+            var tcs = new TaskCompletionSource<object>();
+            tcs.SetResult(null);
+            return tcs.Task;
         }
 
         protected override bool TryComputeLength(out long length)
         {
-            //we don't know. can't be computed up-front
-            length = -1;
-            return false;
+            length = _stream.Length;
+            return true;
         }
     }
 }

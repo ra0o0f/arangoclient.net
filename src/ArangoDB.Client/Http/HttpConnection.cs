@@ -109,7 +109,7 @@ namespace ArangoDB.Client.Http
             if (onStreamReady == null && data != null)
                 requestMessage.Content = new JsonContent(db, data);
             if (onStreamReady != null)
-                requestMessage.Content = new GenericStreamContent(db, onStreamReady);
+                requestMessage.Content = new GenericStreamContent(onStreamReady);
 
             var responseMessage = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 

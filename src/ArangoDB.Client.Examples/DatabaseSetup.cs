@@ -15,7 +15,7 @@ namespace ArangoDB.Client.Examples
 
         static NetworkCredential GetCredential()
         {
-            return new NetworkCredential("root", "123456");
+            return new NetworkCredential("root", "Riaksi57");
         }
 
         static Lazy<DatabaseSharedSetting> SharedSetting = new Lazy<DatabaseSharedSetting>(() =>

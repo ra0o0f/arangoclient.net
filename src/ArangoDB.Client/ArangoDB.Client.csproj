@@ -2,23 +2,24 @@
 
   <PropertyGroup>
     <Version>0.7.70</Version>
-    <TargetFrameworks>netstandard2.0;netstandard1.3;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Description>.NET client for ArangoDB with LINQ provider</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>raoof hojat</Authors>
     <PackageProjectUrl>http://www.arangoclient.net</PackageProjectUrl>
     <PackageTags>ArangoDB;Arango Client;NoSql;Database</PackageTags>
-    <PackageLicenseUrl>https://raw.github.com/ra0o0f/arangoclient.net/next/LICENSE.md</PackageLicenseUrl>
     <PackageIconUrl>http://arangoclient.net/arangodbLogo.png</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ra0o0f/arangoclient.net</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\hangfire.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Remotion.Linq" Version="2.1.2" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>ArangoDB.Client Netstandard_2.0</AssemblyTitle>
@@ -26,10 +27,16 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="Remotion.Linq" Version="2.1.1" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\hangfire.snk">
+      <Link>osp.snk</Link>
+    </None>
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
     <AssemblyTitle>ArangoDB.Client Netstandard_1.3</AssemblyTitle>

@@ -27,7 +27,9 @@ namespace ArangoDB.Client.Http
         Transaction = 8,
         Traversal = 9,
         Import = 10,
-        Index = 11
+        Index = 11,
+        View = 12,
+        Analyzer = 13
     }
 
     public class HttpCommand
@@ -40,18 +42,20 @@ namespace ArangoDB.Client.Http
         {
             ApiValues = new Dictionary<CommandApi, string>()
             {
-                {CommandApi.Database,"database"},
-                {CommandApi.Document,"document"},
-                {CommandApi.Edge,"edge"},
-                {CommandApi.Cursor,"cursor"},
-                {CommandApi.Simple,"simple"},
-                {CommandApi.AllEdges,"edges"},
-                {CommandApi.Collection,"collection"},
-                {CommandApi.Graph,"gharial"},
-                {CommandApi.Transaction,"transaction"},
-                {CommandApi.Traversal,"traversal"},
-                {CommandApi.Import,"import" },
-                {CommandApi.Index,"index" }
+                {CommandApi.Database, "database"},
+                {CommandApi.Document, "document"},
+                {CommandApi.Edge, "edge"},
+                {CommandApi.Cursor, "cursor"},
+                {CommandApi.Simple, "simple"},
+                {CommandApi.AllEdges, "edges"},
+                {CommandApi.Collection, "collection"},
+                {CommandApi.Graph, "gharial"},
+                {CommandApi.Transaction, "transaction"},
+                {CommandApi.Traversal, "traversal"},
+                {CommandApi.Import, "import"},
+                {CommandApi.Index, "index"},
+                {CommandApi.View, "view"},
+                {CommandApi.Analyzer, "analyzer"}
             };
         }
 
@@ -88,7 +92,8 @@ namespace ArangoDB.Client.Http
             if (Query != null)
                 builder.Query = string.Join("&",
                     Query.Keys.Where(key => !string.IsNullOrWhiteSpace(Query[key]))
-                    .Select(key => string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(Query[key]))));
+                        .Select(key =>
+                            string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(Query[key]))));
 
             return builder.Uri;
         }
@@ -96,7 +101,8 @@ namespace ArangoDB.Client.Http
 
         // TDeserialize can be : EdgesInheritedCommandResult<List<TResult>>, InheritedCommandResult<List<TResult>>
         // method should be used when TResult can be change tracked
-        public async Task<ICommandResult<List<TResult>>> RequestGenericListResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
+        public async Task<ICommandResult<List<TResult>>>
+            RequestGenericListResult<TResult, TDeserialize>(object data = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
 
@@ -128,7 +134,8 @@ namespace ArangoDB.Client.Http
 
         // TDeserialize can be : InheritedCommandResult<TResult>, DocumentInheritedCommandResult<TResult>
         // method should be used when TResult can be change tracked
-        public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null, bool? throwForServerErrors = null) where TDeserialize : new()
+        public async Task<ICommandResult<TResult>> RequestGenericSingleResult<TResult, TDeserialize>(object data = null,
+            bool? throwForServerErrors = null) where TDeserialize : new()
         {
             var response = await SendCommandAsync(data).ConfigureAwait(false);
 
@@ -204,7 +211,8 @@ namespace ArangoDB.Client.Http
 
         // T can be any type
         // method should be used when base result is provided on server errors
-        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null, Func<StreamWriter, Task> onStreamReady = null, bool? throwForServerErrors = null)
+        public async Task<ICommandResult<T>> RequestDistinctResult<T>(object data = null,
+            Func<StreamWriter, Task> onStreamReady = null, bool? throwForServerErrors = null)
         {
             DistinctCommandResult<T> result = new DistinctCommandResult<T>();
 
@@ -221,7 +229,9 @@ namespace ArangoDB.Client.Http
                 if (EnableChangeTracking)
                 {
                     JObject jObject = null;
-                    result.Result = response.IsSuccessStatusCode ? serializer.DeserializeSingleResult<T>(stream, out jObject) : default(T);
+                    result.Result = response.IsSuccessStatusCode
+                        ? serializer.DeserializeSingleResult<T>(stream, out jObject)
+                        : default(T);
                     if (response.IsSuccessStatusCode)
                         db.ChangeTracker.TrackChanges(result.Result, jObject);
                 }
@@ -231,7 +241,8 @@ namespace ArangoDB.Client.Http
                 }
 
                 // response has not BaseResult if If-None-Match point to a match revision (status: HttpStatusCode.NotModified)
-                result.BaseResult = response.IsSuccessStatusCode == false && response.StatusCode != HttpStatusCode.NotModified
+                result.BaseResult = response.IsSuccessStatusCode == false &&
+                                    response.StatusCode != HttpStatusCode.NotModified
                     ? serializer.Deserialize<BaseResult>(stream)
                     : new BaseResult();
             }
@@ -244,14 +255,18 @@ namespace ArangoDB.Client.Http
 
         public async Task<HttpResponseMessage> SendCommandAsync(object data = null)
         {
-            NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential, Headers).ConfigureAwait(false);
+            NetworkCredential credential =
+                IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), data, null, credential, Headers)
+                .ConfigureAwait(false);
         }
 
         public async Task<HttpResponseMessage> SendStreamCommandAsync(Func<StreamWriter, Task> onStreamReady)
         {
-            NetworkCredential credential = IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
-            return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential, Headers).ConfigureAwait(false);
+            NetworkCredential credential =
+                IsSystemCommand ? db.SharedSetting.SystemDatabaseCredential : db.SharedSetting.Credential;
+            return await db.Connection.SendCommandAsync(Method, BuildUrl(), null, onStreamReady, credential, Headers)
+                .ConfigureAwait(false);
         }
 
         public ICursor<T> CreateCursor<T>(object data = null)

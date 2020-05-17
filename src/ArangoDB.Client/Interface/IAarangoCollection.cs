@@ -300,6 +300,13 @@ namespace ArangoDB.Client
         /// <param name="id">The document handle or key of document</param>
         /// <returns>A Document</returns>
         Task<T> DocumentAsync(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null);
+        
+        /// <summary>
+        /// Reads a single document
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <returns>A Document</returns>
+        Task<TDerived> DocumentAsync<TDerived>(string id, string ifMatchRev = null, string ifNoneMatchRev = null, Action<BaseResult> baseResult = null) where TDerived : T;
 
         /// <summary>
         /// Check if document exists

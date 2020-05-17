@@ -35,7 +35,9 @@ namespace ArangoDB.Client
                 Command = "current"
             };
 
-            var result = await command.RequestGenericSingleResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>().ConfigureAwait(false);
+            var result = await command
+                .RequestGenericSingleResult<DatabaseInformation, InheritedCommandResult<DatabaseInformation>>()
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -65,7 +67,8 @@ namespace ArangoDB.Client
                 Command = "user"
             };
 
-            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>()
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -96,7 +99,8 @@ namespace ArangoDB.Client
                 IsSystemCommand = true
             };
 
-            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>().ConfigureAwait(false);
+            var result = await command.RequestGenericListResult<string, InheritedCommandResult<List<string>>>()
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -121,7 +125,8 @@ namespace ArangoDB.Client
         /// <param name="name">Name of the database</param>
         /// <param name="users">list of database user</param>
         /// <returns></returns>
-        public async Task CreateDatabaseAsync(string name, List<DatabaseUser> users = null, Action<BaseResult> baseResult = null)
+        public async Task CreateDatabaseAsync(string name, List<DatabaseUser> users = null,
+            Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -136,7 +141,8 @@ namespace ArangoDB.Client
                 Users = users
             };
 
-            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>(data)
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -155,9 +161,11 @@ namespace ArangoDB.Client
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
         /// <returns>CreateCollectionResult</returns>
-        public CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
+        public CreateCollectionResult CreateCollection(string name, bool? waitForSync = null, bool? doCompact = null,
+            double? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null,
-            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
+            string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null,
+            Action<BaseResult> baseResult = null)
         {
             return CreateCollectionAsync(name, waitForSync, doCompact, journalSize, isSystem,
                 isVolatile, type, numberOfShards, shardKeys, keyOptions, IndexBuckets, baseResult).ResultSynchronizer();
@@ -176,9 +184,11 @@ namespace ArangoDB.Client
         /// <param name="numberOfShards">In a cluster, this value determines the number of shards to create for the collection</param>
         /// <param name="shardKeys">In a cluster, this attribute determines which document attributes are used to determine the target shard for documents</param>
         /// <returns>CreateCollectionResult</returns>
-        public async Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null, bool? doCompact = null, double? journalSize = null,
+        public async Task<CreateCollectionResult> CreateCollectionAsync(string name, bool? waitForSync = null,
+            bool? doCompact = null, double? journalSize = null,
             bool? isSystem = null, bool? isVolatile = null, CollectionType? type = null, int? numberOfShards = null
-            , string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null, Action<BaseResult> baseResult = null)
+            , string shardKeys = null, CreateCollectionKeyOption keyOptions = null, int? IndexBuckets = null,
+            Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -201,7 +211,7 @@ namespace ArangoDB.Client
             };
 
             if (type.HasValue)
-                data.Type = (int)type.Value;
+                data.Type = (int) type.Value;
 
             var result = await command.RequestMergedResult<CreateCollectionResult>(data).ConfigureAwait(false);
 
@@ -251,7 +261,8 @@ namespace ArangoDB.Client
         /// <param name="excludeSystem">Exclude system collections</param>
         /// <param name="baseResult">Runs when base result is ready</param>
         /// <returns>List of collection properties</returns>
-        public List<CreateCollectionResult> ListCollections(bool excludeSystem = true, Action<BaseResult> baseResult = null)
+        public List<CreateCollectionResult> ListCollections(bool excludeSystem = true,
+            Action<BaseResult> baseResult = null)
         {
             return ListCollectionsAsync(excludeSystem, baseResult).ResultSynchronizer();
         }
@@ -262,7 +273,8 @@ namespace ArangoDB.Client
         /// <param name="excludeSystem">Exclude system collections</param>
         /// <param name="baseResult">Runs when base result is ready</param>
         /// <returns>List of collection properties</returns>
-        public async Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem = true, Action<BaseResult> baseResult = null)
+        public async Task<List<CreateCollectionResult>> ListCollectionsAsync(bool excludeSystem = true,
+            Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -273,7 +285,9 @@ namespace ArangoDB.Client
 
             command.Query.Add("excludeSystem", excludeSystem.ToString());
 
-            var result = await command.RequestGenericListResult<CreateCollectionResult, InheritedCommandResult<List<CreateCollectionResult>>>().ConfigureAwait(false);
+            var result = await command
+                .RequestGenericListResult<CreateCollectionResult, InheritedCommandResult<List<CreateCollectionResult>>
+                >().ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
@@ -306,10 +320,146 @@ namespace ArangoDB.Client
                 Command = StringUtils.Encode(name)
             };
 
-            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>().ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<bool, InheritedCommandResult<bool>>()
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);
+        }
+
+        public async Task<CreateSearchViewResult> CreateSearchViewAsync(string name, ViewLinkData viewLinkData = null,
+            IList<PrimarySort> primarySortList = null, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.View,
+                Method = HttpMethod.Post
+            };
+
+            var data = new CreateSearchViewData
+            {
+                Name = name,
+                Type = "arangosearch",
+                Links = viewLinkData,
+                PrimarySort = primarySortList
+            };
+
+            var result = await command.RequestMergedResult<CreateSearchViewResult>(data).ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+
+        /// <summary>
+        /// List of search views
+        /// </summary>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        public async Task<List<CreateSearchViewResult>> ListSearchViewAsync(Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.View,
+                Method = HttpMethod.Get
+            };
+
+            var result = await command
+                .RequestGenericListResult<CreateSearchViewResult, InheritedCommandResult<List<CreateSearchViewResult>>
+                >().ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+        
+        /// <summary>
+        /// Drops the search view identified by view name
+        /// </summary>
+        /// <param name="name">Name of the view</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropSearchViewResult</returns>
+        public async Task<DropSearchViewResult> DropSearchViewAsync(string name, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.View,
+                Method = HttpMethod.Delete,
+                Command = StringUtils.Encode(name)
+            };
+
+            var result = await command.RequestMergedResult<DropSearchViewResult>().ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+        
+        public async Task<CreateAnalyzerResult> CreateTextAnalyzer(string name, TextAnalyzerData textAnalyzerData, IEnumerable<string> featureData, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Analyzer,
+                Method = HttpMethod.Post
+            };
+
+            var data = new CreateAnalyzerData
+            {
+                Name = name,
+                Type = "text",
+                Properties = textAnalyzerData,
+                Features = featureData
+            };
+
+            var result = await command.RequestMergedResult<CreateAnalyzerResult>(data).ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+        
+        /// <summary>
+        /// List of analyzers
+        /// </summary>
+        /// <param name="baseResult">Runs when base result is ready</param>
+        /// <returns>List of collection properties</returns>
+        public async Task<List<CreateAnalyzerResult>> ListAnalyzerAsync(Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Analyzer,
+                Method = HttpMethod.Get
+            };
+
+            var result = await command
+                .RequestGenericListResult<CreateAnalyzerResult, InheritedCommandResult<List<CreateAnalyzerResult>>
+                >().ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
+        }
+        
+        /// <summary>
+        /// Drops the search view identified by view name
+        /// </summary>
+        /// <param name="name">Name of the view</param>
+        /// <param name="baseResult"></param>
+        /// <returns>DropSearchViewResult</returns>
+        public async Task<DropAnalyzerResult> DropAnalyzer(string name, Action<BaseResult> baseResult = null)
+        {
+            var command = new HttpCommand(this)
+            {
+                Api = CommandApi.Analyzer,
+                Method = HttpMethod.Delete,
+                Command = StringUtils.Encode(name)
+            };
+
+            var result = await command.RequestMergedResult<DropAnalyzerResult>().ConfigureAwait(false);
+
+            baseResult?.Invoke(result.BaseResult);
+
+            return result.Result;
         }
 
         public void ExecuteTransaction(TransactionData data, Action<BaseResult> baseResult = null)
@@ -327,7 +477,8 @@ namespace ArangoDB.Client
             return ExecuteTransactionAsync<TResult>(data, baseResult).ResultSynchronizer();
         }
 
-        public async Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data, Action<BaseResult> baseResult = null)
+        public async Task<TResult> ExecuteTransactionAsync<TResult>(TransactionData data,
+            Action<BaseResult> baseResult = null)
         {
             var command = new HttpCommand(this)
             {
@@ -338,7 +489,8 @@ namespace ArangoDB.Client
             if (data.Action != null)
                 data.Action = data.Action.Replace("\r\n", " ");
 
-            var result = await command.RequestGenericSingleResult<TResult, InheritedCommandResult<TResult>>(data).ConfigureAwait(false);
+            var result = await command.RequestGenericSingleResult<TResult, InheritedCommandResult<TResult>>(data)
+                .ConfigureAwait(false);
 
             if (baseResult != null)
                 baseResult(result.BaseResult);

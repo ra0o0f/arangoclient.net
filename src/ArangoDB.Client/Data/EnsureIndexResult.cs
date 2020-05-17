@@ -32,6 +32,6 @@ namespace ArangoDB.Client.Data
 
         public List<string> Fields { get; set; }
 
-        public int? SelectivityEstimate { get; set; }
+        public double? SelectivityEstimate { get; set; }
     }
 }

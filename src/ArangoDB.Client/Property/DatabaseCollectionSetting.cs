@@ -127,7 +127,7 @@ namespace ArangoDB.Client.Property
             return ResolveCollectionName(typeof(T));
         }
 
-        internal string ResolvePropertyName(Type type, string memberName)
+        public string ResolvePropertyName(Type type, string memberName)
         {
             IDocumentPropertySetting documentProperty = null;
             ChangeDocumentPropertyForType(type, memberName, x => documentProperty = x);
