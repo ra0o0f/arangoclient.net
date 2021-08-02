@@ -9,7 +9,7 @@ using (IArangoDatabase db = new ArangoDatabase("http://localhost:8529", "SampleD
 {
 	var info = db.CurrentDatabaseInformation();
 
-	// output: "C:\ArangoDB 2.3.4\var\lib\arangodb\databases\database-179610003747"     
+	// output: "C:\ArangoDB 2.3.4\var\lib\arangodb\databases\[database]     
 	Console.WriteLine(info.Path);
 }
 ```

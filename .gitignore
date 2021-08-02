@@ -15,6 +15,7 @@
 docs/book/_book
 node_modules
 
+[Dd]ebug/*
 [Dd]ebug/
 [Rr]elease/
 x64/

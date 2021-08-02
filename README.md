@@ -13,8 +13,6 @@
 
 ```
 dotnet add package ArangoDB.Client
-
-Install-Package ArangoDB.Client
 ```
 
 ### Tutorial
