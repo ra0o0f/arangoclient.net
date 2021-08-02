@@ -63,7 +63,7 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
-        /// Change setting for a specific identifier
+        /// Change configuration for a specific identifier
         /// </summary>
         /// <param name="identifier">name of setting</param>
         public static void ChangeSetting(string identifier, Action<DatabaseSharedSetting> action)

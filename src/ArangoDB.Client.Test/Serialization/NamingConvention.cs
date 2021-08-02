@@ -14,7 +14,6 @@ namespace ArangoDB.Client.Test.Serialization
         public void NameOfCollection()
         {
             DatabaseSharedSetting sharedSetting = new DatabaseSharedSetting();
-
             Assert.Equal("ComplexModel", sharedSetting.Collection.ResolveCollectionName<ComplexModel>());
         }
 
